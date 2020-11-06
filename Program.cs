@@ -31,8 +31,7 @@ namespace JackTheStudent
         try {
             Console.WriteLine("[Jack] Welcome!");
             _cts = new CancellationTokenSource(); 
-
-            // Load the config file
+          // Load the config file
             Console.WriteLine("[Jack] Loading config file..");
             _config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -42,7 +41,7 @@ namespace JackTheStudent
             // Create the DSharpPlus client
             Console.WriteLine("[Jack] Creating discord client..");
             _discord = new DiscordClient(new DiscordConfiguration {
-                Token = _config.GetValue<string>("discord:token"),
+                Token = Environment.GetEnvironmentVariable("BOT_TOKEN"),
                 TokenType = TokenType.Bot
             });
 

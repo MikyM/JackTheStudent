@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "+2z/+EAFlUh5SQMY8gr+nDfdeIMdqlk16jPYzvP8XL93MqJCJm83E8cn32Q82SclTT8y1v1gMjSS9AoK8UOrXA==",
+  "dgSpecHash": "Cjb4QR7hPdJ4M2VhJuAYGqcKuMW1LE3GcXzNGB1Wy7EtgVqZzcXA8DCCIOFOszWzuRkOoSqytpALXsDrjQV97Q==",
   "success": true,
   "projectFilePath": "F:\\Code\\JackTheStudent\\JackTheStudent.csproj",
   "expectedPackageFiles": [
@@ -11,6 +11,7 @@
     "C:\\Users\\Kszysieg\\.nuget\\packages\\microsoft.extensions.configuration\\3.1.9\\microsoft.extensions.configuration.3.1.9.nupkg.sha512",
     "C:\\Users\\Kszysieg\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\3.1.9\\microsoft.extensions.configuration.abstractions.3.1.9.nupkg.sha512",
     "C:\\Users\\Kszysieg\\.nuget\\packages\\microsoft.extensions.configuration.binder\\3.1.9\\microsoft.extensions.configuration.binder.3.1.9.nupkg.sha512",
+    "C:\\Users\\Kszysieg\\.nuget\\packages\\microsoft.extensions.configuration.environmentvariables\\3.1.9\\microsoft.extensions.configuration.environmentvariables.3.1.9.nupkg.sha512",
     "C:\\Users\\Kszysieg\\.nuget\\packages\\microsoft.extensions.configuration.fileextensions\\3.1.9\\microsoft.extensions.configuration.fileextensions.3.1.9.nupkg.sha512",
     "C:\\Users\\Kszysieg\\.nuget\\packages\\microsoft.extensions.configuration.json\\3.1.9\\microsoft.extensions.configuration.json.3.1.9.nupkg.sha512",
     "C:\\Users\\Kszysieg\\.nuget\\packages\\microsoft.extensions.fileproviders.abstractions\\3.1.9\\microsoft.extensions.fileproviders.abstractions.3.1.9.nupkg.sha512",
