@@ -8,6 +8,7 @@ using DSharpPlus.CommandsNext;
 using DSharpPlus.Interactivity;
 using Microsoft.Extensions.Configuration;
 using JackTheStudent.Commands;
+using JackTheStudent.Models;
 namespace JackTheStudent
 {
     class Program
