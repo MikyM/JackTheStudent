@@ -44,7 +44,7 @@ public class BasicCommandsModule : IModule
         await ctx.TriggerTypingAsync();
 
     /* Send the message "I'm Alive!" to the channel the message was recieved from */
-        await ctx.RespondAsync("How are you today?");
+        await ctx.RespondAsync("How I am today?");
 
         var intr = ctx.Client.GetInteractivityModule(); // Grab the interactivity module
         var response = await intr.WaitForMessageAsync(
@@ -58,9 +58,34 @@ public class BasicCommandsModule : IModule
             await ctx.RespondAsync("Sorry, I didn't get a response!");
             return;
         } else if (response.Message.Content.ToLower() == "bad") {
-            await ctx.RespondAsync("Loser!");
+            await ctx.RespondAsync("Okay, how are you then?");
+
+            var response1 = await intr.WaitForMessageAsync(
+                c => c.Author.Id == ctx.Message.Author.Id, // Make sure the response is from the same person who sent the command
+                TimeSpan.FromSeconds(5)
+            );
+            if(response1 == null) {
+            await ctx.RespondAsync("Sorry, I didn't get a response!");
+            return;
+            } else if (response1.Message.Content.ToLower() == "bad") {
+                await ctx.RespondAsync("Loser!");
+            } else if (response1.Message.Content.ToLower() == "good") {
+                await ctx.RespondAsync("I'm glad!");
+            } // Wait 60 seconds for a response instead of the default 30 we set earlier!
         } else if (response.Message.Content.ToLower() == "good") {
-            await ctx.RespondAsync("I'm glad!");
+            await ctx.RespondAsync("Okay, how are you then?");
+            var response2 = await intr.WaitForMessageAsync(
+                c => c.Author.Id == ctx.Message.Author.Id, // Make sure the response is from the same person who sent the command
+                TimeSpan.FromSeconds(5)
+            );
+            if(response2 == null) {
+            await ctx.RespondAsync("Sorry, I didn't get a response!");
+            return;
+            } else if (response2.Message.Content.ToLower() == "bad") {
+                await ctx.RespondAsync("Aww, that's too bad!");
+            } else if (response2.Message.Content.ToLower() == "good") {
+                await ctx.RespondAsync("I'm glad!");
+            }
         } 
         
         await ctx.RespondAsync("Thank you for telling me how you are!");
