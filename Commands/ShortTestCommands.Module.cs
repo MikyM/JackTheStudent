@@ -11,14 +11,14 @@ using System.Collections.Generic;
 /* Create our class and extend from IModule */
 namespace JackTheStudent.Commands
 {
-public class StudentCommandsModule : IModule
+public class ShortTestCommandsModule : IModule
 {
     private List<string> classList = new List<string>() {"eng", "mat", "ele", "db", "prog"};
     private List<string> eventList = new List<string>() {"exam", "hwork", "lreport", "stest"};
 
-    [Command("log")]
+    [Command("shorttest")]
     [Description("Command logging an event of specified type")]
-    public async Task Log(CommandContext ctx, string eventType, string classType, DateTime eventDate, string groupId = "")
+    public async Task ShortTestLog(CommandContext ctx, string eventType, string classType, DateTime eventDate, string groupId = "")
     {
     
         switch(eventType) {
@@ -102,9 +102,9 @@ public class StudentCommandsModule : IModule
         
     }
 
-    [Command("logs")]
+    [Command("shorttests")]
     [Description("Command retrieving all logged events of specified type")]
-    public async Task Logs(CommandContext ctx, string eventType, string classType = ".", string span = "planned", string group = "")
+    public async Task ShortTestLogs(CommandContext ctx, string eventType, string classType = ".", string span = "planned", string group = "")
     {
         switch(eventType) {
         case "exam":

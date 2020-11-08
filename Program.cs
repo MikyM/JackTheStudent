@@ -2,12 +2,14 @@
 using System.Linq;
 using System.IO;
 using System.Threading;
+using System.Globalization;
 using System.Threading.Tasks;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.Interactivity;
 using Microsoft.Extensions.Configuration;
 using JackTheStudent.Commands;
+using System.Collections.Generic;
 using JackTheStudent.Models;
 namespace JackTheStudent
 {
@@ -24,11 +26,38 @@ namespace JackTheStudent
     private CommandsNextModule _commands;
     private InteractivityModule _interactivity;
 
+    public static List<ClassTypes> classList = new List<ClassTypes>();
+    public static List<string> groupList = new List<string>();
+
     /* Use the async main to create an instance of the class and await it*/
     static async Task Main(string[] args) => await new Program().InitBot(args);
 
     async Task InitBot(string[] args)
     {
+        try {
+            using (var db = new JackTheStudentContext()){
+                classList = db.ClassTypes
+                    .ToList();
+            }
+        } catch(Exception ex) {
+            Console.Error.WriteLine("[Jack] " + ex.ToString());
+        }
+
+        try {
+            using (var db = new JackTheStudentContext()){
+                groupList = db.Group
+                    .Select( x => x.GroupId) 
+                    .ToList();
+            }
+        } catch(Exception ex) {
+            Console.Error.WriteLine("[Jack] " + ex.ToString());
+        }
+
+        CultureInfo culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
+        culture.DateTimeFormat.ShortDatePattern = "dd-MM-yyyy HH:mm";
+        culture.DateTimeFormat.LongTimePattern = "";
+        Thread.CurrentThread.CurrentCulture = culture;
+        
         try {
             Console.WriteLine("[Jack] Welcome!");
             _cts = new CancellationTokenSource(); 
@@ -108,4 +137,6 @@ namespace JackTheStudent
             return deps.Build();
         }
     }
+
+    
 }

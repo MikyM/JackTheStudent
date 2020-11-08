@@ -6,6 +6,9 @@ using System;
 using System.Threading.Tasks;
 using System.Linq;
 using JackTheStudent.Commands;
+using JackTheStudent.Models;
+using System.Data.SqlClient;
+using MySql.Data.MySqlClient;
 
 namespace JackTheStudent.Commands
 {
@@ -35,6 +38,89 @@ public class BasicCommandsModule : IModule
         /* Send the message "I'm Alive!" to the channel the message was recieved from */
         await ctx.RespondAsync("I'm dead!");
     }
+
+    [Command("truncate")]
+    [Description("Simple command to test if the bot is dead!")]
+    public async Task Truncate(CommandContext ctx)
+    {
+        
+        using (var db = new JackTheStudentContext()){
+            
+        }                    
+
+        /* Send the message "I'm Alive!" to the channel the message was recieved from */
+        await ctx.RespondAsync("All tables have been cleared!");
+    }
+
+    [Command("logdickappointment")]
+    [Description("Simple command to test if the bot is dead!")]
+    public async Task DickAppointment(CommandContext ctx, string name, string length, string circumference, string width, DateTime date)
+    {
+
+        try {
+            using (var db = new JackTheStudentContext()) {
+                var dickAppointment = new DickAppointments {
+                    Name = name,
+                    Date = date,
+                    Width = width,
+                    Circumference = circumference,
+                    Length = length
+                };
+                db.DickAppointments.Add(dickAppointment);
+                await db.SaveChangesAsync();
+            }
+        }
+        catch (Exception ex) {
+            Console.Error.WriteLine("[Jack] " + ex.ToString());
+            await ctx.RespondAsync("Dick appointment log failed");
+            return;
+        }
+
+        await ctx.RespondAsync("Dick appointment logged successfully");
+        return;
+    }
+
+    [Command("logsdickappointment")]
+    [Description("Simple command to test if the bot is dead!")]
+    public async Task DickAppointmentLogs(CommandContext ctx, string span = "planned")
+    {
+        if (span == "planned") {
+            try {
+            using (var db = new JackTheStudentContext()){
+                var dickAppointments = db.DickAppointments
+                    .Where(c => c.Date > DateTime.Now)
+                    .ToList();
+                    foreach (DickAppointments dickAppointment in dickAppointments) {
+                        await ctx.RespondAsync(dickAppointment.Name + " is equipped with a " + dickAppointment.Length + " cm length dingus, " + "that is " +
+                         dickAppointment.Circumference + " in circumference (" + dickAppointment.Width + " width). Meeting scheduled for " + dickAppointment.Date + ".");
+                    }
+                    }
+                } catch(Exception ex) {
+                    Console.Error.WriteLine("[Jack] " + ex.ToString());
+                    await ctx.RespondAsync("Show logs failed");
+                    return;
+                }
+            return;
+        } else if (span == ".") {
+            try {
+            using (var db = new JackTheStudentContext()){
+                var dickAppointments = db.DickAppointments
+                    .ToList();
+                    foreach (DickAppointments dickAppointment in dickAppointments) {
+                        await ctx.RespondAsync(dickAppointment.Name + " is equipped with a " + dickAppointment.Length + " cm length dingus, " + "that is " +
+                         dickAppointment.Circumference + " in circumference (" + dickAppointment.Width + " width). Meeting scheduled for " + dickAppointment.Date + ".");
+                    }
+                    }
+                } catch(Exception ex) {
+                    Console.Error.WriteLine("[Jack] " + ex.ToString());
+                    await ctx.RespondAsync("Show logs failed");
+                    return;
+                }
+            return;
+        }
+        
+    }
+
 
     [Command("interact")]
     [Description("Simple command to test interaction!")]

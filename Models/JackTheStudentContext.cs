@@ -15,24 +15,64 @@ namespace JackTheStudent.Models
         {
         }
 
+        public virtual DbSet<ClassTypes> ClassTypes { get; set; }
+        public virtual DbSet<Group> Group { get; set; }
         public virtual DbSet<ClassMaterials> ClassMaterials { get; set; }
         public virtual DbSet<Exams> Exams { get; set; }
         public virtual DbSet<Homeworks> Homeworks { get; set; }
         public virtual DbSet<LabReports> LabReports { get; set; }
         public virtual DbSet<PersonalReminders> PersonalReminders { get; set; }
         public virtual DbSet<ShortTests> ShortTests { get; set; }
+        public virtual DbSet<DickAppointments> DickAppointments { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+            if (!optionsBuilder.IsConfigured) {
                 optionsBuilder.UseMySQL(Environment.GetEnvironmentVariable("JACKTHESTUDENT_DB_CON_STRING"));
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<ClassTypes>(entity =>
+            {
+                entity.HasKey(e => e.Id)
+                    .HasName("PRIMARY");
+
+                entity.ToTable("class_types");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasColumnName("name")
+                    .HasMaxLength(45);
+
+                entity.Property(e => e.ShortName)
+                    .IsRequired()
+                    .HasColumnName("short_name")
+                    .HasMaxLength(10);   
+            });
+
+            modelBuilder.Entity<Group>(entity =>
+            {
+                entity.HasKey(e => e.Id)
+                    .HasName("PRIMARY");
+
+                entity.ToTable("group");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.GroupId)
+                    .IsRequired()
+                    .HasColumnName("group")
+                    .HasMaxLength(20); 
+            });
+
             modelBuilder.Entity<ClassMaterials>(entity =>
             {
                 entity.HasKey(e => e.IdMaterial)
@@ -41,7 +81,7 @@ namespace JackTheStudent.Models
                 entity.ToTable("class_materials");
 
                 entity.Property(e => e.IdMaterial)
-                    .HasColumnName("id_material")
+                    .HasColumnName("id")
                     .HasColumnType("int(11)");
 
                 entity.Property(e => e.AdditionalInfo)
@@ -81,7 +121,7 @@ namespace JackTheStudent.Models
                 entity.ToTable("exams");
 
                 entity.Property(e => e.IdExam)
-                    .HasColumnName("id_exam")
+                    .HasColumnName("id")
                     .HasColumnType("int(11)");
 
                 entity.Property(e => e.AdditionalInfo)
@@ -120,7 +160,7 @@ namespace JackTheStudent.Models
                 entity.ToTable("homeworks");
 
                 entity.Property(e => e.IdHomework)
-                    .HasColumnName("id_homework")
+                    .HasColumnName("id")
                     .HasColumnType("int(11)");
 
                 entity.Property(e => e.AdditionalInfo)
@@ -136,6 +176,10 @@ namespace JackTheStudent.Models
                     .IsRequired()
                     .HasColumnName("date");
 
+                entity.Property(e => e.GroupId)
+                    .IsRequired()
+                    .HasColumnName("group_id");
+                
                 entity.Property(e => e.LogById)
                     .IsRequired()
                     .HasColumnName("log_by_id")
@@ -156,7 +200,7 @@ namespace JackTheStudent.Models
                 entity.HasKey(e => e.IdLabReport)
                     .HasName("PRIMARY");
 
-                entity.ToTable("lab_reports");
+                entity.ToTable("lab");
 
                 entity.Property(e => e.IdLabReport)
                     .HasColumnName("id_lab_report")
@@ -174,6 +218,10 @@ namespace JackTheStudent.Models
                 entity.Property(e => e.Date)
                     .IsRequired()
                     .HasColumnName("date");
+
+                entity.Property(e => e.GroupId)
+                    .IsRequired()
+                    .HasColumnName("group_id");
                 
                 entity.Property(e => e.LogById)
                     .IsRequired()
@@ -198,7 +246,7 @@ namespace JackTheStudent.Models
                 entity.ToTable("personal_reminders");
 
                 entity.Property(e => e.IdReminder)
-                    .HasColumnName("id_reminder")
+                    .HasColumnName("id")
                     .HasColumnType("int(11)");
 
                 entity.Property(e => e.About)
@@ -233,7 +281,7 @@ namespace JackTheStudent.Models
                 entity.ToTable("short_tests");
 
                 entity.Property(e => e.IdShortTest)
-                    .HasColumnName("id_short_test")
+                    .HasColumnName("id")
                     .HasColumnType("int(11)");
 
                 entity.Property(e => e.AdditionalInfo)
@@ -248,6 +296,10 @@ namespace JackTheStudent.Models
                 entity.Property(e => e.Date)
                     .IsRequired()
                     .HasColumnName("date");
+
+                entity.Property(e => e.GroupId)
+                    .IsRequired()
+                    .HasColumnName("group_id");
                     
                 entity.Property(e => e.LogById)
                     .IsRequired()
@@ -262,6 +314,42 @@ namespace JackTheStudent.Models
                 entity.Property(e => e.Materials)
                     .HasColumnName("materials")
                     .HasColumnType("longtext");
+            });
+
+            modelBuilder.Entity<DickAppointments>(entity =>
+            {
+                entity.HasKey(e => e.IdDickAppointment)
+                    .HasName("PRIMARY");
+
+                entity.ToTable("dick_appointments");
+
+                entity.Property(e => e.IdDickAppointment)
+                    .HasColumnName("id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.Name)
+                    .HasColumnName("name")
+                    .HasColumnType("longtext")
+                    .HasMaxLength(45);
+
+                entity.Property(e => e.Length)
+                    .IsRequired()
+                    .HasColumnName("length")
+                    .HasMaxLength(45);
+                
+                entity.Property(e => e.Circumference)
+                    .IsRequired()
+                    .HasColumnName("circumference")
+                    .HasMaxLength(45);
+
+                entity.Property(e => e.Width)
+                    .IsRequired()
+                    .HasColumnName("width")
+                    .HasMaxLength(45);
+
+                entity.Property(e => e.Date)
+                    .IsRequired()
+                    .HasColumnName("date");
             });
 
             OnModelCreatingPartial(modelBuilder);
