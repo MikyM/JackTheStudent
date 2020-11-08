@@ -15,7 +15,7 @@ namespace JackTheStudent.Models
         {
         }
 
-        public virtual DbSet<ClassType> ClassType { get; set; }
+        public virtual DbSet<Class> Class { get; set; }
         public virtual DbSet<Group> Group { get; set; }
         public virtual DbSet<ClassMaterial> ClassMaterial { get; set; }
         public virtual DbSet<Exam> Exam { get; set; }
@@ -34,12 +34,12 @@ namespace JackTheStudent.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<ClassType>(entity =>
+            modelBuilder.Entity<Class>(entity =>
             {
                 entity.HasKey(e => e.Id)
                     .HasName("PRIMARY");
 
-                entity.ToTable("class_type");
+                entity.ToTable("class");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")

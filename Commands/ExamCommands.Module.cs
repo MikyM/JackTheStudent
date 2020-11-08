@@ -7,9 +7,7 @@ using System.Threading.Tasks;
 using JackTheStudent.Models;
 using System.Linq;
 using System.Collections.Generic;
-using JackTheStudent.Models;
 
-/* Create our class and extend from IModule */
 namespace JackTheStudent.Commands
 {
 

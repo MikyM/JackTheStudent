@@ -9,22 +9,18 @@ using System.Linq;
 using System.Collections.Generic;
 using JackTheStudent;
 using System.Globalization;
-/* Create our class and extend from IModule */
+
 namespace JackTheStudent.Commands
 {
 public class HomeworkCommandsModule : IModule
 {
-    //private List<string> classList = new List<string>() {"eng", "mat", "ele", "db", "prog"};
+    
     [Command("homework")]
     [Description("Command logging an event of specified type")]
     public async Task HomeworkLog(CommandContext ctx, string groupId = "", string classType = "", string eventDate = "", string eventTime = "", string additionalInfo = "", string materials = "")
     {
-        
-        //List<string> classList = GetClassNames();
-
         DateTime parsedEventDate = new DateTime();
         DateTime parsedEventTime = new DateTime();
-
 
         if(groupId == "") {
             await ctx.RespondAsync("Learn to read you dumbass. The command looks like: !homework <class> <group> <eventDate> <eventTime> Try again!");
@@ -63,11 +59,11 @@ public class HomeworkCommandsModule : IModule
                 db.Homework.Add(homeWork);
                 await db.SaveChangesAsync();
                 }
-                } catch(Exception ex) {
-                    Console.Error.WriteLine("[Jack] " + ex.ToString());
-                    await ctx.RespondAsync("Homework log failed");
-                    return;
-                }
+            } catch(Exception ex) {
+                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                await ctx.RespondAsync("Homework log failed");
+                return;
+            }
         await ctx.RespondAsync("Homework logged successfully");     
         return;
         }   
@@ -184,11 +180,11 @@ public class HomeworkCommandsModule : IModule
                             return;
                             }                           
                         }
-                        } catch(Exception ex) {
-                            Console.Error.WriteLine("[Jack] " + ex.ToString());
-                            await ctx.RespondAsync("Show logs failed");
-                            return;
-                        }
+                    } catch(Exception ex) {
+                        Console.Error.WriteLine("[Jack] " + ex.ToString());
+                        await ctx.RespondAsync("Show logs failed");
+                        return;
+                    }
                 } else {
                     await ctx.RespondAsync("Learn to read you dumbass. The command looks like: !homeworks <class> <group> <eventDate> <eventTime> Try again!");
                     return;
@@ -216,11 +212,11 @@ public class HomeworkCommandsModule : IModule
                             return;
                             }                           
                         }
-                        } catch(Exception ex) {
-                            Console.Error.WriteLine("[Jack] " + ex.ToString());
-                            await ctx.RespondAsync("Show logs failed");
-                            return;
-                        }
+                    } catch(Exception ex) {
+                        Console.Error.WriteLine("[Jack] " + ex.ToString());
+                        await ctx.RespondAsync("Show logs failed");
+                        return;
+                    }
                 } else {
                     await ctx.RespondAsync("Ya know there's only either all possible events or the ones that didn't happen right? Get yo facts straight negro!");
                     return;

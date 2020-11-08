@@ -15,28 +15,21 @@ namespace JackTheStudent
 {
     class Program
     {
-        /* Cancellation token*/
     private CancellationTokenSource _cts { get; set; }
-
-    /*App config loading*/
     private IConfigurationRoot _config;
-
-    /* These are the discord library's main classes */
     private DiscordClient _discord;
     private CommandsNextModule _commands;
     private InteractivityModule _interactivity;
-
-    public static List<ClassType> classList = new List<ClassType>();
+    public static List<Class> classList = new List<Class>();
     public static List<string> groupList = new List<string>();
 
-    /* Use the async main to create an instance of the class and await it*/
     static async Task Main(string[] args) => await new Program().InitBot(args);
 
     async Task InitBot(string[] args)
     {
         try {
             using (var db = new JackTheStudentContext()){
-                classList = db.ClassType
+                classList = db.Class
                     .ToList();
             }
         } catch(Exception ex) {
@@ -61,35 +54,31 @@ namespace JackTheStudent
         try {
             Console.WriteLine("[Jack] Welcome!");
             _cts = new CancellationTokenSource(); 
-          // Load the config file
+
             Console.WriteLine("[Jack] Loading config file..");
             _config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("config.json", optional: false, reloadOnChange: true)
                 .Build();
 
-            // Create the DSharpPlus client
             Console.WriteLine("[Jack] Creating discord client..");
             _discord = new DiscordClient(new DiscordConfiguration {
                 Token = Environment.GetEnvironmentVariable("BOT_TOKEN"),
                 TokenType = TokenType.Bot
             });
 
-            // Create the interactivity module
             _interactivity = _discord.UseInteractivity(new InteractivityConfiguration() {
                 PaginationBehaviour = TimeoutBehaviour.Delete, // What to do when a pagination request times out
                 PaginationTimeout = TimeSpan.FromSeconds(30), // How long to wait before timing out
                 Timeout = TimeSpan.FromSeconds(30) // Default time to wait for interactive commands like waiting for a message or a reaction
             });
 
-            // Build dependancies and then create the commands module.
             var deps = BuildDeps();
             _commands = _discord.UseCommandsNext(new CommandsNextConfiguration {
                 StringPrefix = _config.GetValue<string>("discord:CommandPrefix"), // Load the command prefix(what comes before the command, eg "!" or "/") from our config file
                 Dependencies = deps // Pass the dependancies
             });
 
-            // Command loading
             Console.WriteLine("[Jack] Loading command modules..");
 
             var type = typeof(IModule); // Get the type of our interface
