@@ -53,14 +53,14 @@ public class HomeworkCommandsModule : IModule
         } else {
             try {
                 using (var db = new JackTheStudentContext()){
-                var homeWork = new Homeworks {Class = classType,
+                var homeWork = new Homework {Class = classType,
                                               Date = parsedEventDate.Date.Add(parsedEventTime.TimeOfDay),
                                               GroupId = groupId,
                                               LogById = ctx.Message.Author.Id.ToString(),
                                               LogByUsername = ctx.Message.Author.Username,
                                               AdditionalInfo = additionalInfo,
                                               Materials = materials};
-                db.Homeworks.Add(homeWork);
+                db.Homework.Add(homeWork);
                 await db.SaveChangesAsync();
                 }
                 } catch(Exception ex) {
@@ -87,13 +87,13 @@ public class HomeworkCommandsModule : IModule
             if (group == "." && classType == "." && span == "planned") {
                 try {
                     using (var db = new JackTheStudentContext()){
-                    var homeworks = db.Homeworks
+                    var homeworks = db.Homework
                                 .Where( x => x.Date > DateTime.Now)
                                 .ToList();
                         if (homeworks.Count == 0) {
                                 await ctx.RespondAsync("Wait what!? There is literally no homework planned at all!");
                         } else {
-                            foreach (Homeworks homework in homeworks) {
+                            foreach (Homework homework in homeworks) {
                                 await ctx.RespondAsync(CultureInfo.CurrentCulture.TextInfo
                                     .ToTitleCase(JackTheStudent.Program.classList
                                     .Where( c => c.ShortName == homework.Class)
@@ -111,13 +111,13 @@ public class HomeworkCommandsModule : IModule
             } else if(classType == "." && span == "." && group != "." ) {
                 try {
                     using (var db = new JackTheStudentContext()){
-                    var homeworks = db.Homeworks
+                    var homeworks = db.Homework
                         .Where( x => x.GroupId == group)
                         .ToList();
                         if (homeworks.Count == 0) {
                                 await ctx.RespondAsync("Wait what!? There is no homework for group " + group + "!");
                         } else {
-                            foreach (Homeworks homework in homeworks) {
+                            foreach (Homework homework in homeworks) {
                                 await ctx.RespondAsync(CultureInfo.CurrentCulture.TextInfo
                                                         .ToTitleCase(JackTheStudent.Program.classList
                                                         .Where( c => c.ShortName == homework.Class)
@@ -135,13 +135,13 @@ public class HomeworkCommandsModule : IModule
             } else if (classType == "." && span == "planned") {
                 try {
                     using (var db = new JackTheStudentContext()){
-                    var homeworks = db.Homeworks
+                    var homeworks = db.Homework
                         .Where(x => x.Date > DateTime.Now && x.GroupId == group)
                         .ToList();
                         if (homeworks.Count == 0) {
                                 await ctx.RespondAsync("Wait what!? There is no homework, hmm... league?");
                         } else {
-                            foreach (Homeworks homework in homeworks) {
+                            foreach (Homework homework in homeworks) {
                                 await ctx.RespondAsync(CultureInfo.CurrentCulture.TextInfo
                                                         .ToTitleCase(JackTheStudent.Program.classList
                                                         .Where( c => c.ShortName == homework.Class)
@@ -161,7 +161,7 @@ public class HomeworkCommandsModule : IModule
                 if(JackTheStudent.Program.classList.Any(c => c.ShortName == classType)) {
                     try {
                         using (var db = new JackTheStudentContext()){
-                            var homeworks = db.Homeworks
+                            var homeworks = db.Homework
                                 .Where(x => x.Date > DateTime.Now && x.Class == classType && x.GroupId == group)
                                 .ToList();                     
 
@@ -174,7 +174,7 @@ public class HomeworkCommandsModule : IModule
                                 await ctx.RespondAsync(response);
                                 return;
                             } else {
-                                foreach (Homeworks homework in homeworks) {
+                                foreach (Homework homework in homeworks) {
                                     await ctx.RespondAsync(CultureInfo.CurrentCulture.TextInfo
                                                             .ToTitleCase(JackTheStudent.Program.classList
                                                             .Where( c => c.ShortName == homework.Class)
@@ -197,7 +197,7 @@ public class HomeworkCommandsModule : IModule
                 if(JackTheStudent.Program.classList.Any(c => c.ShortName == classType)) {
                     try {
                         using (var db = new JackTheStudentContext()){
-                            var homeworks = db.Homeworks
+                            var homeworks = db.Homework
                                 .Where(x => x.Class == classType && x.GroupId == group)
                                 .ToList();                     
 
@@ -210,7 +210,7 @@ public class HomeworkCommandsModule : IModule
                                 await ctx.RespondAsync(response);
                                 return;
                             } else {
-                                foreach (Homeworks homework in homeworks) {
+                                foreach (Homework homework in homeworks) {
                                     await ctx.RespondAsync(homework.Class + " homework for group " + homework.GroupId + ", deadline is " + homework.Date);
                                 }
                             return;
@@ -228,7 +228,7 @@ public class HomeworkCommandsModule : IModule
             } else {
                 try {
                     using (var db = new JackTheStudentContext()){
-                        var homeworks = db.Homeworks
+                        var homeworks = db.Homework
                             .ToList();                     
 
                         if (homeworks.Count == 0) {
@@ -236,7 +236,7 @@ public class HomeworkCommandsModule : IModule
                             await ctx.RespondAsync(response);
                             return;
                         } else {
-                            foreach (Homeworks homework in homeworks) {
+                            foreach (Homework homework in homeworks) {
                                 await ctx.RespondAsync(CultureInfo.CurrentCulture.TextInfo
                                                         .ToTitleCase(JackTheStudent.Program.classList
                                                         .Where( c => c.ShortName == homework.Class)

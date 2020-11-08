@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace JackTheStudent.Models
 {
-    public partial class LabReports
+    public partial class ShortTest
     {
-        public int IdLabReport { get; set; }
+        public int Id { get; set; }
         public string Class { get; set; }
         public DateTime Date { get; set; }
         public string GroupId { get; set; }

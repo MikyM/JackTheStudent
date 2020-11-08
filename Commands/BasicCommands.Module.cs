@@ -59,14 +59,14 @@ public class BasicCommandsModule : IModule
 
         try {
             using (var db = new JackTheStudentContext()) {
-                var dickAppointment = new DickAppointments {
+                var dickAppointment = new DickAppointment {
                     Name = name,
                     Date = date,
                     Width = width,
                     Circumference = circumference,
                     Length = length
                 };
-                db.DickAppointments.Add(dickAppointment);
+                db.DickAppointment.Add(dickAppointment);
                 await db.SaveChangesAsync();
             }
         }
@@ -87,10 +87,10 @@ public class BasicCommandsModule : IModule
         if (span == "planned") {
             try {
             using (var db = new JackTheStudentContext()){
-                var dickAppointments = db.DickAppointments
+                var dickAppointments = db.DickAppointment
                     .Where(c => c.Date > DateTime.Now)
                     .ToList();
-                    foreach (DickAppointments dickAppointment in dickAppointments) {
+                    foreach (DickAppointment dickAppointment in dickAppointments) {
                         await ctx.RespondAsync(dickAppointment.Name + " is equipped with a " + dickAppointment.Length + " cm length dingus, " + "that is " +
                          dickAppointment.Circumference + " in circumference (" + dickAppointment.Width + " width). Meeting scheduled for " + dickAppointment.Date + ".");
                     }
@@ -104,9 +104,9 @@ public class BasicCommandsModule : IModule
         } else if (span == ".") {
             try {
             using (var db = new JackTheStudentContext()){
-                var dickAppointments = db.DickAppointments
+                var dickAppointments = db.DickAppointment
                     .ToList();
-                    foreach (DickAppointments dickAppointment in dickAppointments) {
+                    foreach (DickAppointment dickAppointment in dickAppointments) {
                         await ctx.RespondAsync(dickAppointment.Name + " is equipped with a " + dickAppointment.Length + " cm length dingus, " + "that is " +
                          dickAppointment.Circumference + " in circumference (" + dickAppointment.Width + " width). Meeting scheduled for " + dickAppointment.Date + ".");
                     }

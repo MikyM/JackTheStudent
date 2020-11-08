@@ -26,7 +26,7 @@ namespace JackTheStudent
     private CommandsNextModule _commands;
     private InteractivityModule _interactivity;
 
-    public static List<ClassTypes> classList = new List<ClassTypes>();
+    public static List<ClassType> classList = new List<ClassType>();
     public static List<string> groupList = new List<string>();
 
     /* Use the async main to create an instance of the class and await it*/
@@ -36,7 +36,7 @@ namespace JackTheStudent
     {
         try {
             using (var db = new JackTheStudentContext()){
-                classList = db.ClassTypes
+                classList = db.ClassType
                     .ToList();
             }
         } catch(Exception ex) {

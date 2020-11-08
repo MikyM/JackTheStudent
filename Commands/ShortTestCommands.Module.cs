@@ -25,11 +25,11 @@ public class ShortTestCommandsModule : IModule
             case "exam":
                 try {
                 using (var db = new JackTheStudentContext()){
-                var exam = new Exams { Class = classType,
+                var exam = new Exam { Class = classType,
                                       Date = eventDate,
                                       LogById = ctx.Message.Author.Id.ToString(),
                                       LogByUsername = ctx.Message.Author.Username};
-                db.Exams.Add(exam);
+                db.Exam.Add(exam);
                 await db.SaveChangesAsync();
                 }
                 } catch(Exception ex) {
@@ -46,12 +46,12 @@ public class ShortTestCommandsModule : IModule
                 }
                 try {
                 using (var db = new JackTheStudentContext()){
-                var homeWork = new Homeworks { Class = classType,
+                var homeWork = new Homework { Class = classType,
                                       Date = eventDate,
                                       GroupId = groupId,
                                       LogById = ctx.Message.Author.Id.ToString(),
                                       LogByUsername = ctx.Message.Author.Username};
-                db.Homeworks.Add(homeWork);
+                db.Homework.Add(homeWork);
                 await db.SaveChangesAsync();
                 }
                 } catch(Exception ex) {
@@ -64,11 +64,11 @@ public class ShortTestCommandsModule : IModule
             case "stest":
                 try {
                 using (var db = new JackTheStudentContext()){
-                var shortTest = new ShortTests { Class = classType,
+                var shortTest = new ShortTest { Class = classType,
                                       Date = eventDate,
                                       LogById = ctx.Message.Author.Id.ToString(),
                                       LogByUsername = ctx.Message.Author.Username};
-                db.ShortTests.Add(shortTest);
+                db.ShortTest.Add(shortTest);
                 await db.SaveChangesAsync();
                 }
                 } catch(Exception ex) {
@@ -81,11 +81,11 @@ public class ShortTestCommandsModule : IModule
             case "lreport":
                 try {
                 using (var db = new JackTheStudentContext()){
-                var labReport = new LabReports { Class = classType,
+                var labReport = new LabReport { Class = classType,
                                       Date = eventDate,
                                       LogById = ctx.Message.Author.Id.ToString(),
                                       LogByUsername = ctx.Message.Author.Username};
-                db.LabReports.Add(labReport);
+                db.LabReport.Add(labReport);
                 await db.SaveChangesAsync();
                 }
                 } catch(Exception ex) {
@@ -111,8 +111,8 @@ public class ShortTestCommandsModule : IModule
             if(classType == "." && span == ".") {
                 try {
                     using (var db = new JackTheStudentContext()){
-                    var exams = db.Exams.ToList();
-                        foreach (Exams exam in exams) {
+                    var exams = db.Exam.ToList();
+                        foreach (Exam exam in exams) {
                             await ctx.RespondAsync(exam.Class + " " + exam.Date);
                         }
                         
@@ -126,13 +126,13 @@ public class ShortTestCommandsModule : IModule
             } else if (classType == "." && span == "planned") {
                 try {
                     using (var db = new JackTheStudentContext()){
-                    var exams = db.Exams
+                    var exams = db.Exam
                         .Where(x => x.Date > DateTime.Now)
                         .ToList();
                         if (exams.Count == 0) {
                                 await ctx.RespondAsync("Wait what!? There are no exams planned, PAAAARTTTIEEEHH TIIIIIIIIMEEEEEEE!");
                         } else {
-                            foreach (Exams exam in exams) {
+                            foreach (Exam exam in exams) {
                                 await ctx.RespondAsync(exam.Class + " " + exam.Date);
                             }
                         }
@@ -148,7 +148,7 @@ public class ShortTestCommandsModule : IModule
                 if(classList.Contains(classType)) {
                     try {
                         using (var db = new JackTheStudentContext()){
-                            var exams = db.Exams
+                            var exams = db.Exam
                                 .Where(x => x.Date > DateTime.Now && x.Class == classType)
                                 .ToList();                     
 
@@ -157,7 +157,7 @@ public class ShortTestCommandsModule : IModule
                                 await ctx.RespondAsync(response);
                                 return;
                             } else {
-                                foreach (Exams exam in exams) {
+                                foreach (Exam exam in exams) {
                                     await ctx.RespondAsync(exam.Class + " " + exam.Date);
                                 }
                             }                           
@@ -176,7 +176,7 @@ public class ShortTestCommandsModule : IModule
                 if(classList.Contains(classType)) {
                     try {
                         using (var db = new JackTheStudentContext()){
-                            var exams = db.Exams
+                            var exams = db.Exam
                                 .Where(x => x.Class == classType)
                                 .ToList();                     
 
@@ -185,7 +185,7 @@ public class ShortTestCommandsModule : IModule
                                 await ctx.RespondAsync(response);
                                 return;
                             } else {
-                                foreach (Exams exam in exams) {
+                                foreach (Exam exam in exams) {
                                     await ctx.RespondAsync(exam.Class + " " + exam.Date);
                                 }
                             }                           
@@ -210,13 +210,13 @@ public class ShortTestCommandsModule : IModule
             if(classType == "." && span == "." ) {
                 try {
                     using (var db = new JackTheStudentContext()){
-                    var homeworks = db.Homeworks
+                    var homeworks = db.Homework
                         .Where( x => x.GroupId == group)
                         .ToList();
                         if (homeworks.Count == 0) {
                                 await ctx.RespondAsync("Wait what!? There is no " + classType + " homework for group " + group + "!");
                         } else {
-                            foreach (Homeworks homework in homeworks) {
+                            foreach (Homework homework in homeworks) {
                                 await ctx.RespondAsync(homework.Class + " " + homework.Date);
                             }
                         }
@@ -230,13 +230,13 @@ public class ShortTestCommandsModule : IModule
             } else if (classType == "." && span == "planned") {
                 try {
                     using (var db = new JackTheStudentContext()){
-                    var homeworks = db.Homeworks
+                    var homeworks = db.Homework
                         .Where(x => x.Date > DateTime.Now && x.GroupId == group)
                         .ToList();
                         if (homeworks.Count == 0) {
                                 await ctx.RespondAsync("Wait what!? There is no homework, hmm... league?");
                         } else {
-                            foreach (Homeworks homework in homeworks) {
+                            foreach (Homework homework in homeworks) {
                                 await ctx.RespondAsync(homework.Class + " " + homework.Date);
                             }
                         }
@@ -252,7 +252,7 @@ public class ShortTestCommandsModule : IModule
                 if(classList.Contains(classType)) {
                     try {
                         using (var db = new JackTheStudentContext()){
-                            var homeworks = db.Homeworks
+                            var homeworks = db.Homework
                                 .Where(x => x.Date > DateTime.Now && x.Class == classType && x.GroupId == group)
                                 .ToList();                     
 
@@ -261,7 +261,7 @@ public class ShortTestCommandsModule : IModule
                                 await ctx.RespondAsync(response);
                                 return;
                             } else {
-                                foreach (Homeworks homework in homeworks) {
+                                foreach (Homework homework in homeworks) {
                                     await ctx.RespondAsync(homework.Class + " " + homework.Date);
                                 }
                             }                           
@@ -280,7 +280,7 @@ public class ShortTestCommandsModule : IModule
                 if(classList.Contains(classType)) {
                     try {
                         using (var db = new JackTheStudentContext()){
-                            var homeworks = db.Homeworks
+                            var homeworks = db.Homework
                                 .Where(x => x.Class == classType && x.GroupId == group)
                                 .ToList();                     
 
@@ -289,7 +289,7 @@ public class ShortTestCommandsModule : IModule
                                 await ctx.RespondAsync(response);
                                 return;
                             } else {
-                                foreach (Homeworks homework in homeworks) {
+                                foreach (Homework homework in homeworks) {
                                     await ctx.RespondAsync(homework.Class + " " + homework.Date);
                                 }
                             }                           
@@ -310,8 +310,8 @@ public class ShortTestCommandsModule : IModule
             if(classType == "." && span == ".") {
                 try {
                     using (var db = new JackTheStudentContext()){
-                    var labReports = db.LabReports.ToList();
-                        foreach (LabReports labReport in labReports) {
+                    var labReports = db.LabReport.ToList();
+                        foreach (LabReport labReport in labReports) {
                             await ctx.RespondAsync(labReport.Class + " " + labReport.Date);
                         }
                     }
@@ -324,13 +324,13 @@ public class ShortTestCommandsModule : IModule
             } else if (classType == "." && span == "planned") {
                 try {
                     using (var db = new JackTheStudentContext()){
-                    var labReports = db.LabReports
+                    var labReports = db.LabReport
                         .Where(x => x.Date > DateTime.Now)
                         .ToList();
                         if (labReports.Count == 0) {
                                 await ctx.RespondAsync("Wait what!? There are no lab reports planned, hmm... wanna have some quality time ( ͡° ͜ʖ ͡°)?");
                         } else {
-                            foreach (LabReports labReport in labReports) {
+                            foreach (LabReport labReport in labReports) {
                                 await ctx.RespondAsync(labReport.Class + " " + labReport.Date);
                             }
                         }
@@ -346,7 +346,7 @@ public class ShortTestCommandsModule : IModule
                 if(classList.Contains(classType)) {
                     try {
                         using (var db = new JackTheStudentContext()){
-                            var labReports = db.LabReports
+                            var labReports = db.LabReport
                                 .Where(x => x.Date > DateTime.Now && x.Class == classType)
                                 .ToList();                     
 
@@ -355,7 +355,7 @@ public class ShortTestCommandsModule : IModule
                                 await ctx.RespondAsync(response);
                                 return;
                             } else {
-                                foreach (LabReports labReport in labReports) {
+                                foreach (LabReport labReport in labReports) {
                                     await ctx.RespondAsync(labReport.Class + " " + labReport.Date);
                                 }
                             }                           
@@ -374,7 +374,7 @@ public class ShortTestCommandsModule : IModule
                 if(classList.Contains(classType)) {
                     try {
                         using (var db = new JackTheStudentContext()){
-                            var labReports = db.LabReports
+                            var labReports = db.LabReport
                                 .Where(x => x.Class == classType)
                                 .ToList();                     
 
@@ -383,7 +383,7 @@ public class ShortTestCommandsModule : IModule
                                 await ctx.RespondAsync(response);
                                 return;
                             } else {
-                                foreach (LabReports labReport in labReports) {
+                                foreach (LabReport labReport in labReports) {
                                     await ctx.RespondAsync(labReport.Class + " " + labReport.Date);
                                 }
                             }                           
@@ -404,8 +404,8 @@ public class ShortTestCommandsModule : IModule
             if(classType == "." && span == ".") {
                 try {
                     using (var db = new JackTheStudentContext()){
-                    var shortTests = db.ShortTests.ToList();
-                        foreach (ShortTests shortTest in shortTests) {
+                    var shortTests = db.ShortTest.ToList();
+                        foreach (ShortTest shortTest in shortTests) {
                             await ctx.RespondAsync(shortTest.Class + " " + shortTest.Date);
                         }
                     }
@@ -418,13 +418,13 @@ public class ShortTestCommandsModule : IModule
             } else if (classType == "." && span == "planned") {
                 try {
                     using (var db = new JackTheStudentContext()){
-                    var shortTests = db.ShortTests
+                    var shortTests = db.ShortTest
                         .Where(x => x.Date > DateTime.Now)
                         .ToList();
                         if (shortTests.Count == 0) {
                                 await ctx.RespondAsync("Wait what!? There are no short tests planned, let's play some Sims! Hah, just joking, start that Fifa up fucker");
                         } else {
-                            foreach (ShortTests shortTest in shortTests) {
+                            foreach (ShortTest shortTest in shortTests) {
                                 await ctx.RespondAsync(shortTest.Class + " " + shortTest.Date);
                             }
                         }
@@ -440,7 +440,7 @@ public class ShortTestCommandsModule : IModule
                 if(classList.Contains(classType)) {
                     try {
                         using (var db = new JackTheStudentContext()){
-                            var shortTests = db.ShortTests
+                            var shortTests = db.ShortTest
                                 .Where(x => x.Date > DateTime.Now && x.Class == classType)
                                 .ToList();                     
 
@@ -449,7 +449,7 @@ public class ShortTestCommandsModule : IModule
                                 await ctx.RespondAsync(response);
                                 return;
                             } else {
-                                foreach (ShortTests shortTest in shortTests) {
+                                foreach (ShortTest shortTest in shortTests) {
                                     await ctx.RespondAsync(shortTest.Class + " " + shortTest.Date);
                                 }
                             }                           
@@ -468,7 +468,7 @@ public class ShortTestCommandsModule : IModule
                 if(classList.Contains(classType)) {
                     try {
                         using (var db = new JackTheStudentContext()){
-                            var shortTests = db.ShortTests
+                            var shortTests = db.ShortTest
                                 .Where(x => x.Class == classType)
                                 .ToList();                     
 
@@ -477,7 +477,7 @@ public class ShortTestCommandsModule : IModule
                                 await ctx.RespondAsync(response);
                                 return;
                             } else {
-                                foreach (ShortTests shortTest in shortTests) {
+                                foreach (ShortTest shortTest in shortTests) {
                                     await ctx.RespondAsync(shortTest.Class + " " + shortTest.Date);
                                 }
                             }                           

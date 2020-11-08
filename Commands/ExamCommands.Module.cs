@@ -24,13 +24,13 @@ public class ExamCommandsModule : IModule
     { 
         try {
             using (var db = new JackTheStudentContext()){
-                var exam = new Exams {  Class = classType,
+                var exam = new Exam {  Class = classType,
                                         Date = eventDate,
                                         LogById = ctx.Message.Author.Id.ToString(),
                                         LogByUsername = ctx.Message.Author.Username};
                 
             
-            db.Exams.Add(exam);
+            db.Exam.Add(exam);
             await db.SaveChangesAsync();
             }
         } catch(Exception ex) {
@@ -50,8 +50,8 @@ public class ExamCommandsModule : IModule
         if(classType == "." && span == ".") {
             try {
                 using (var db = new JackTheStudentContext()){
-                    var exams = db.Exams.ToList();
-                        foreach (Exams exam in exams) {
+                    var exams = db.Exam.ToList();
+                        foreach (Exam exam in exams) {
                             await ctx.RespondAsync(exam.Class + " " + exam.Date);
                         }
                         
@@ -65,13 +65,13 @@ public class ExamCommandsModule : IModule
             } else if (classType == "." && span == "planned") {
                 try {
                     using (var db = new JackTheStudentContext()){
-                    var exams = db.Exams
+                    var exams = db.Exam
                         .Where(x => x.Date > DateTime.Now)
                         .ToList();
                         if (exams.Count == 0) {
                                 await ctx.RespondAsync("Wait what!? There are no exams planned, PAAAARTTTIEEEHH TIIIIIIIIMEEEEEEE!");
                         } else {
-                            foreach (Exams exam in exams) {
+                            foreach (Exam exam in exams) {
                                 await ctx.RespondAsync(exam.Class + " " + exam.Date);
                             }
                         }
@@ -87,7 +87,7 @@ public class ExamCommandsModule : IModule
                 if(classList.Contains(classType)) {
                     try {
                         using (var db = new JackTheStudentContext()){
-                            var exams = db.Exams
+                            var exams = db.Exam
                                 .Where(x => x.Date > DateTime.Now && x.Class == classType)
                                 .ToList();                     
 
@@ -96,7 +96,7 @@ public class ExamCommandsModule : IModule
                                 await ctx.RespondAsync(response);
                                 return;
                             } else {
-                                foreach (Exams exam in exams) {
+                                foreach (Exam exam in exams) {
                                     await ctx.RespondAsync(exam.Class + " " + exam.Date);
                                 }
                             }                           
@@ -115,7 +115,7 @@ public class ExamCommandsModule : IModule
                 if(classList.Contains(classType)) {
                     try {
                         using (var db = new JackTheStudentContext()){
-                            var exams = db.Exams
+                            var exams = db.Exam
                                 .Where(x => x.Class == classType)
                                 .ToList();                     
 
@@ -124,7 +124,7 @@ public class ExamCommandsModule : IModule
                                 await ctx.RespondAsync(response);
                                 return;
                             } else {
-                                foreach (Exams exam in exams) {
+                                foreach (Exam exam in exams) {
                                     await ctx.RespondAsync(exam.Class + " " + exam.Date);
                                 }
                             }                           

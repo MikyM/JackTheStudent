@@ -3,12 +3,10 @@ using System.Collections.Generic;
 
 namespace JackTheStudent.Models
 {
-    public partial class ShortTests
+    public partial class PersonalReminder
     {
-        public int IdShortTest { get; set; }
-        public string Class { get; set; }
-        public DateTime Date { get; set; }
-        public string GroupId { get; set; }
+        public int Id { get; set; }
+        public string About { get; set; }
         public string LogById { get; set; }
         public string LogByUsername { get; set; }
         public string AdditionalInfo { get; set; }

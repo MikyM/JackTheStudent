@@ -15,15 +15,15 @@ namespace JackTheStudent.Models
         {
         }
 
-        public virtual DbSet<ClassTypes> ClassTypes { get; set; }
+        public virtual DbSet<ClassType> ClassType { get; set; }
         public virtual DbSet<Group> Group { get; set; }
-        public virtual DbSet<ClassMaterials> ClassMaterials { get; set; }
-        public virtual DbSet<Exams> Exams { get; set; }
-        public virtual DbSet<Homeworks> Homeworks { get; set; }
-        public virtual DbSet<LabReports> LabReports { get; set; }
-        public virtual DbSet<PersonalReminders> PersonalReminders { get; set; }
-        public virtual DbSet<ShortTests> ShortTests { get; set; }
-        public virtual DbSet<DickAppointments> DickAppointments { get; set; }
+        public virtual DbSet<ClassMaterial> ClassMaterial { get; set; }
+        public virtual DbSet<Exam> Exam { get; set; }
+        public virtual DbSet<Homework> Homework { get; set; }
+        public virtual DbSet<LabReport> LabReport { get; set; }
+        public virtual DbSet<PersonalReminder> PersonalReminder { get; set; }
+        public virtual DbSet<ShortTest> ShortTest { get; set; }
+        public virtual DbSet<DickAppointment> DickAppointment { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -34,12 +34,12 @@ namespace JackTheStudent.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<ClassTypes>(entity =>
+            modelBuilder.Entity<ClassType>(entity =>
             {
                 entity.HasKey(e => e.Id)
                     .HasName("PRIMARY");
 
-                entity.ToTable("class_types");
+                entity.ToTable("class_type");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
@@ -73,14 +73,14 @@ namespace JackTheStudent.Models
                     .HasMaxLength(20); 
             });
 
-            modelBuilder.Entity<ClassMaterials>(entity =>
+            modelBuilder.Entity<ClassMaterial>(entity =>
             {
-                entity.HasKey(e => e.IdMaterial)
+                entity.HasKey(e => e.Id)
                     .HasName("PRIMARY");
 
-                entity.ToTable("class_materials");
+                entity.ToTable("class_material");
 
-                entity.Property(e => e.IdMaterial)
+                entity.Property(e => e.Id)
                     .HasColumnName("id")
                     .HasColumnType("int(11)");
 
@@ -113,14 +113,14 @@ namespace JackTheStudent.Models
                     .HasColumnType("longtext");
             });
 
-            modelBuilder.Entity<Exams>(entity =>
+            modelBuilder.Entity<Exam>(entity =>
             {
-                entity.HasKey(e => e.IdExam)
+                entity.HasKey(e => e.Id)
                     .HasName("PRIMARY");
 
-                entity.ToTable("exams");
+                entity.ToTable("exam");
 
-                entity.Property(e => e.IdExam)
+                entity.Property(e => e.Id)
                     .HasColumnName("id")
                     .HasColumnType("int(11)");
 
@@ -152,14 +152,14 @@ namespace JackTheStudent.Models
                     .HasColumnType("longtext");
             });
 
-            modelBuilder.Entity<Homeworks>(entity =>
+            modelBuilder.Entity<Homework>(entity =>
             {
-                entity.HasKey(e => e.IdHomework)
+                entity.HasKey(e => e.Id)
                     .HasName("PRIMARY");
 
-                entity.ToTable("homeworks");
+                entity.ToTable("homework");
 
-                entity.Property(e => e.IdHomework)
+                entity.Property(e => e.Id)
                     .HasColumnName("id")
                     .HasColumnType("int(11)");
 
@@ -195,15 +195,15 @@ namespace JackTheStudent.Models
                     .HasColumnType("longtext");
             });
 
-            modelBuilder.Entity<LabReports>(entity =>
+            modelBuilder.Entity<LabReport>(entity =>
             {
-                entity.HasKey(e => e.IdLabReport)
+                entity.HasKey(e => e.Id)
                     .HasName("PRIMARY");
 
-                entity.ToTable("lab");
+                entity.ToTable("lab_report");
 
-                entity.Property(e => e.IdLabReport)
-                    .HasColumnName("id_lab_report")
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
                     .HasColumnType("int(11)");
 
                 entity.Property(e => e.AdditionalInfo)
@@ -238,14 +238,14 @@ namespace JackTheStudent.Models
                     .HasColumnType("longtext");
             });
 
-            modelBuilder.Entity<PersonalReminders>(entity =>
+            modelBuilder.Entity<PersonalReminder>(entity =>
             {
-                entity.HasKey(e => e.IdReminder)
+                entity.HasKey(e => e.Id)
                     .HasName("PRIMARY");
 
-                entity.ToTable("personal_reminders");
+                entity.ToTable("personal_reminder");
 
-                entity.Property(e => e.IdReminder)
+                entity.Property(e => e.Id)
                     .HasColumnName("id")
                     .HasColumnType("int(11)");
 
@@ -273,14 +273,14 @@ namespace JackTheStudent.Models
                     .HasColumnType("longtext");
             });
 
-            modelBuilder.Entity<ShortTests>(entity =>
+            modelBuilder.Entity<ShortTest>(entity =>
             {
-                entity.HasKey(e => e.IdShortTest)
+                entity.HasKey(e => e.Id)
                     .HasName("PRIMARY");
 
-                entity.ToTable("short_tests");
+                entity.ToTable("short_test");
 
-                entity.Property(e => e.IdShortTest)
+                entity.Property(e => e.Id)
                     .HasColumnName("id")
                     .HasColumnType("int(11)");
 
@@ -316,14 +316,14 @@ namespace JackTheStudent.Models
                     .HasColumnType("longtext");
             });
 
-            modelBuilder.Entity<DickAppointments>(entity =>
+            modelBuilder.Entity<DickAppointment>(entity =>
             {
-                entity.HasKey(e => e.IdDickAppointment)
+                entity.HasKey(e => e.Id)
                     .HasName("PRIMARY");
 
-                entity.ToTable("dick_appointments");
+                entity.ToTable("dick_appointment");
 
-                entity.Property(e => e.IdDickAppointment)
+                entity.Property(e => e.Id)
                     .HasColumnName("id")
                     .HasColumnType("int(11)");
 
