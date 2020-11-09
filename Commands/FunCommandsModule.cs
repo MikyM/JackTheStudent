@@ -22,7 +22,7 @@ public class FunCommandsModule : IModule
     {
         Random r = new Random();
         int rnd = r.Next(1,100);
-        await ctx.RespondAsync("Your lucky number's: " + rnd);
+        await ctx.RespondAsync("Your lucky number is: " + rnd);
     }
 
 
@@ -39,7 +39,7 @@ public class FunCommandsModule : IModule
             TimeSpan.FromSeconds(15));
 
         if(response == null) {
-            await ctx.RespondAsync("If you not gonna answer, dont bother me dude..");
+            await ctx.RespondAsync("If you not gonna answer, dont bother me dude...");
             
         } else if (response.Message.Content == "1" || response.Message.Content == "2" || response.Message.Content == "3") {
             await ctx.RespondAsync("That's kinda bad... What's your lucky number?");
@@ -47,11 +47,11 @@ public class FunCommandsModule : IModule
                 c => c.Author.Id == ctx.Message.Author.Id,
                 TimeSpan.FromSeconds(15));
             int luck = 0; Int32.TryParse(response1.Message.Content, out luck);
-            //Trying to covert str to int, not sure if thats a proper way.
+
             if(response1 == null) {
             await ctx.RespondAsync("You might want to use !roll command to get your lucky number.");
             } else if (luck > 0 && luck <= 25) {
-                await ctx.RespondAsync("Low skills, low luck, I'm not sure about this dude... That's the worst you get.");
+                await ctx.RespondAsync("Low skills, low luck, I'm not sure about this dude... That's the worst you could get.");
             } else if (luck > 25 && luck <= 50) {
                 await ctx.RespondAsync("Low skills, under average luck mean some trouble.");
             } else if (luck > 50 && luck <= 75) {
@@ -74,7 +74,7 @@ public class FunCommandsModule : IModule
             } else if (luck > 25 && luck <= 50) {
                 await ctx.RespondAsync("Average skills, under average luck, not going to be easy.");
             } else if (luck > 50 && luck <= 75) {
-                await ctx.RespondAsync("Average skills, above average luck, stable and boring");
+                await ctx.RespondAsync("Average skills, above average luck, stable and boring.");
             } else if (luck > 75 && luck <= 100) {
                 await ctx.RespondAsync("Average skills, super high luck, might be good.");
             }
@@ -114,12 +114,12 @@ public class FunCommandsModule : IModule
             } else if (luck > 50 && luck <= 75) {
                 await ctx.RespondAsync("You know everything, above average luck, go and write it already!");
             } else if (luck > 75 && luck <= 100) {
-                await ctx.RespondAsync("You know everything and have super high luck. Daaaaamn. ");
+                await ctx.RespondAsync("You know everything and have super high luck. Daaaaamn.");
             }    
         }    
 
         await ctx.RespondAsync("Despite the result, I hope you pass it anyway. Good luck!");
 
         }
-    } //What does this want me to make? I have no idea why this has 23 problems.
+    }
 }
