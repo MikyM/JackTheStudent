@@ -135,7 +135,7 @@ public class BasicCommandsModule : IModule
         var intr = ctx.Client.GetInteractivityModule(); // Grab the interactivity module
         var response = await intr.WaitForMessageAsync(
             c => c.Author.Id == ctx.Message.Author.Id, // Make sure the response is from the same person who sent the command
-            TimeSpan.FromSeconds(5) // Wait 60 seconds for a response instead of the default 30 we set earlier!
+            TimeSpan.FromSeconds(15) // Wait 60 seconds for a response instead of the default 30 we set earlier!
         );
     // You can also check for a specific message by doing something like
         
@@ -148,7 +148,7 @@ public class BasicCommandsModule : IModule
 
             var response1 = await intr.WaitForMessageAsync(
                 c => c.Author.Id == ctx.Message.Author.Id, // Make sure the response is from the same person who sent the command
-                TimeSpan.FromSeconds(5)
+                TimeSpan.FromSeconds(15)
             );
             if(response1 == null) {
             await ctx.RespondAsync("Sorry, I didn't get a response!");
@@ -162,7 +162,7 @@ public class BasicCommandsModule : IModule
             await ctx.RespondAsync("Okay, how are you then?");
             var response2 = await intr.WaitForMessageAsync(
                 c => c.Author.Id == ctx.Message.Author.Id, // Make sure the response is from the same person who sent the command
-                TimeSpan.FromSeconds(5)
+                TimeSpan.FromSeconds(15)
             );
             if(response2 == null) {
             await ctx.RespondAsync("Sorry, I didn't get a response!");
