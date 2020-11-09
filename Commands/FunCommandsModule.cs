@@ -51,7 +51,7 @@ public class FunCommandsModule : IModule
             if(response1 == null) {
             await ctx.RespondAsync("You might want to use !roll command to get your lucky number.");
             } else if (luck > 0 && luck <= 25) {
-                await ctx.RespondAsync("Low skills, low luck, I dont know dude.. That's the worst you get.");
+                await ctx.RespondAsync("Low skills, low luck, I'm not sure about this dude... That's the worst you get.");
             } else if (luck > 25 && luck <= 50) {
                 await ctx.RespondAsync("Low skills, under average luck mean some trouble.");
             } else if (luck > 50 && luck <= 75) {
