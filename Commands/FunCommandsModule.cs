@@ -31,7 +31,7 @@ public class FunCommandsModule : IModule
     public async Task Chances(CommandContext ctx)
     {
         await ctx.TriggerTypingAsync();
-        await ctx.RespondAsync("In scale of 1 to 10, what's your skill?");
+        await ctx.RespondAsync("In a scale from 1 to 10, how do you rate your skills?");
 
         var intr = ctx.Client.GetInteractivityModule();
         var response = await intr.WaitForMessageAsync(
