@@ -69,7 +69,7 @@ public class ExamCommandsModule : IModule
                 await ctx.RespondAsync("Exam log failed");
                 return;
             }
-        await ctx.RespondAsync("Exam logged successfully");     
+        await ctx.RespondAsync("Logged successfully");     
         return;
         }   
     }

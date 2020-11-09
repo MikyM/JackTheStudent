@@ -75,7 +75,7 @@ public class ShortTestCommandsModule : IModule
                 }
             } catch(Exception ex) {
                 Console.Error.WriteLine("[Jack] " + ex.ToString());
-                await ctx.RespondAsync("ShortTest log failed");
+                await ctx.RespondAsync("Log failed");
                 return;
             }
         await ctx.RespondAsync("Short test logged successfully");     
@@ -238,7 +238,7 @@ public class ShortTestCommandsModule : IModule
                             string response = "There is no short test logged for " + JackTheStudent.Program.classList
                                                                                     .Where( c => c.ShortName == classType)
                                                                                     .Select( c => c.Name)
-                                                                                    .FirstOrDefault() + " class!";
+                                                                                    .FirstOrDefault() + " class " + "for group " + group + "!";;
                             await ctx.RespondAsync(response);
                             return;
                         } else {
