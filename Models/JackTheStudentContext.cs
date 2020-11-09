@@ -24,6 +24,8 @@ namespace JackTheStudent.Models
         public virtual DbSet<PersonalReminder> PersonalReminder { get; set; }
         public virtual DbSet<ShortTest> ShortTest { get; set; }
         public virtual DbSet<Test> Test { get; set; }
+        public virtual DbSet<Project> Project { get; set; }
+        public virtual DbSet<GroupProjectMember> GroupProjectMember { get; set; }
         public virtual DbSet<DickAppointment> DickAppointment { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -72,6 +74,67 @@ namespace JackTheStudent.Models
                     .IsRequired()
                     .HasColumnName("group")
                     .HasMaxLength(20); 
+            });
+
+            modelBuilder.Entity<Project>(entity =>
+            {
+                entity.HasKey(e => e.Id)
+                    .HasName("PRIMARY");
+
+                entity.ToTable("project");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.isGroup)
+                    .HasColumnName("is_group")
+                    .HasColumnType("tinyint(1)");
+                
+
+                entity.Property(e => e.AdditionalInfo)
+                    .HasColumnName("additional_info")
+                    .HasColumnType("longtext");
+
+                entity.Property(e => e.Class)
+                    .IsRequired()
+                    .HasColumnName("class")
+                    .HasMaxLength(45);
+
+                entity.Property(e => e.Date)
+                    .IsRequired()
+                    .HasColumnName("date");
+
+                entity.Property(e => e.LogById)
+                    .IsRequired()
+                    .HasColumnName("log_by_id")
+                    .HasColumnType("longtext");
+
+                entity.Property(e => e.LogByUsername)
+                    .IsRequired()
+                    .HasColumnName("log_by_username")
+                    .HasColumnType("longtext");
+
+                entity.Property(e => e.Materials)
+                    .IsRequired()
+                    .HasColumnName("materials")
+                    .HasColumnType("longtext");
+            });
+
+            modelBuilder.Entity<GroupProjectMember>(entity =>
+            {
+                entity.HasOne(e => e.Project)
+                    .WithMany(e => e.GroupProjectMember)
+                    .IsRequired();
+                
+                entity.HasKey(e => e.Id)
+                    .HasName("PRIMARY");
+
+                entity.ToTable("group_project_member");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasColumnType("int(11)");
             });
 
             modelBuilder.Entity<ClassMaterial>(entity =>
