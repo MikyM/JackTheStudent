@@ -72,6 +72,7 @@ public class ProjectCommandsModule : IModule
                 var project = new Project {Class = classType,
                                                 Date = parsedEventDate.Date.Add(parsedEventTime.TimeOfDay),
                                                 GroupId = groupId,
+                                                isGroup = isGroup,
                                                 LogById = ctx.Message.Author.Id.ToString(),
                                                 LogByUsername = ctx.Message.Author.Username + "#" + ctx.Message.Author.Discriminator,
                                                 AdditionalInfo = additionalInfo,
@@ -95,7 +96,7 @@ public class ProjectCommandsModule : IModule
             );
 
             short membersCount = 1;    
-            while (!Int16.TryParse(response.Message.Content, out membersCount) && membersCount >= 2) {
+            while (!Int16.TryParse(response.Message.Content, out membersCount) && membersCount <= 2) {
                 await ctx.RespondAsync("Ever heard of intigers? Try again.");
                 var interactivity = ctx.Client.GetInteractivityModule(); // Grab the interactivity module
                 var response1 = await intr.WaitForMessageAsync(
@@ -109,20 +110,21 @@ public class ProjectCommandsModule : IModule
                 var project = new Project {Class = classType,
                                                 Date = parsedEventDate.Date.Add(parsedEventTime.TimeOfDay),
                                                 GroupId = groupId,
-                                                isGroup = Byte.Parse(isGroup),
+                                                isGroup = isGroup,
                                                 LogById = ctx.Message.Author.Id.ToString(),
                                                 LogByUsername = ctx.Message.Author.Username + "#" + ctx.Message.Author.Discriminator,
                                                 AdditionalInfo = additionalInfo,
-                                                Materials = materials};
-                for (int i = 1; i > membersCount; i++) {
+                                                Materials = materials,
+                                                GroupProjectMembers = new List<GroupProjectMember>()};
+                for (int i = 1; i <= membersCount; i++) {
                     await ctx.RespondAsync("Name of the " + i + " participant");
                     var interactivity = ctx.Client.GetInteractivityModule(); // Grab the interactivity module
                     var participant = await intr.WaitForMessageAsync(
                         c => c.Author.Id == ctx.Message.Author.Id, // Make sure the response is from the same person who sent the command
                         TimeSpan.FromSeconds(5) // Wait 60 seconds for a response instead of the default 30 we set earlier!
                     );
-                    var projectGroupMember = new GroupProjectMember { Member = participant.Message.Content.ToString()};
-                    project.GroupProjectMember.Add(projectGroupMember);
+                    var groupProjectMember = new GroupProjectMember { Member = participant.Message.Content};
+                    project.GroupProjectMembers.Add(groupProjectMember);
                 }
                 db.Project.Add(project);
                 await db.SaveChangesAsync();

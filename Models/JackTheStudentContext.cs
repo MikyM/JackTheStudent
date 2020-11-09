@@ -89,8 +89,12 @@ namespace JackTheStudent.Models
 
                 entity.Property(e => e.isGroup)
                     .HasColumnName("is_group")
-                    .HasColumnType("tinyint(1)");
-                
+                    .HasMaxLength(5);
+
+                entity.Property(e => e.GroupId)
+                    .IsRequired()
+                    .HasColumnName("group_id")
+                    .HasMaxLength(3);                  
 
                 entity.Property(e => e.AdditionalInfo)
                     .HasColumnName("additional_info")
@@ -124,7 +128,7 @@ namespace JackTheStudent.Models
             modelBuilder.Entity<GroupProjectMember>(entity =>
             {
                 entity.HasOne(e => e.Project)
-                    .WithMany(e => e.GroupProjectMember)
+                    .WithMany(e => e.GroupProjectMembers)
                     .IsRequired();
                 
                 entity.HasKey(e => e.Id)
@@ -135,6 +139,9 @@ namespace JackTheStudent.Models
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
                     .HasColumnType("int(11)");
+
+                entity.Property(e => e.Member)
+                    .HasMaxLength(45);
             });
 
             modelBuilder.Entity<ClassMaterial>(entity =>

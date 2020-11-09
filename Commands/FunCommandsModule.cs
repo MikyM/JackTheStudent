@@ -20,8 +20,9 @@ public class FunCommandsModule : IModule
     [Description("Rolls a random number from 1 to 100 which's considered your lucky number.")]
     public async Task Roll(CommandContext ctx)
     {
-        var rnd = new Random();
-        await ctx.RespondAsync("Your lucky number's: {rnd.Next(1, 100)}");
+        Random r = new Random();
+        int rnd = r.Next(1,100);
+        await ctx.RespondAsync("Your lucky number's: " + rnd);
     }
 
 
@@ -40,12 +41,12 @@ public class FunCommandsModule : IModule
         if(response == null) {
             await ctx.RespondAsync("If you not gonna answer, dont bother me dude..");
             
-        } else if (response.Message.Content() == "1" || "2" || "3") {
+        } else if (response.Message.Content == "1" || response.Message.Content == "2" || response.Message.Content == "3") {
             await ctx.RespondAsync("That's kinda bad... What's your lucky number?");
             var response1 = await intr.WaitForMessageAsync(
                 c => c.Author.Id == ctx.Message.Author.Id,
                 TimeSpan.FromSeconds(15));
-            int luck = 0; int16.TryParse(response1, out luck);
+            int luck = 0; Int32.TryParse(response1.Message.Content, out luck);
             //Trying to covert str to int, not sure if thats a proper way.
             if(response1 == null) {
             await ctx.RespondAsync("You might want to use !roll command to get your lucky number.");
@@ -59,12 +60,12 @@ public class FunCommandsModule : IModule
                 await ctx.RespondAsync("Low skills, super high luck, I'm not sure about this dude. ");
             }
              
-        } else if (response.Message.Content() == "4" || "5" || "6") {
+        } else if (response.Message.Content == "4" || response.Message.Content == "5" || response.Message.Content == "6") {
             await ctx.RespondAsync("Not bad. What's your lucky number?");
             var response1 = await intr.WaitForMessageAsync(
                 c => c.Author.Id == ctx.Message.Author.Id,
                 TimeSpan.FromSeconds(15));
-            int luck = 0; int16.TryParse(response1, out luck);
+            int luck = 0; Int32.TryParse(response1.Message.Content, out luck);
             
             if(response1 == null) {
             await ctx.RespondAsync("You might want to use !roll command to get your lucky number.");
@@ -78,12 +79,12 @@ public class FunCommandsModule : IModule
                 await ctx.RespondAsync("Average skills, super high luck, might be good.");
             }
              
-        } else if (response.Message.Content() == "7" || "8" || "9") {
+        } else if (response.Message.Content == "7" || response.Message.Content == "8" || response.Message.Content == "9") {
             await ctx.RespondAsync("Looks promising! What's your lucky number?");
             var response1 = await intr.WaitForMessageAsync(
                 c => c.Author.Id == ctx.Message.Author.Id,
                 TimeSpan.FromSeconds(15));
-            int luck = 0; int16.TryParse(response1, out luck);
+            int luck = 0; Int32.TryParse(response1.Message.Content, out luck);
 
             if(response1 == null) {
             await ctx.RespondAsync("You might want to use !roll command to get your lucky number.");
@@ -97,12 +98,12 @@ public class FunCommandsModule : IModule
                 await ctx.RespondAsync("Above average skills, super high luck. Nothing can go wrong.");
             }
             
-        } else if (response.Message.Content() == "10") {
+        } else if (response.Message.Content == "10") {
             await ctx.RespondAsync("Wow, you really need this? What's your lucky number?");
             var response1 = await intr.WaitForMessageAsync(
                 c => c.Author.Id == ctx.Message.Author.Id,
                 TimeSpan.FromSeconds(15));
-            int luck = 0; int16.TryParse(response1, out luck);
+            int luck = 0; Int32.TryParse(response1.Message.Content, out luck);
 
             if(response1 == null) {
             await ctx.RespondAsync("You might want to use !roll command to get your lucky number.");
