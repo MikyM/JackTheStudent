@@ -7,6 +7,7 @@ namespace JackTheStudent.Models
     {
         public int Id { get; set; }
         public string Member { get; set; }
+        public int ProjectId { get; set; }
         public Project Project { get; set; }
     }
 }

@@ -6,7 +6,7 @@ namespace JackTheStudent.Models
     public partial class Project
     {
         public int Id { get; set; }
-        public string isGroup { get; set; }
+        public Boolean isGroup { get; set; }
         public string Class { get; set; }
         public DateTime Date { get; set; }
         public string GroupId { get; set; }

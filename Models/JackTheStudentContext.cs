@@ -26,7 +26,6 @@ namespace JackTheStudent.Models
         public virtual DbSet<Test> Test { get; set; }
         public virtual DbSet<Project> Project { get; set; }
         public virtual DbSet<GroupProjectMember> GroupProjectMember { get; set; }
-        public virtual DbSet<DickAppointment> DickAppointment { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -88,8 +87,9 @@ namespace JackTheStudent.Models
                     .HasColumnType("int(11)");
 
                 entity.Property(e => e.isGroup)
+                    .IsRequired()
                     .HasColumnName("is_group")
-                    .HasMaxLength(5);
+                    .HasColumnType("tinyint(1)");
 
                 entity.Property(e => e.GroupId)
                     .IsRequired()
@@ -129,7 +129,8 @@ namespace JackTheStudent.Models
             {
                 entity.HasOne(e => e.Project)
                     .WithMany(e => e.GroupProjectMembers)
-                    .IsRequired();
+                    .HasForeignKey(e => e.ProjectId)
+                    .IsRequired();                
                 
                 entity.HasKey(e => e.Id)
                     .HasName("PRIMARY");
@@ -138,6 +139,10 @@ namespace JackTheStudent.Models
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.ProjectId)
+                    .HasColumnName("project_id")
                     .HasColumnType("int(11)");
 
                 entity.Property(e => e.Member)
@@ -428,42 +433,6 @@ namespace JackTheStudent.Models
                 entity.Property(e => e.Materials)
                     .HasColumnName("materials")
                     .HasColumnType("longtext");
-            });
-
-            modelBuilder.Entity<DickAppointment>(entity =>
-            {
-                entity.HasKey(e => e.Id)
-                    .HasName("PRIMARY");
-
-                entity.ToTable("dick_appointment");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasColumnType("int(11)");
-
-                entity.Property(e => e.Name)
-                    .HasColumnName("name")
-                    .HasColumnType("longtext")
-                    .HasMaxLength(45);
-
-                entity.Property(e => e.Length)
-                    .IsRequired()
-                    .HasColumnName("length")
-                    .HasMaxLength(45);
-                
-                entity.Property(e => e.Circumference)
-                    .IsRequired()
-                    .HasColumnName("circumference")
-                    .HasMaxLength(45);
-
-                entity.Property(e => e.Width)
-                    .IsRequired()
-                    .HasColumnName("width")
-                    .HasMaxLength(45);
-
-                entity.Property(e => e.Date)
-                    .IsRequired()
-                    .HasColumnName("date");
             });
 
             OnModelCreatingPartial(modelBuilder);

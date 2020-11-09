@@ -72,7 +72,7 @@ public class ProjectCommandsModule : IModule
                 var project = new Project {Class = classType,
                                                 Date = parsedEventDate.Date.Add(parsedEventTime.TimeOfDay),
                                                 GroupId = groupId,
-                                                isGroup = isGroup,
+                                                isGroup = Convert.ToBoolean(Convert.ToInt16(isGroup)),
                                                 LogById = ctx.Message.Author.Id.ToString(),
                                                 LogByUsername = ctx.Message.Author.Username + "#" + ctx.Message.Author.Discriminator,
                                                 AdditionalInfo = additionalInfo,
@@ -110,7 +110,7 @@ public class ProjectCommandsModule : IModule
                 var project = new Project {Class = classType,
                                                 Date = parsedEventDate.Date.Add(parsedEventTime.TimeOfDay),
                                                 GroupId = groupId,
-                                                isGroup = isGroup,
+                                                isGroup = Convert.ToBoolean(Convert.ToInt16(isGroup)),
                                                 LogById = ctx.Message.Author.Id.ToString(),
                                                 LogByUsername = ctx.Message.Author.Username + "#" + ctx.Message.Author.Discriminator,
                                                 AdditionalInfo = additionalInfo,
@@ -157,14 +157,29 @@ public class ProjectCommandsModule : IModule
     public async Task ProjectLogs(CommandContext ctx, 
         [Description("\nTakes group IDs or \".\", type !group to retrieve all groups, usage of \".\" will tell Jack to retrieve project for ALL groups.\n")] string group = ".",
         [Description("\nTakes class' short names or \".\", type !class to retrieve all classes, usage of \".\" will tell Jack to retrieve project for ALL classes.\n")] string classType = ".",
+        [Description("\nTakes 0, 1 or \".\", type\n")] string isGroup = ".",
         [Description("\nTakes \".\" or \"planned\", usage of \".\" will tell Jack to retrieve all LOGGED project, \"planned\" retrieves only future events.\n")] string span = "planned")
-    {       
+    {      
+
+        bool isParticipants = false;
+
         if (!JackTheStudent.Program.groupList.Contains(group) && group != ".") {
             await ctx.RespondAsync("There's no such group dumbass. Try again!");
             return;
         } else if (!JackTheStudent.Program.classList.Any(c => c.ShortName == classType) && classType != ".") {
             await ctx.RespondAsync("There's no such class, you high bruh?");
             return;
+        } else if (isGroup != "." && isGroup != "0" && isGroup != "1") {
+            await ctx.RespondAsync("... isGroup only takes . , 0 i 1");
+            return;
+        } else if (isGroup == "." || isGroup == "1") {
+            await ctx.RespondAsync("Would you like to see the participants of each project? Answer yes or no.");
+            var interactivity = ctx.Client.GetInteractivityModule();
+            var response = await interactivity.WaitForMessageAsync(
+                c => c.Author.Id == ctx.Message.Author.Id, 
+                TimeSpan.FromSeconds(5));
+
+            isParticipants = "yes".Equals(response.Message.Content.ToLower());
         }
         if (group == "." && classType == "." && span == "planned") {
             try {
@@ -177,11 +192,22 @@ public class ProjectCommandsModule : IModule
                     } else {
                         string result = String.Empty;
                         foreach (Project project in projects) {
+                            /*string participantsString = String.Empty;
+                            if (project.isGroup) {
+                                var participants = db.GroupProjectMember
+                                    .Where( x => x.ProjectId == project.Id)
+                                    .ToList();
+                                foreach (GroupProjectMember participant in participants) {
+                                    participantsString = participantsString + ", " + participant.Member;
+                                }
+
+                                participantsString = "[" + participantsString + "]";  
+                            }*/
                             result = result + "\n" + CultureInfo.CurrentCulture.TextInfo
                                                         .ToTitleCase(JackTheStudent.Program.classList
                                                         .Where( c => c.ShortName == project.Class)
                                                         .Select( c => c.Name)
-                                                        .FirstOrDefault()) + " project for group " + project.GroupId + ", will happen on " + project.Date;
+                                                        .FirstOrDefault()) + " project for group " + project.GroupId + /*participantsString +*/ ", deadline is " + project.Date;
                         }
                         await ctx.RespondAsync(result);
                     }
@@ -348,6 +374,11 @@ public class ProjectCommandsModule : IModule
                 return;
             }
         }    
+    }
+    public async Task<string> GetParticipants(string projectId)
+    {   
+        string result = projectId;
+        return result;
     }
 }
 }
