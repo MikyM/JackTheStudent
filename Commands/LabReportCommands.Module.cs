@@ -67,7 +67,7 @@ public class LabReportCommandsModule : IModule
                                                 Date = parsedEventDate.Date.Add(parsedEventTime.TimeOfDay),
                                                 GroupId = groupId,
                                                 LogById = ctx.Message.Author.Id.ToString(),
-                                                LogByUsername = ctx.Message.Author.Username,
+                                                LogByUsername = ctx.Message.Author.Username + "#" + ctx.Message.Author.Discriminator,
                                                 AdditionalInfo = additionalInfo,
                                                 Materials = materials};
                 db.LabReport.Add(labReport);

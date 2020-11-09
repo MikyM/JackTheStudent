@@ -7,25 +7,25 @@ using System.Threading.Tasks;
 using JackTheStudent.Models;
 using System.Linq;
 using System.Collections.Generic;
-using JackTheStudent;
 using System.Globalization;
 
+/* Create our class and extend from IModule */
 namespace JackTheStudent.Commands
 {
-public class HomeworkCommandsModule : IModule
+public class TestCommandsModule : IModule
 {
     
-    [Command("homework")]
-    [Description("Command logging a homework, last two arguments are optional." +
+    [Command("test")]
+    [Description("Command logging a test, last two arguments are optional." +
         "\nTo pass without addInfo but with materials use \".\" where addInfo should be.\n" +
         "Words seperated with spaces must be wrapped with \"\"\n" +
-        "\n!homework <groupId> <classShortName> <deadlineDate> <deadlineTime> <additionalInfo> <materials>\n" + 
+        "\n!test <groupId> <classShortName> <testDate> <testTime> <additionalInfo> <materials>\n" + 
         "\nExamples:\n" +
-        "\n!homework 3 mat 05-05-2021 13:30" + 
-        "\n!homework 1 ele 05-05-2021 12:30 \"Calculator required\"" +
-        "\n!homework 3 mat 05-05-2021 13:30 \"Calculator required\" \"https://yourmaterials.com\"" +
-        "\n!homework 1 eng 05-05-2021 13:30 . \"https://yourmaterials.com\"")]
-    public async Task HomeworkLog(CommandContext ctx,
+        "\n!test 3 mat 05-05-2021 13:30" + 
+        "\n!test 1 ele 05-05-2021 12:30 \"Calculator required\"" +
+        "\n!test 3 mat 05-05-2021 13:30 \"Calculator required\" \"https://yourmaterials.com\"" +
+        "\n!test 1 eng 05-05-2021 13:30 . \"https://yourmaterials.com\"")]
+    public async Task TestLog(CommandContext ctx,
         [Description ("\nTakes group IDs, type !group to retrieve all groups.\n")] string groupId = "", 
         [Description ("\nTakes class' short names, type !class to retrive all classes.\n")] string classType = "", 
         [Description ("\nTakes dates in dd/mm/yyyy format, accepts different separators.\n")] string eventDate = "", 
@@ -37,13 +37,13 @@ public class HomeworkCommandsModule : IModule
         DateTime parsedEventTime = new DateTime();
 
         if(groupId == "") {
-            await ctx.RespondAsync("Learn to read you dumbass. The command looks like: !homework <group> <class> <deadlineDate> <deadlineTime> Try again!");
+            await ctx.RespondAsync("Learn to read you dumbass. The command looks like: !test <group> <class> <testDate> <testTime> Try again!");
             return;
         } else if (!JackTheStudent.Program.groupList.Contains(groupId)){
             await ctx.RespondAsync("There's no such group dumbass. Try again!");
             return;
         } else if (classType == "") {
-            await ctx.RespondAsync("Learn to read you dumbass. The command looks like: !homework <group> <class> <deadlineDate> <deadlineTime> Try again!");
+            await ctx.RespondAsync("Learn to read you dumbass. The command looks like: !test <group> <class> <testDate> <testTime> Try again!");
             return;      
         } else if (!JackTheStudent.Program.classList.Any(c => c.ShortName == classType)) {
             await ctx.RespondAsync("There's no such class, you high bruh?");
@@ -63,14 +63,14 @@ public class HomeworkCommandsModule : IModule
         } else {
             try {
                 using (var db = new JackTheStudentContext()){
-                var homeWork = new Homework {Class = classType,
+                var test = new Test {Class = classType,
                                                 Date = parsedEventDate.Date.Add(parsedEventTime.TimeOfDay),
                                                 GroupId = groupId,
                                                 LogById = ctx.Message.Author.Id.ToString(),
                                                 LogByUsername = ctx.Message.Author.Username + "#" + ctx.Message.Author.Discriminator,
                                                 AdditionalInfo = additionalInfo,
                                                 Materials = materials};
-                db.Homework.Add(homeWork);
+                db.Test.Add(test);
                 await db.SaveChangesAsync();
                 }
             } catch(Exception ex) {
@@ -78,30 +78,30 @@ public class HomeworkCommandsModule : IModule
                 await ctx.RespondAsync("Log failed");
                 return;
             }
-        await ctx.RespondAsync("Homework logged successfully");     
+        await ctx.RespondAsync("Test logged successfully");     
         return;
         }   
     }
 
-    [Command("homeworks")]
-    [Description("Command retrieving logged homework based on passed arguments, ALL arguments are optional and the command has default settings.\n" +
-        "\n!homeworks <groupId> <classShortName> <alreadyTookPlace?>\n" + 
+    [Command("tests")]
+    [Description("Command retrieving logged test based on passed arguments, ALL arguments are optional and the command has default settings.\n" +
+        "\n!tests <groupId> <classShortName> <alreadyTookPlace?>\n" + 
         "\nType !classes to retrieve short names and !groups to retrieve group IDs" +
         "\nUse \".\" to retrieve ALL possible entries for each argument, <alreadyTookPlace?> takes \"planned\" or \".\"\n" +
         "\nExamples:\n" +
-        "\n!homeworks - will retrieve all PLANNED homework for all the groups and all the classes" + 
-        "\n!homeworks 1 - will retrieve all PLANNED homework for group 1 for all the classes" +
-        "\n!homeworks 1 mat - will retrieve all PLANNED homework for group 1 for Maths class" +
-        "\n!homeworks 1 mat planned - will retrieve all PLANNED homework for group 1 for Maths class" +
-        "\n!homeworks 1 mat . - will retrieve all LOGGED homework for group 1 for Maths class" +
-        "\n!homeworks 1 . . - will retrieve all LOGGED homework for group 1 for ALL classes" + 
-        "\n!homeworks . . . - will retrieve all LOGGED homework for ALL groups for ALL classes" +
-        "\n!homeworks . mat . - will retrieve all LOGGED homework for ALL groups for MAths class" +
-        "\n!homeworks . . planned - will retrieve all PLANNED homework for ALL groups for ALL classes")]
-    public async Task HomeworkLogs(CommandContext ctx, 
-        [Description("\nTakes group IDs or \".\", type !group to retrieve all groups, usage of \".\" will tell Jack to retrieve homework for ALL groups.\n")] string group = ".",
-        [Description("\nTakes class' short names or \".\", type !class to retrieve all classes, usage of \".\" will tell Jack to retrieve homework for ALL classes.\n")] string classType = ".",
-        [Description("\nTakes \".\" or \"planned\", usage of \".\" will tell Jack to retrieve all LOGGED homework, \"planned\" retrieves only future events.\n")] string span = "planned")
+        "\n!tests - will retrieve all PLANNED tests for all the groups and all the classes" + 
+        "\n!tests 1 - will retrieve all PLANNED tests for group 1 for all the classes" +
+        "\n!tests 1 mat - will retrieve all PLANNED tests for group 1 for Maths class" +
+        "\n!tests 1 mat planned - will retrieve all PLANNED tests for group 1 for Maths class" +
+        "\n!tests 1 mat . - will retrieve all LOGGED tests for group 1 for Maths class" +
+        "\n!tests 1 . . - will retrieve all LOGGED tests for group 1 for ALL classes" + 
+        "\n!tests . . . - will retrieve all LOGGED tests for ALL groups for ALL classes" +
+        "\n!tests . mat . - will retrieve all LOGGED tests for ALL groups for MAths class" +
+        "\n!tests . . planned - will retrieve all PLANNED tests for ALL groups for ALL classes")]
+    public async Task TestLogs(CommandContext ctx, 
+        [Description("\nTakes group IDs or \".\", type !group to retrieve all groups, usage of \".\" will tell Jack to retrieve test for ALL groups.\n")] string group = ".",
+        [Description("\nTakes class' short names or \".\", type !class to retrieve all classes, usage of \".\" will tell Jack to retrieve test for ALL classes.\n")] string classType = ".",
+        [Description("\nTakes \".\" or \"planned\", usage of \".\" will tell Jack to retrieve all LOGGED test, \"planned\" retrieves only future events.\n")] string span = "planned")
     {       
         if (!JackTheStudent.Program.groupList.Contains(group) && group != ".") {
             await ctx.RespondAsync("There's no such group dumbass. Try again!");
@@ -113,19 +113,19 @@ public class HomeworkCommandsModule : IModule
         if (group == "." && classType == "." && span == "planned") {
             try {
                 using (var db = new JackTheStudentContext()){
-                var homeworks = db.Homework
+                var tests = db.Test
                             .Where( x => x.Date > DateTime.Now)
                             .ToList();
-                    if (homeworks.Count == 0) {
-                            await ctx.RespondAsync("Wait what!? There is literally no homework planned at all!");
+                    if (tests.Count == 0) {
+                            await ctx.RespondAsync("Wait what!? There are literally no tests planned at all!");
                     } else {
                         string result = String.Empty;
-                        foreach (Homework homework in homeworks) {
+                        foreach (Test test in tests) {
                             result = result + "\n" + CultureInfo.CurrentCulture.TextInfo
                                                         .ToTitleCase(JackTheStudent.Program.classList
-                                                        .Where( c => c.ShortName == homework.Class)
+                                                        .Where( c => c.ShortName == test.Class)
                                                         .Select( c => c.Name)
-                                                        .FirstOrDefault()) + " homework for group " + homework.GroupId + ", deadline is " + homework.Date;
+                                                        .FirstOrDefault()) + " test for group " + test.GroupId + ", will happen on " + test.Date;
                         }
                         await ctx.RespondAsync(result);
                     }
@@ -139,19 +139,19 @@ public class HomeworkCommandsModule : IModule
         } else if(classType == "." && span == "." && group != "." ) {
             try {
                 using (var db = new JackTheStudentContext()){
-                var homeworks = db.Homework
+                var tests = db.Test
                     .Where( x => x.GroupId == group)
                     .ToList();
-                    if (homeworks.Count == 0) {
-                            await ctx.RespondAsync("Wait what!? There is no homework logged for group " + group + "!");
+                    if (tests.Count == 0) {
+                            await ctx.RespondAsync("There are no tests logged for group " + group + "!");
                     } else {
                         string result = String.Empty;
-                        foreach (Homework homework in homeworks) {
+                        foreach (Test test in tests) {
                             result = result + "\n" + CultureInfo.CurrentCulture.TextInfo
                                                         .ToTitleCase(JackTheStudent.Program.classList
-                                                        .Where( c => c.ShortName == homework.Class)
+                                                        .Where( c => c.ShortName == test.Class)
                                                         .Select( c => c.Name)
-                                                        .FirstOrDefault()) + " homework for group " + homework.GroupId + ", deadline is/was " + homework.Date;
+                                                        .FirstOrDefault()) + " " + test.Date;
                         }
                         await ctx.RespondAsync(result);
                     }
@@ -162,22 +162,22 @@ public class HomeworkCommandsModule : IModule
                 return;
             }
         return;
-        } else if (classType == "." && span == "planned" && group != ".") {
+        } else if (classType == "." && span == "planned") {
             try {
                 using (var db = new JackTheStudentContext()){
-                var homeworks = db.Homework
+                var tests = db.Test
                     .Where(x => x.Date > DateTime.Now && x.GroupId == group)
                     .ToList();
-                    if (homeworks.Count == 0) {
-                            await ctx.RespondAsync("Wait what!? There is no planned homework for group " + group +", hmm... league?");
+                    if (tests.Count == 0) {
+                            await ctx.RespondAsync("Wait what!? There are no tests planned for any class for group " + group + "!");
                     } else {
                         string result = String.Empty;
-                        foreach (Homework homework in homeworks) {
+                        foreach (Test test in tests) {
                             result = result + "\n" + CultureInfo.CurrentCulture.TextInfo
                                                         .ToTitleCase(JackTheStudent.Program.classList
-                                                        .Where( c => c.ShortName == homework.Class)
+                                                        .Where( c => c.ShortName == test.Class)
                                                         .Select( c => c.Name)
-                                                        .FirstOrDefault()) + " homework for group " + homework.GroupId + ", deadline is " + homework.Date;
+                                                        .FirstOrDefault()) + " test for group " + test.GroupId + ", will happen on " + test.Date;
                         }
                         await ctx.RespondAsync(result);
                     }
@@ -188,30 +188,30 @@ public class HomeworkCommandsModule : IModule
                 return;
             }
         return;
-        } else if (classType != "." && span == "planned" && group !=".") {
+        } else if (classType != "." && span == "planned" && group != ".") {
 
             if(JackTheStudent.Program.classList.Any(c => c.ShortName == classType)) {
                 try {
                     using (var db = new JackTheStudentContext()){
-                        var homeworks = db.Homework
+                        var tests = db.Test
                             .Where(x => x.Date > DateTime.Now && x.Class == classType && x.GroupId == group)
                             .ToList();                     
 
-                        if (homeworks.Count == 0) {
+                        if (tests.Count == 0) {
                             string response = "There is no " + JackTheStudent.Program.classList
                                                                 .Where( c => c.ShortName == classType)
                                                                 .Select( c => c.Name)
-                                                                .FirstOrDefault() + " homework planned for group " + group + " at all!";
+                                                                .FirstOrDefault() + " test planned for group " + group + "!";
                             await ctx.RespondAsync(response);
                             return;
                         } else {
                             string result = String.Empty;
-                            foreach (Homework homework in homeworks) {
+                            foreach (Test test in tests) {
                                 result = result + "\n" + CultureInfo.CurrentCulture.TextInfo
                                                             .ToTitleCase(JackTheStudent.Program.classList
-                                                            .Where( c => c.ShortName == homework.Class)
+                                                            .Where( c => c.ShortName == test.Class)
                                                             .Select( c => c.Name)
-                                                            .FirstOrDefault()) + " homework for group " + homework.GroupId + ", deadline is " + homework.Date;
+                                                            .FirstOrDefault()) + " test for group " + test.GroupId + ", will happen on " + test.Date;
                             }
                             await ctx.RespondAsync(result);
                             return;
@@ -223,32 +223,32 @@ public class HomeworkCommandsModule : IModule
                     return;
                 }
             } else {
-                await ctx.RespondAsync("Learn to read you dumbass. The command looks like: !homeworks <group> <group> <eventDate> <eventTime> Try again!");
+                await ctx.RespondAsync("Learn to read you dumbass. The command looks like: !tests <group> <group> <testDate> <testTime> Try again!");
                 return;
             }                    
-        } else if (classType != "." && span == "." && group !=".") {
+        } else if (classType != "." && span == "." && group != ".") {
             if(JackTheStudent.Program.classList.Any(c => c.ShortName == classType)) {
                 try {
                     using (var db = new JackTheStudentContext()){
-                        var homeworks = db.Homework
+                        var tests = db.Test
                             .Where(x => x.Class == classType && x.GroupId == group)
                             .ToList();                     
 
-                        if (homeworks.Count == 0) {
-                            string response = "There is no homework logged for " + JackTheStudent.Program.classList
+                        if (tests.Count == 0) {
+                            string response = "There is no test logged for " + JackTheStudent.Program.classList
                                                                                     .Where( c => c.ShortName == classType)
                                                                                     .Select( c => c.Name)
-                                                                                    .FirstOrDefault() + " class " + "for group " + group + "!";
+                                                                                    .FirstOrDefault() + " class " + "for group " + group + "!";;
                             await ctx.RespondAsync(response);
                             return;
                         } else {
                             string result = String.Empty;
-                            foreach (Homework homework in homeworks) {
+                            foreach (Test test in tests) {
                             result = result + "\n" + CultureInfo.CurrentCulture.TextInfo
                                                         .ToTitleCase(JackTheStudent.Program.classList
-                                                        .Where( c => c.ShortName == homework.Class)
+                                                        .Where( c => c.ShortName == test.Class)
                                                         .Select( c => c.Name)
-                                                        .FirstOrDefault()) + " homework for group " + homework.GroupId + ", deadline is/was " + homework.Date;
+                                                        .FirstOrDefault()) + " test for group " + test.GroupId + ", will happen / happened on " + test.Date;
                             }
                             await ctx.RespondAsync(result);
                             return;
@@ -266,21 +266,21 @@ public class HomeworkCommandsModule : IModule
         } else {
             try {
                 using (var db = new JackTheStudentContext()){
-                    var homeworks = db.Homework
+                    var tests = db.Test
                         .ToList();                     
 
-                    if (homeworks.Count == 0) {
-                        string response = "There is no logged homework!";
+                    if (tests.Count == 0) {
+                        string response = "There aren no tests logged!";
                         await ctx.RespondAsync(response);
                         return;
                     } else {
                         string result = String.Empty;
-                        foreach (Homework homework in homeworks) {
+                        foreach (Test test in tests) {
                             result = result + "\n" + CultureInfo.CurrentCulture.TextInfo
                                                         .ToTitleCase(JackTheStudent.Program.classList
-                                                        .Where( c => c.ShortName == homework.Class)
+                                                        .Where( c => c.ShortName == test.Class)
                                                         .Select( c => c.Name)
-                                                        .FirstOrDefault()) + " homework for group " + homework.GroupId + ", deadline is/was " + homework.Date;
+                                                        .FirstOrDefault()) + " test for group " + test.GroupId + ", will happen / happened " + test.Date;
                         }
                         await ctx.RespondAsync(result);
                         return;

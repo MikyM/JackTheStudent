@@ -23,6 +23,7 @@ namespace JackTheStudent.Models
         public virtual DbSet<LabReport> LabReport { get; set; }
         public virtual DbSet<PersonalReminder> PersonalReminder { get; set; }
         public virtual DbSet<ShortTest> ShortTest { get; set; }
+        public virtual DbSet<Test> Test { get; set; }
         public virtual DbSet<DickAppointment> DickAppointment { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -279,6 +280,49 @@ namespace JackTheStudent.Models
                     .HasName("PRIMARY");
 
                 entity.ToTable("short_test");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.AdditionalInfo)
+                    .HasColumnName("additional_info")
+                    .HasColumnType("longtext");
+
+                entity.Property(e => e.Class)
+                    .IsRequired()
+                    .HasColumnName("class")
+                    .HasMaxLength(45);
+
+                entity.Property(e => e.Date)
+                    .IsRequired()
+                    .HasColumnName("date");
+
+                entity.Property(e => e.GroupId)
+                    .IsRequired()
+                    .HasColumnName("group_id");
+                    
+                entity.Property(e => e.LogById)
+                    .IsRequired()
+                    .HasColumnName("log_by_id")
+                    .HasColumnType("longtext");
+
+                entity.Property(e => e.LogByUsername)
+                    .IsRequired()
+                    .HasColumnName("log_by_username")
+                    .HasColumnType("longtext");
+
+                entity.Property(e => e.Materials)
+                    .HasColumnName("materials")
+                    .HasColumnType("longtext");
+            });
+
+            modelBuilder.Entity<Test>(entity =>
+            {
+                entity.HasKey(e => e.Id)
+                    .HasName("PRIMARY");
+
+                entity.ToTable("test");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
