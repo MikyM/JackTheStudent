@@ -174,7 +174,7 @@ public class ProjectCommandsModule : IModule
             try {
                 using (var db = new JackTheStudentContext()){
                 var projects = db.Project
-                            .Where( x => x.Date > DateTime.Now)
+                            .Where(x => x.Date > DateTime.Now)
                             .ToList();
                     if (projects.Count == 0) {
                             await ctx.RespondAsync("Wait what!? There are literally no projects planned at all!");
@@ -414,7 +414,14 @@ public class ProjectCommandsModule : IModule
             c => c.Author.Id == ctx.Message.Author.Id, 
             TimeSpan.FromSeconds(5));
 
-        return "yes".Equals(response.Message.Content.ToLower());
+        while (response.Message.Content.ToLower() != "yes" && response.Message.Content.ToLower() != "no"){
+            await ctx.RespondAsync("Answer with either yes or no you moron...");
+            response = await interactivity.WaitForMessageAsync(
+                c => c.Author.Id == ctx.Message.Author.Id, 
+                TimeSpan.FromSeconds(5));
+        }
+        
+        return ("yes".Equals(response.Message.Content.ToLower()) ? true : false);
     }
 }
 }

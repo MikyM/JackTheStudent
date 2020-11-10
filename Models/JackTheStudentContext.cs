@@ -120,7 +120,6 @@ namespace JackTheStudent.Models
                     .HasColumnType("longtext");
 
                 entity.Property(e => e.Materials)
-                    .IsRequired()
                     .HasColumnName("materials")
                     .HasColumnType("longtext");
             });
