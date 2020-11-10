@@ -57,7 +57,7 @@ public class FunCommandsModule : IModule
             } else if (luck > 50 && luck <= 75) {
                 await ctx.RespondAsync("Low skills and above average luck, but do you really want to trust on that?");
             } else if (luck > 75 && luck <= 100) {
-                await ctx.RespondAsync("Low skills and high luck, let the gamble begin!);
+                await ctx.RespondAsync("Low skills and high luck, let the gamble begin!");
             }
              
         } else if (response.Message.Content == "4" || response.Message.Content == "5" || response.Message.Content == "6") {
