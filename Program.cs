@@ -48,6 +48,7 @@ namespace JackTheStudent
         }
 
         try {
+            Console.WriteLine(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resource", "quotes.txt"));
             using (var fileStream = File.OpenRead(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resource", "quotes.txt")))
                 using (var reader = new StreamReader(fileStream)) {
                     String quote;
