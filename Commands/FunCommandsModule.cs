@@ -193,7 +193,7 @@ public class FunCommandsModule : IModule
         quotes.Add("Lisp programmers know the value of everything but the cost of nothing. - Alan J. Perlis");
         quotes.Add("An interpreter raises the machine to the level of the user program; a compiler lowers the user program to the level of the machine language. - SICP");
         quotes.Add("Everything should be made as simple as possible, but no simpler. - Albert Einstein");
-        quotes.Add("The great dividing line between success and failure can be expressed in five words: "I did not have time." - WestHost weekly newsletter 14 Feb 2003");
+        quotes.Add("The great dividing line between success and failure can be expressed in five words: \"I did not have time.\" - WestHost weekly newsletter 14 Feb 2003");
         quotes.Add("When your enemy is making a very serious mistake, don't be impolite and disturb him. - Napoleon Bonaparte (allegedly)");
         quotes.Add("A charlatan makes obscure what is clear; a thinker makes clear what is obscure. - Hugh Kingsmill");
         quotes.Add("The three chief virtues of a programmer are: Laziness, Impatience and Hubris. - Larry Wall (Programming Perl)");
@@ -213,7 +213,7 @@ public class FunCommandsModule : IModule
         quotes.Add("C++ is history repeated as tragedy. Java is history repeated as farce. - Scott McKay");
         quotes.Add("Simplicity takes effort-- genius, even. - Paul Graham");
         quotes.Add("Show, don't tell. - unknown");
-        quotes.Add("In God I trust; I will not be afraid. What can mortal man do to me? - David (Psalm 56:4)")
+        quotes.Add("In God I trust; I will not be afraid. What can mortal man do to me? - David (Psalm 56:4)");
         quotes.Add("Linux is only free if your time has no value. - Jamie Zawinski");
         quotes.Add("Code is poetry. - wordpress.org");
         quotes.Add("If you choose not to decide, you still have made a choice. - Rush (Freewill)");
@@ -221,7 +221,7 @@ public class FunCommandsModule : IModule
         quotes.Add("The function of wisdom is to discriminate between good and evil. - Cicero");
         quotes.Add("The reason to do animation is caricature. Good caricature picks out the essense of the statement and removes everything else. It's not simply about reproducing reality; It's about bumping it up. - Brad Bird, writer and director, The Incredibles");
         quotes.Add("Mistakes were made. - Ronald Reagan");
-        quotes.Add("I would rather be an optimist and be wrong than a pessimist who proves to be right. The former sometimes wins, but never the latter. - 'Hoots');
+        quotes.Add("I would rather be an optimist and be wrong than a pessimist who proves to be right. The former sometimes wins, but never the latter. - 'Hoots'");
         quotes.Add("What is truth? - Pontius Pilate");
         quotes.Add("Life moves pretty fast. If you don't stop and look around once in a while, you could miss it. - Ferris Bueller");
         quotes.Add("The direct pursuit of happiness is a recipe for an unhappy life. - Donald Campbell"); 

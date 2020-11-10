@@ -27,7 +27,7 @@ namespace JackTheStudent.Models
                     foreach (GroupProjectMember participant in participants) {
                         participantsString = participantsString + participant.Member + ", ";
                     }
-            participantsString = "\nMembers: " + participantsString.Substring(0, participantsString.Length-2); 
+            participantsString = $"\nMembers: {participantsString.Substring(0, participantsString.Length-2)}"; 
             }
         return participantsString;
         }
