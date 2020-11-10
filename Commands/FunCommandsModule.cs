@@ -128,7 +128,6 @@ public class FunCommandsModule : IModule
     public async Task Inspire(CommandContext ctx)    
     {
         var random = new Random();
-        
         int index = random.Next(JackTheStudent.Program.quotes.Count);
         await ctx.RespondAsync(JackTheStudent.Program.quotes[index]);
     }
