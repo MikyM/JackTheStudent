@@ -165,7 +165,7 @@ public class FunCommandsModule : IModule
         quotes.Add("Challenges are what make life interesting and overcoming them is what makes life meaningful. - Joshua J. Marine");
         quotes.Add("Be patient with yourself. Self-growth is tender; it’s holy ground. There’s no greater investment. - Stephen Covey");
         quotes.Add("Done is better than perfect. - Sheryl Sandberg");
-
+        //Only programming quotes below.
         quotes.Add("Don't worry about what anybody else is going to do. The best way to predict the future is to invent it. - Alan Kay");
         quotes.Add("Premature optimization is the root of all evil (or at least most of it) in programming. - Donald Knuth");
         quotes.Add("Lisp has jokingly been called 'the most intelligent way to misuse a computer'. I think that description is a great compliment because it transmits the full flavor of liberation: it has assisted a number of our most gifted fellow humans in thinking previously impossible thoughts. - Edsger Dijkstra, CACM, 15:10");
