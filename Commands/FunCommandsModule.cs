@@ -121,5 +121,16 @@ public class FunCommandsModule : IModule
         await ctx.RespondAsync("Despite my answer, I hope you pass it anyway. Good luck!");
 
         }
+
+    
+    [Command("inspire")]
+    [Description("Throws a random inspirational quote straight at you.")]
+    public async Task Inspire(CommandContext ctx)    
+    {
+        var random = new Random();
+        
+        int index = random.Next(JackTheStudent.Program.quotes.Count);
+        await ctx.RespondAsync(JackTheStudent.Program.quotes[index]);
+    }
     }
 }

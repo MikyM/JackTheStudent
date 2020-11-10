@@ -22,6 +22,7 @@ namespace JackTheStudent
     private InteractivityModule _interactivity;
     public static List<Class> classList = new List<Class>();
     public static List<string> groupList = new List<string>();
+    public static List<string> quotes = new List<string>();
 
     static async Task Main(string[] args) => await new Program().InitBot(args);
 
@@ -41,6 +42,18 @@ namespace JackTheStudent
                 groupList = db.Group
                     .Select( x => x.GroupId) 
                     .ToList();
+            }
+        } catch(Exception ex) {
+            Console.Error.WriteLine("[Jack] " + ex.ToString());
+        }
+
+        try {
+            using (var fileStream = File.OpenRead(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resource", "quotes.txt")))
+                using (var reader = new StreamReader(fileStream)) {
+                    String quote;
+                    while ((quote = reader.ReadLine()) != null) {
+                        quotes.Add(quote);
+                    }
             }
         } catch(Exception ex) {
             Console.Error.WriteLine("[Jack] " + ex.ToString());
