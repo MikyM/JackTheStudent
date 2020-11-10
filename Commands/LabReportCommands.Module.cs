@@ -266,8 +266,7 @@ public class LabReportCommandsModule : IModule
         } else {
             try {
                 using (var db = new JackTheStudentContext()){
-                    var labReports = db.LabReport
-                        .ToList();                     
+                    var labReports = db.LabReport.ToList();                     
 
                     if (labReports.Count == 0) {
                         string response = "There aren no lab reports logged!";

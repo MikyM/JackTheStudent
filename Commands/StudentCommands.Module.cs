@@ -20,8 +20,7 @@ public class StudentCommandsModule : IModule
     {
         try {
             using (var db = new JackTheStudentContext()){
-                var groups = db.Group
-                            .ToList();
+                var groups = db.Group.ToList();
                     if (groups.Count == 0) {
                             await ctx.RespondAsync("No groups logged!");
                     } else {
@@ -46,8 +45,7 @@ public class StudentCommandsModule : IModule
     {
         try {
             using (var db = new JackTheStudentContext()){
-                var classes = db.Class
-                            .ToList();
+                var classes = db.Class.ToList();
                     if (classes.Count == 0) {
                             await ctx.RespondAsync("No classes logged!");
                     } else {

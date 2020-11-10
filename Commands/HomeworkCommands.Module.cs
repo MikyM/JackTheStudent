@@ -266,8 +266,7 @@ public class HomeworkCommandsModule : IModule
         } else {
             try {
                 using (var db = new JackTheStudentContext()){
-                    var homeworks = db.Homework
-                        .ToList();                     
+                    var homeworks = db.Homework.ToList();                     
 
                     if (homeworks.Count == 0) {
                         string response = "There is no logged homework!";

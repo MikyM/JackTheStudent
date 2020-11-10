@@ -266,8 +266,7 @@ public class TestCommandsModule : IModule
         } else {
             try {
                 using (var db = new JackTheStudentContext()){
-                    var tests = db.Test
-                        .ToList();                     
+                    var tests = db.Test.ToList();                     
 
                     if (tests.Count == 0) {
                         string response = "There aren no tests logged!";
