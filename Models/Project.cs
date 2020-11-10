@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace JackTheStudent.Models
 {
@@ -15,5 +17,21 @@ namespace JackTheStudent.Models
         public string AdditionalInfo { get; set; }
         public string Materials { get; set; }
         public ICollection<GroupProjectMember> GroupProjectMembers { get; set; }
+
+        public async Task<string> GetParticipantsString()
+        {
+            Project project = this;
+            string participantsString = String.Empty; 
+            using (var db = new JackTheStudentContext()){  
+            var participants = db.GroupProjectMember
+                                    .Where( x => x.ProjectId == project.Id)
+                                    .ToList();
+                foreach (GroupProjectMember participant in participants) {
+                    participantsString = participantsString + participant.Member + ", ";
+            }
+            participantsString = "\nMembers: " + participantsString.Substring(0, participantsString.Length-2); 
+        }
+        return participantsString;
+    }
     }
 }

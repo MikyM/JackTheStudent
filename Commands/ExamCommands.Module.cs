@@ -18,7 +18,7 @@ public class ExamCommandsModule : IModule
     [Description("Command logging a exam, last two arguments are optional." +
         "\nTo pass without addInfo but with materials use \".\" where addInfo should be.\n" +
         "Words seperated with spaces must be wrapped with \"\"\n" +
-        "\n!exam <classShortName> <exameDate> <examTime> <additionalInfo> <materials>\n" + 
+        "\n!exam <classShortName> <examDate> <examTime> <additionalInfo> <materials>\n" + 
         "\nExamples:\n" +
         "\n!exam mat 05-05-2021 13:30" + 
         "\n!exam ele 05-05-2021 12:30 \"Calculator required\"" +
@@ -116,11 +116,10 @@ public class ExamCommandsModule : IModule
                 return;
             }
         return;
-        } else if(classType == "." && span == ".") {
+        } else if (classType == "." && span == ".") {
             try {
                 using (var db = new JackTheStudentContext()){
-                var exams = db.Exam
-                    .ToList();
+                var exams = db.Exam.ToList();
                     if (exams.Count == 0) {
                             await ctx.RespondAsync("There are no exams logged!");
                     } else {

@@ -266,8 +266,7 @@ public class ShortTestCommandsModule : IModule
         } else {
             try {
                 using (var db = new JackTheStudentContext()){
-                    var shortTests = db.ShortTest
-                        .ToList();                     
+                    var shortTests = db.ShortTest.ToList();                     
 
                     if (shortTests.Count == 0) {
                         string response = "There aren no short tests logged!";
