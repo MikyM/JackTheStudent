@@ -4,6 +4,8 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 WORKDIR /src
 COPY ["JackTheStudent.csproj", "./"]
+
+RUN dotnet nuget add source https://nuget.emzi0767.com/api/v3/index.json -n dsharp
 RUN dotnet restore "JackTheStudent.csproj"
 COPY . .
 WORKDIR "/src/."
