@@ -11,7 +11,7 @@ using System.Collections.Generic;
 
 namespace JackTheStudent.Commands
 {
-public class ExamCommandsModule : IModule
+public class ExamCommandsModule : Base​Command​Module
 {
     
     [Command("exam")]

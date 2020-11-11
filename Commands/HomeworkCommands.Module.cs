@@ -12,7 +12,7 @@ using System.Globalization;
 
 namespace JackTheStudent.Commands
 {
-public class HomeworkCommandsModule : IModule
+public class HomeworkCommandsModule : Base​Command​Module
 {
     
     [Command("homework")]
