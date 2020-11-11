@@ -9,8 +9,15 @@ using DSharpPlus.CommandsNext;
 using DSharpPlus.Interactivity;
 using Microsoft.Extensions.Configuration;
 using JackTheStudent.Commands;
+using System.Reflection;
 using System.Collections.Generic;
 using JackTheStudent.Models;
+using DSharpPlus.EventArgs;
+using DSharpPlus.Entities;
+using DSharpPlus.Interactivity.Enums;
+using DSharpPlus.Interactivity.Extensions;
+
+
 namespace JackTheStudent
 {
     class Program
@@ -18,10 +25,11 @@ namespace JackTheStudent
     private CancellationTokenSource _cts { get; set; }
     private IConfigurationRoot _config;
     private DiscordClient _discord;
-    private CommandsNextModule _commands;
-    private InteractivityModule _interactivity;
+    private CommandsNextExtension _commands;
+    private InteractivityExtension _interactivity;
     public static List<Class> classList = new List<Class>();
     public static List<string> groupList = new List<string>();
+    public static List<ClassType> classTypeList = new List<ClassType>();
     public static List<string> quotes = new List<string>();
 
     static async Task Main(string[] args) => await new Program().InitBot(args);
@@ -48,14 +56,24 @@ namespace JackTheStudent
         }
 
         try {
-            Console.WriteLine(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resource", "quotes.txt"));
+            using (var db = new JackTheStudentContext()){
+                classTypeList = db.ClassType
+                    .ToList();
+            }
+        } catch(Exception ex) {
+            Console.Error.WriteLine("[Jack] " + ex.ToString());
+        }
+
+        try {
             using (var fileStream = File.OpenRead(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resource", "quotes.txt")))
                 using (var reader = new StreamReader(fileStream)) {
                     String quote;
                     while ((quote = reader.ReadLine()) != null) {
                         quotes.Add(quote);
                     }
-            }
+                reader.Close();
+                fileStream.Close();
+            } 
         } catch(Exception ex) {
             Console.Error.WriteLine("[Jack] " + ex.ToString());
         }
@@ -76,35 +94,31 @@ namespace JackTheStudent
                 .Build();
 
             Console.WriteLine("[Jack] Creating discord client..");
+            
             _discord = new DiscordClient(new DiscordConfiguration {
                 Token = Environment.GetEnvironmentVariable("BOT_TOKEN"),
-                TokenType = TokenType.Bot
+                TokenType = TokenType.Bot,
+                AutoReconnect = true
             });
 
-            _interactivity = _discord.UseInteractivity(new InteractivityConfiguration() {
-                PaginationBehaviour = TimeoutBehaviour.Delete, // What to do when a pagination request times out
-                PaginationTimeout = TimeSpan.FromSeconds(30), // How long to wait before timing out
-                Timeout = TimeSpan.FromSeconds(30) // Default time to wait for interactive commands like waiting for a message or a reaction
-            });
 
-            var deps = BuildDeps();
+            _discord.UseInteractivity(new InteractivityConfiguration() {
+                PaginationBehaviour = PaginationBehaviour.WrapAround, 
+                Timeout = TimeSpan.FromSeconds(30) 
+            }); 
+
             _commands = _discord.UseCommandsNext(new CommandsNextConfiguration {
-                StringPrefix = _config.GetValue<string>("discord:CommandPrefix"), // Load the command prefix(what comes before the command, eg "!" or "/") from our config file
-                Dependencies = deps // Pass the dependancies
+                StringPrefixes = new string[] {_config.GetValue<string>("discord:CommandPrefix")}, 
+                //EnableDms = false,
+                //EnableMentionPrefix = true,
+                //DmHelp = true
             });
 
             Console.WriteLine("[Jack] Loading command modules..");
 
-            var type = typeof(IModule); // Get the type of our interface
-            var types = AppDomain.CurrentDomain.GetAssemblies() // Get the assemblies associated with our project
-                .SelectMany(s => s.GetTypes()) // Get all the types
-                .Where(p => type.IsAssignableFrom(p) && !p.IsInterface); // Filter to find any type that can be assigned to an IModule
+            _commands.RegisterCommands(Assembly.GetExecutingAssembly());
 
-            var typeList = types as Type[] ?? types.ToArray(); // Convert to an array
-            foreach (var t in typeList)
-                _commands.RegisterCommands(t); // Loop through the list and register each command module with CommandsNext
-
-            Console.WriteLine($"[Jack] Loaded {typeList.Count()} modules.");
+            _discord.Ready += OnClientReady;
 
             RunAsync(args).Wait();
         }
@@ -114,32 +128,23 @@ namespace JackTheStudent
     }
 
     async Task RunAsync(string[] args)
-    {
-        // Connect to discord's service
+    {   
         Console.WriteLine("[Jack] Connecting..");
         await _discord.ConnectAsync();
-        Console.WriteLine("[Jack] Connected!");
-
-        // Keep the bot running until the cancellation token requests we stop
+        Console.WriteLine("[Jack] Connected!");     
+        
         while (!_cts.IsCancellationRequested)
             await Task.Delay(TimeSpan.FromMinutes(1));
     }
 
-    /* 
-     DSharpPlus has dependancy injection for commands, this builds a list of dependancies. 
-     We can then access these in our command modules.
-    */
-    private DependencyCollection BuildDeps()
+    private Task OnClientReady(DiscordClient _discord, ReadyEventArgs e)
     {
-        using var deps = new DependencyCollectionBuilder();
-            deps.AddInstance(_interactivity) // Add interactivity
-                .AddInstance(_cts) // Add the cancellation token
-                .AddInstance(_config) // Add our config
-                .AddInstance(_discord); // Add the discord client
+        DiscordActivity status = new DiscordActivity("... wish you knew, huh?");
+        _discord.UpdateStatusAsync(status);
+        Console.WriteLine($"[Jack] Updated status to {status.Name}!");
 
-            return deps.Build();
-        }
+        return Task.CompletedTask;
     }
-
     
+}
 }

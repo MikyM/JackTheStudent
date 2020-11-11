@@ -12,11 +12,11 @@ using System.Globalization;
 /* Create our class and extend from IModule */
 namespace JackTheStudent.Commands
 {
-public class StudentCommandsModule : Base​Command​Module
+public class SemesterCommandsModule :  Base​Command​Module
 {
-    [Command("group")]
+    [Command("groudasp")]
     [Description("Command retrieving group IDs")]
-    public async Task GroupLogs(CommandContext ctx)
+    public async Task sLogsds(CommandContext ctx)
     {
         try {
             using (var db = new JackTheStudentContext()){
@@ -39,9 +39,9 @@ public class StudentCommandsModule : Base​Command​Module
         return; 
     }
 
-    [Command("class")]
+    [Command("classdas")]
     [Description("Command retrieving classes")]
-    public async Task ClassesLogs(CommandContext ctx)
+    public async Task sLoasdadgs(CommandContext ctx)
     {
         try {
             using (var db = new JackTheStudentContext()){
