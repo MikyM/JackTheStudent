@@ -118,6 +118,8 @@ namespace JackTheStudent
 
             _commands.RegisterCommands(Assembly.GetExecutingAssembly());
 
+            Console.WriteLine("[Jack] Command modules loaded.");
+
             _discord.Ready += OnClientReady;
 
             RunAsync(args).Wait();
