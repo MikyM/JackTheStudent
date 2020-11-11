@@ -117,8 +117,7 @@ namespace JackTheStudent.Models
 
                 entity.Property(e => e.AdditionalInfo)
                     .HasColumnName("additional_info")
-                    .HasColumnType("longtext")
-                    .IsRequired();
+                    .HasColumnType("longtext");
 
                 entity.Property(e => e.Class)
                     .IsRequired()

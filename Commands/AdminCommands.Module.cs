@@ -14,7 +14,7 @@ namespace JackTheStudent.Commands
 {
 public class SemesterCommandsModule :  Base​Command​Module
 {
-    [Command("groudasp")]
+    [Command("groudsdsasp")]
     [Description("Command retrieving group IDs")]
     public async Task sLogsds(CommandContext ctx)
     {

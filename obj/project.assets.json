@@ -7344,11 +7344,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "F:\\Code\\JackTheStudent\\JackTheStudent.csproj",
+      "projectUniqueName": "f:\\Code\\JackTheStudent\\JackTheStudent.csproj",
       "projectName": "JackTheStudent",
-      "projectPath": "F:\\Code\\JackTheStudent\\JackTheStudent.csproj",
+      "projectPath": "f:\\Code\\JackTheStudent\\JackTheStudent.csproj",
       "packagesPath": "C:\\Users\\Kszysieg\\.nuget\\packages\\",
-      "outputPath": "F:\\Code\\JackTheStudent\\obj\\",
+      "outputPath": "f:\\Code\\JackTheStudent\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "F:\\Microsoft\\Xamarin\\NuGet\\"

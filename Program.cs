@@ -109,9 +109,9 @@ namespace JackTheStudent
 
             _commands = _discord.UseCommandsNext(new CommandsNextConfiguration {
                 StringPrefixes = new string[] {_config.GetValue<string>("discord:CommandPrefix")}, 
-                //EnableDms = false,
-                //EnableMentionPrefix = true,
-                //DmHelp = true
+                EnableDms = true,
+                EnableMentionPrefix = true,
+                DmHelp = true
             });
 
             Console.WriteLine("[Jack] Loading command modules..");
