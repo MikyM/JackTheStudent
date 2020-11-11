@@ -9,12 +9,13 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using DSharpPlus.Interactivity.Extensions;
 using JackTheStudent.CommandDescriptions;
 
 /* Create our class and extend from IModule */
 namespace JackTheStudent.Commands
 {
-public class ProjectCommandsModule : IModule
+public class ProjectCommandsModule : Base​Command​Module
 {
     [Command("project")]
     [Description(ProjectDescriptions.projectLogDescription)]
@@ -80,16 +81,16 @@ public class ProjectCommandsModule : IModule
         return;
         } else {
             await ctx.RespondAsync("How many members does the project have?");
-            var intr = ctx.Client.GetInteractivityModule(); // Grab the interactivity module
+            var intr = ctx.Client.GetInteractivity(); // Grab the interactivity module
             var response = await intr.WaitForMessageAsync(
                 c => c.Author.Id == ctx.Message.Author.Id, // Make sure the response is from the same person who sent the command
                 TimeSpan.FromSeconds(5) // Wait 60 seconds for a response instead of the default 30 we set earlier!
             );
 
             short membersCount = 1;    
-            while (!Int16.TryParse(response.Message.Content, out membersCount) && membersCount <= 2) {
+            while (!Int16.TryParse(response.Result.Content, out membersCount) && membersCount <= 2) {
                 await ctx.RespondAsync("Ever heard of intigers? Try again.");
-                var interactivity = ctx.Client.GetInteractivityModule(); // Grab the interactivity module
+                var interactivity = ctx.Client.GetInteractivity(); // Grab the interactivity module
                 var response1 = await intr.WaitForMessageAsync(
                     c => c.Author.Id == ctx.Message.Author.Id, // Make sure the response is from the same person who sent the command
                     TimeSpan.FromSeconds(5) // Wait 60 seconds for a response instead of the default 30 we set earlier!
@@ -108,12 +109,12 @@ public class ProjectCommandsModule : IModule
                                                 GroupProjectMembers = new List<GroupProjectMember>()};
                 for (int i = 1; i <= membersCount; i++) {
                     await ctx.RespondAsync("What's the name of the " + i + " participant?");
-                    var interactivity = ctx.Client.GetInteractivityModule(); // Grab the interactivity module
+                    var interactivity = ctx.Client.GetInteractivity(); // Grab the interactivity module
                     var participant = await intr.WaitForMessageAsync(
                         c => c.Author.Id == ctx.Message.Author.Id, // Make sure the response is from the same person who sent the command
                         TimeSpan.FromSeconds(5) // Wait 60 seconds for a response instead of the default 30 we set earlier!
                     );
-                    var groupProjectMember = new GroupProjectMember { Member = participant.Message.Content};
+                    var groupProjectMember = new GroupProjectMember { Member = participant.Result.Content};
                     project.GroupProjectMembers.Add(groupProjectMember);
                 }
                 db.Project.Add(project);
@@ -389,19 +390,19 @@ public class ProjectCommandsModule : IModule
     public async Task<bool> ParticipantsQuestion(CommandContext ctx) 
     {
         await ctx.RespondAsync("Would you like to see the participants of each project? Answer with yes or no.");
-        var interactivity = ctx.Client.GetInteractivityModule();
+        var interactivity = ctx.Client.GetInteractivity();
         var response = await interactivity.WaitForMessageAsync(
             c => c.Author.Id == ctx.Message.Author.Id, 
             TimeSpan.FromSeconds(5));
 
-        while (response.Message.Content.ToLower() != "yes" && response.Message.Content.ToLower() != "no"){
+        while (response.Result.Content.ToLower() != "yes" && response.Result.Content.ToLower() != "no"){
             await ctx.RespondAsync("Answer with either yes or no you moron...");
             response = await interactivity.WaitForMessageAsync(
                 c => c.Author.Id == ctx.Message.Author.Id, 
                 TimeSpan.FromSeconds(5));
         }
         
-        return ("yes".Equals(response.Message.Content.ToLower()) ? true : false);
+        return ("yes".Equals(response.Result.Content.ToLower()) ? true : false);
     }
 }
 }

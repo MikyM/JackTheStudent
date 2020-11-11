@@ -26,7 +26,8 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "https://api.nuget.org/v3/index.json": {}
+          "https://api.nuget.org/v3/index.json": {},
+          "https://nuget.emzi0767.com/api/v3/index.json": {}
         },
         "frameworks": {
           "netcoreapp3.1": {
@@ -44,15 +45,15 @@
           "dependencies": {
             "DSharpPlus": {
               "target": "Package",
-              "version": "[3.2.3, )"
+              "version": "[4.0.0-nightly-00748, )"
             },
             "DSharpPlus.CommandsNext": {
               "target": "Package",
-              "version": "[3.2.3, )"
+              "version": "[4.0.0-nightly-00748, )"
             },
             "DSharpPlus.Interactivity": {
               "target": "Package",
-              "version": "[3.2.3, )"
+              "version": "[4.0.0-nightly-00748, )"
             },
             "Microsoft.EntityFrameworkCore.Design": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",

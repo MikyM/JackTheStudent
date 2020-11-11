@@ -18,6 +18,7 @@ namespace JackTheStudent.Models
         public virtual DbSet<Class> Class { get; set; }
         public virtual DbSet<Group> Group { get; set; }
         public virtual DbSet<ClassMaterial> ClassMaterial { get; set; }
+        public virtual DbSet<ClassType> ClassType { get; set; }
         public virtual DbSet<Exam> Exam { get; set; }
         public virtual DbSet<Homework> Homework { get; set; }
         public virtual DbSet<LabReport> LabReport { get; set; }
@@ -26,6 +27,7 @@ namespace JackTheStudent.Models
         public virtual DbSet<Test> Test { get; set; }
         public virtual DbSet<Project> Project { get; set; }
         public virtual DbSet<GroupProjectMember> GroupProjectMember { get; set; }
+        public virtual DbSet<TeamsLink> TeamsLink { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -58,6 +60,28 @@ namespace JackTheStudent.Models
                     .HasMaxLength(10);   
             });
 
+            modelBuilder.Entity<ClassType>(entity =>
+            {
+                entity.HasKey(e => e.Id)
+                    .HasName("PRIMARY");
+
+                entity.ToTable("class_type");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasColumnName("name")
+                    .HasMaxLength(45);
+
+                entity.Property(e => e.ShortName)
+                    .IsRequired()
+                    .HasColumnName("short_name")
+                    .HasMaxLength(10);   
+            });
+
             modelBuilder.Entity<Group>(entity =>
             {
                 entity.HasKey(e => e.Id)
@@ -73,6 +97,53 @@ namespace JackTheStudent.Models
                     .IsRequired()
                     .HasColumnName("group")
                     .HasMaxLength(20); 
+            });
+
+            modelBuilder.Entity<TeamsLink>(entity =>
+            {
+                entity.HasKey(e => e.Id)
+                    .HasName("PRIMARY");
+
+                entity.ToTable("teams_link");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.ClassType)
+                    .HasColumnName("class_type")
+                    .IsRequired()
+                    .HasMaxLength(5);
+
+                entity.Property(e => e.AdditionalInfo)
+                    .HasColumnName("additional_info")
+                    .HasColumnType("longtext")
+                    .IsRequired();
+
+                entity.Property(e => e.Class)
+                    .IsRequired()
+                    .HasColumnName("class")
+                    .HasMaxLength(45);
+
+                entity.Property(e => e.Date)
+                    .IsRequired()
+                    .HasColumnName("date")
+                    .HasMaxLength(25);
+
+                entity.Property(e => e.LogById)
+                    .IsRequired()
+                    .HasColumnName("log_by_id")
+                    .HasColumnType("longtext");
+
+                entity.Property(e => e.LogByUsername)
+                    .IsRequired()
+                    .HasColumnName("log_by_username")
+                    .HasColumnType("longtext");
+
+                entity.Property(e => e.GroupId)
+                    .IsRequired()
+                    .HasColumnName("group_id")
+                    .HasColumnType("longtext");
             });
 
             modelBuilder.Entity<Project>(entity =>
