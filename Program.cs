@@ -8,7 +8,6 @@ using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.Interactivity;
 using Microsoft.Extensions.Configuration;
-using JackTheStudent.Commands;
 using System.Reflection;
 using System.Collections.Generic;
 using JackTheStudent.Models;
@@ -31,7 +30,7 @@ namespace JackTheStudent
     public static List<string> groupList = new List<string>();
     public static List<ClassType> classTypeList = new List<ClassType>();
     public static List<string> quotes = new List<string>();
-
+    
     static async Task Main(string[] args) => await new Program().InitBot(args);
 
     async Task InitBot(string[] args)
@@ -48,7 +47,7 @@ namespace JackTheStudent
         try {
             using (var db = new JackTheStudentContext()){
                 groupList = db.Group
-                    .Select( x => x.GroupId) 
+                    .Select(x => x.GroupId) 
                     .ToList();
             }
         } catch(Exception ex) {
@@ -141,9 +140,9 @@ namespace JackTheStudent
 
     private Task OnClientReady(DiscordClient _discord, ReadyEventArgs e)
     {
-        DiscordActivity status = new DiscordActivity("... wish you knew, huh?");
+        DiscordActivity status = new DiscordActivity("you fail exams :')", ActivityType.Watching);
         _discord.UpdateStatusAsync(status);
-        Console.WriteLine($"[Jack] Updated status to {status.Name}!");
+        Console.WriteLine($"[Jack] Updated status to \"{status.Name}\"!");
 
         return Task.CompletedTask;
     }

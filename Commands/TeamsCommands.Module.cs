@@ -138,8 +138,8 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                             await ctx.RespondAsync("There are no teams links logged!");
                     } else {
                         foreach (TeamsLink teamsLink in teamsLinks) {
-                            chosenUniClass = JackTheStudent.Program.classList.Where(c => c.ShortName == teamsLink.Class).Select(c => c.Name).FirstOrDefault();
-                            chosenClassType = JackTheStudent.Program.classTypeList.Where(c => c.ShortName == teamsLink.ClassType).Select(c => c.Name).FirstOrDefault();
+                            chosenClassType = teamsLink.GetFullClassType();
+                            chosenUniClass = teamsLink.GetFullClassName();
 
                             if (teamsLink.GroupId == ".") {
                                 chosenGroupString = "everyone";
@@ -168,7 +168,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                             await ctx.RespondAsync($"There are no {chosenUniClass} teams links logged.");
                     } else {
                         foreach (TeamsLink teamsLink in teamsLinks) {
-                            chosenClassType = JackTheStudent.Program.classTypeList.Where(c => c.ShortName == teamsLink.ClassType).Select(c => c.Name).FirstOrDefault();
+                            chosenClassType = teamsLink.GetFullClassType();
 
                             if (teamsLink.GroupId == ".") {
                                 chosenGroupString = "everyone";
@@ -228,7 +228,8 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                         return;
                     } else {
                         foreach (TeamsLink teamsLink in teamsLinks) {
-                            chosenUniClass = JackTheStudent.Program.classList.Where(c => c.ShortName == teamsLink.Class).Select(c => c.Name).FirstOrDefault();
+                            chosenUniClass = teamsLink.GetFullClassName();
+
                             if (teamsLink.GroupId == ".") {
                                 chosenGroupString = "everyone";
                             } else {
@@ -261,7 +262,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                     } else {
                         result = String.Empty;
                         foreach (TeamsLink teamsLink in teamsLinks) {
-                            chosenUniClass = JackTheStudent.Program.classList.Where(c => c.ShortName == teamsLink.Class).Select(c => c.Name).FirstOrDefault();
+                            chosenUniClass = teamsLink.GetFullClassName();
                             result = result + "\n" + CultureInfo.CurrentCulture.TextInfo.ToTitleCase(chosenUniClass) + $" {chosenClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date}. Link: {teamsLink.Link}";
                         }
                         await ctx.RespondAsync(result);
@@ -289,7 +290,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                     } else {
 
                         foreach (TeamsLink teamsLink in teamsLinks) {
-                                chosenClassType = JackTheStudent.Program.classTypeList.Where(c => c.ShortName == teamsLink.ClassType).Select(c => c.Name).FirstOrDefault();
+                                teamsLink.GetFullClassType();
                                 result = result + "\n" + CultureInfo.CurrentCulture.TextInfo.ToTitleCase(chosenUniClass) + $" {chosenClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date}. Link: {teamsLink.Link}";
                         }
                         await ctx.RespondAsync(result);
