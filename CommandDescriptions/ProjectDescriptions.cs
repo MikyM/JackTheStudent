@@ -5,7 +5,7 @@ namespace JackTheStudent.CommandDescriptions
     public class ProjectDescriptions
     {
     public const string projectLogDescription = "Command logging a project, last two arguments are optional." +
-        "\nTo pass without addInfo but with materials use \".\" where addInfo should be.\n" +
+        "\nTo log without addInfo but with materials use \".\" where addInfo should be.\n" +
         "Words seperated with spaces must be wrapped with \"\"\n" +
         "\n!project <groupId> <classShortName> <projectDate> <projectTime> <additionalInfo> <materials>\n" + 
         "\nExamples:\n" +

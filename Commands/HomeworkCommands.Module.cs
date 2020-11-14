@@ -70,6 +70,7 @@ public class HomeworkCommandsModule : Base​Command​Module
                                                 LogByUsername = ctx.Message.Author.Username + "#" + ctx.Message.Author.Discriminator,
                                                 AdditionalInfo = additionalInfo,
                                                 Materials = materials};
+                JackTheStudent.Program.homeworkList.Add(homeWork);
                 db.Homework.Add(homeWork);
                 await db.SaveChangesAsync();
                 }

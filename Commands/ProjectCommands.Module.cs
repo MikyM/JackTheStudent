@@ -90,8 +90,7 @@ public class ProjectCommandsModule : Base​Command​Module
             short membersCount = 1;    
             while (!Int16.TryParse(response.Result.Content, out membersCount) && membersCount <= 2) {
                 await ctx.RespondAsync("Ever heard of intigers? Try again.");
-                var interactivity = ctx.Client.GetInteractivity(); // Grab the interactivity module
-                var response1 = await intr.WaitForMessageAsync(
+                response = await intr.WaitForMessageAsync(
                     c => c.Author.Id == ctx.Message.Author.Id, // Make sure the response is from the same person who sent the command
                     TimeSpan.FromSeconds(5) // Wait 60 seconds for a response instead of the default 30 we set earlier!
                 );
@@ -109,7 +108,6 @@ public class ProjectCommandsModule : Base​Command​Module
                                                 GroupProjectMembers = new List<GroupProjectMember>()};
                 for (int i = 1; i <= membersCount; i++) {
                     await ctx.RespondAsync("What's the name of the " + i + " participant?");
-                    var interactivity = ctx.Client.GetInteractivity(); // Grab the interactivity module
                     var participant = await intr.WaitForMessageAsync(
                         c => c.Author.Id == ctx.Message.Author.Id, // Make sure the response is from the same person who sent the command
                         TimeSpan.FromSeconds(5) // Wait 60 seconds for a response instead of the default 30 we set earlier!
@@ -117,6 +115,7 @@ public class ProjectCommandsModule : Base​Command​Module
                     var groupProjectMember = new GroupProjectMember { Member = participant.Result.Content};
                     project.GroupProjectMembers.Add(groupProjectMember);
                 }
+                JackTheStudent.Program.projectList.Add(project);
                 db.Project.Add(project);
                 await db.SaveChangesAsync();
             }
@@ -166,7 +165,7 @@ public class ProjectCommandsModule : Base​Command​Module
 
                         foreach (Project project in projects) {                           
                             if (project.isGroup && isParticipants) {
-                                participantsString = await project.GetParticipantsString();
+                                participantsString = await GetParticipantsString(await project.GetParticipants());
                             }
                             result = result + "\n" + CultureInfo.CurrentCulture.TextInfo
                                                         .ToTitleCase(JackTheStudent.Program.classList
@@ -201,7 +200,7 @@ public class ProjectCommandsModule : Base​Command​Module
 
                         foreach (Project project in projects) {
                             if (project.isGroup && isParticipants) {
-                                participantsString = await project.GetParticipantsString();
+                                participantsString = await GetParticipantsString(await project.GetParticipants());
                             }
                             result = result + "\n" + CultureInfo.CurrentCulture.TextInfo
                                                         .ToTitleCase(JackTheStudent.Program.classList
@@ -236,7 +235,7 @@ public class ProjectCommandsModule : Base​Command​Module
             
                         foreach (Project project in projects) {
                             if (project.isGroup && isParticipants) {
-                                participantsString = await project.GetParticipantsString();
+                                participantsString = await GetParticipantsString(await project.GetParticipants());
                             }
 
                             result = result + "\n" + CultureInfo.CurrentCulture.TextInfo
@@ -280,7 +279,7 @@ public class ProjectCommandsModule : Base​Command​Module
 
                             foreach (Project project in projects) {
                                 if (project.isGroup && isParticipants) {
-                                    participantsString = await project.GetParticipantsString();
+                                    participantsString = await GetParticipantsString(await project.GetParticipants());
                                 }
                                 result = result + "\n" + CultureInfo.CurrentCulture.TextInfo
                                                             .ToTitleCase(JackTheStudent.Program.classList
@@ -326,9 +325,8 @@ public class ProjectCommandsModule : Base​Command​Module
 
                             foreach (Project project in projects) {
                                 if (project.isGroup && isParticipants) {
-                                    participantsString = await project.GetParticipantsString();
+                                    participantsString = await GetParticipantsString(await project.GetParticipants());
                                 }
-
                                 result = result + "\n" + CultureInfo.CurrentCulture.TextInfo
                                                             .ToTitleCase(JackTheStudent.Program.classList
                                                             .Where( c => c.ShortName == project.Class)
@@ -368,7 +366,7 @@ public class ProjectCommandsModule : Base​Command​Module
                         
                         foreach (Project project in projects) {
                             if (project.isGroup && isParticipants) {
-                                    participantsString = await project.GetParticipantsString();
+                                participantsString = await GetParticipantsString(await project.GetParticipants());
                             }
                             result = result + "\n" + CultureInfo.CurrentCulture.TextInfo
                                                         .ToTitleCase(JackTheStudent.Program.classList
@@ -403,6 +401,15 @@ public class ProjectCommandsModule : Base​Command​Module
         }
         
         return ("yes".Equals(response.Result.Content.ToLower()) ? true : false);
+    }
+
+    public async Task <string> GetParticipantsString(List<GroupProjectMember> participants)
+    {
+        string participantsString = String.Empty;
+        foreach (GroupProjectMember participant in participants) {
+            participantsString = participantsString + participant.Member + ", ";
+        }
+        return $"\nMembers: {participantsString.Substring(0, participantsString.Length-2)}";
     }
 }
 }

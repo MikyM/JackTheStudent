@@ -70,6 +70,7 @@ public class LabReportCommandsModule : Base​Command​Module
                                                 LogByUsername = ctx.Message.Author.Username + "#" + ctx.Message.Author.Discriminator,
                                                 AdditionalInfo = additionalInfo,
                                                 Materials = materials};
+                JackTheStudent.Program.labReportList.Add(labReport);
                 db.LabReport.Add(labReport);
                 await db.SaveChangesAsync();
                 }

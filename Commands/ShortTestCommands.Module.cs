@@ -70,6 +70,7 @@ public class ShortTestCommandsModule : Base​Command​Module
                                                 LogByUsername = ctx.Message.Author.Username + "#" + ctx.Message.Author.Discriminator,
                                                 AdditionalInfo = additionalInfo,
                                                 Materials = materials};
+                JackTheStudent.Program.shortTestList.Add(shortTest);
                 db.ShortTest.Add(shortTest);
                 await db.SaveChangesAsync();
                 }
