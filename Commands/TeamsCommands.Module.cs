@@ -81,6 +81,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                                                 LogById = ctx.Message.Author.Id.ToString(),
                                                 LogByUsername = ctx.Message.Author.Username + "#" + ctx.Message.Author.Discriminator,
                                                 AdditionalInfo = additionalInfo};
+                JackTheStudent.Program.teamsLinkList.Add(teamsLink);
                 db.TeamsLink.Add(teamsLink);
                 await db.SaveChangesAsync();
                 }

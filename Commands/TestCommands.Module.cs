@@ -70,6 +70,7 @@ public class TestCommandsModule : Base​Command​Module
                                                 LogByUsername = ctx.Message.Author.Username + "#" + ctx.Message.Author.Discriminator,
                                                 AdditionalInfo = additionalInfo,
                                                 Materials = materials};
+                JackTheStudent.Program.testList.Add(test);
                 db.Test.Add(test);
                 await db.SaveChangesAsync();
                 }

@@ -273,6 +273,11 @@ namespace JackTheStudent.Models
                     .IsRequired()
                     .HasColumnName("class")
                     .HasMaxLength(45);
+
+                entity.Property(e => e.ClassShortName)
+                    .IsRequired()
+                    .HasColumnName("class_short_name")
+                    .HasMaxLength(3);
                 
                 entity.Property(e => e.Date)
                     .IsRequired()
@@ -291,6 +296,10 @@ namespace JackTheStudent.Models
                 entity.Property(e => e.Materials)
                     .HasColumnName("materials")
                     .HasColumnType("longtext");
+
+                entity.Property(e => e.wasReminded)
+                    .HasColumnName("was_reminded")
+                    .IsRequired();
             });
 
             modelBuilder.Entity<Homework>(entity =>
@@ -398,16 +407,26 @@ namespace JackTheStudent.Models
                 entity.Property(e => e.LogById)
                     .IsRequired()
                     .HasColumnName("log_by_id")
-                    .HasColumnType("longtext");
+                    .HasColumnType("bigint(20)");
 
                 entity.Property(e => e.LogByUsername)
                     .IsRequired()
                     .HasColumnName("log_by_username")
                     .HasColumnType("longtext");
 
-                entity.Property(e => e.SetDate)
-                    .HasColumnName("materials")
-                    .IsRequired();
+                entity.Property(e => e.SetForDate)
+                    .IsRequired()
+                    .HasColumnName("set_for_date");
+
+                entity.Property(e => e.ChannelId)
+                    .IsRequired()
+                    .HasColumnName("channel_id")
+                    .HasColumnType("bigint(20)");
+
+                entity.Property(e => e.UserMention)
+                    .IsRequired()
+                    .HasColumnName("user_mention")
+                    .HasMaxLength(50);
             });
 
             modelBuilder.Entity<ShortTest>(entity =>

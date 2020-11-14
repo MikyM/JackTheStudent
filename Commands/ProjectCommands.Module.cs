@@ -115,6 +115,7 @@ public class ProjectCommandsModule : Base​Command​Module
                     var groupProjectMember = new GroupProjectMember { Member = participant.Result.Content};
                     project.GroupProjectMembers.Add(groupProjectMember);
                 }
+                JackTheStudent.Program.projectList.Add(project);
                 db.Project.Add(project);
                 await db.SaveChangesAsync();
             }
