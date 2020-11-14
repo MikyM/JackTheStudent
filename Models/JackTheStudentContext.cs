@@ -250,7 +250,7 @@ namespace JackTheStudent.Models
 
                 entity.Property(e => e.MaterialLink)
                     .IsRequired()
-                    .HasColumnName("materials")
+                    .HasColumnName("material_link")
                     .HasColumnType("longtext");
             });
 
