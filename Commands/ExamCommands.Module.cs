@@ -56,7 +56,7 @@ public class ExamCommandsModule : Base​Command​Module
             try {
                 using (var db = new JackTheStudentContext()){
                 var exam = new Exam {ClassShortName = classType,
-                                              Class = JackTheStudent.Program.classList.Where(c => c.ShortName == classType).Select(c => c.Name).FirstOrDefault(),
+                                              Class = JackTheStudent.Program.classList.Where(e => e.ShortName == classType).Select(e => e.Name).FirstOrDefault(),
                                               Date = parsedEventDate.Date.Add(parsedEventTime.TimeOfDay),
                                               LogById = ctx.Message.Author.Id.ToString(),
                                               LogByUsername = ctx.Message.Author.Username + "#" + ctx.Message.Author.Discriminator,
@@ -163,7 +163,7 @@ public class ExamCommandsModule : Base​Command​Module
                     .ToList();                  
                 if (exams.Count == 0) {
                     string response = "There are no logged exams for " + exams
-                                                                            .Select( c => c.Class)
+                                                                            .Select(e => e.Class)
                                                                             .FirstOrDefault() + "class!";
                     await ctx.RespondAsync(response);
                     return;
