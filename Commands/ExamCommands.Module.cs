@@ -55,13 +55,15 @@ public class ExamCommandsModule : Base​Command​Module
         } else {
             try {
                 using (var db = new JackTheStudentContext()){
-                var exam = new Exam {ClassShortName = classType,
-                                              Class = JackTheStudent.Program.classList.Where(e => e.ShortName == classType).Select(e => e.Name).FirstOrDefault(),
-                                              Date = parsedEventDate.Date.Add(parsedEventTime.TimeOfDay),
-                                              LogById = ctx.Message.Author.Id.ToString(),
-                                              LogByUsername = ctx.Message.Author.Username + "#" + ctx.Message.Author.Discriminator,
-                                              AdditionalInfo = additionalInfo,
-                                              Materials = materials};
+                var exam = new Exam {
+                    ClassShortName = classType,
+                    Class = JackTheStudent.Program.classList.Where(e => e.ShortName == classType).Select(e => e.Name).FirstOrDefault(),
+                    Date = parsedEventDate.Date.Add(parsedEventTime.TimeOfDay),
+                    LogById = ctx.Message.Author.Id.ToString(),
+                    LogByUsername = ctx.Message.Author.Username + "#" + ctx.Message.Author.Discriminator,
+                    AdditionalInfo = additionalInfo,
+                    Materials = materials
+                };
                 JackTheStudent.Program.examList.Add(exam);
                 db.Exam.Add(exam);
                 await db.SaveChangesAsync();
@@ -101,8 +103,7 @@ public class ExamCommandsModule : Base​Command​Module
                     } else {
                         string result = String.Empty;
                         foreach (Exam exam in exams) {
-                                result = result + "\n" + CultureInfo.CurrentCulture.TextInfo
-                                    .ToTitleCase(exam.Class) + " exam will happen on " + exam.Date;
+                                result = result + "\n" + CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class) + " exam will happen on " + exam.Date;
                         }
                         await ctx.RespondAsync(result);
                     }
@@ -120,8 +121,7 @@ public class ExamCommandsModule : Base​Command​Module
                     } else {
                         string result = String.Empty;
                         foreach (Exam exam in exams) {
-                            result = result + "\n" + CultureInfo.CurrentCulture.TextInfo
-                                .ToTitleCase(exam.Class) + " exam will happen / happened on " + exam.Date;
+                            result = result + "\n" + CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class) + " exam will happen / happened on " + exam.Date;
                         }
                         await ctx.RespondAsync(result);
                     }
@@ -133,20 +133,15 @@ public class ExamCommandsModule : Base​Command​Module
         return;
         } else if (classType != "." && span == "planned") {
                 try {
-                    exams = exams
-                        .Where(e => e.Date > DateTime.Now && e.ClassShortName == classType)
-                        .ToList();                     
+                    exams = exams.Where(e => e.Date > DateTime.Now && e.ClassShortName == classType).ToList();                     
                     if (exams.Count == 0) {
-                        string response = "There are no " + exams
-                                                            .Select(e => e.Class)
-                                                            .FirstOrDefault() + " exams planned!";
+                        string response = "There are no " + exams.Select(e => e.Class).FirstOrDefault() + " exams planned!";
                         await ctx.RespondAsync(response);
                         return;
                     } else {
                         string result = String.Empty;
                         foreach (Exam exam in exams) {
-                            result = result + "\n" + CultureInfo.CurrentCulture.TextInfo
-                                                    .ToTitleCase(exam.Class) + $" exam will happen on {exam.Date}";
+                            result = result + "\n" + CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class) + $" exam will happen on {exam.Date}";
                         }
                         await ctx.RespondAsync(result);
                         return;
@@ -158,20 +153,15 @@ public class ExamCommandsModule : Base​Command​Module
             }                                       
         } else {
             try {
-                exams = exams
-                    .Where (e => e.ClassShortName == classType)
-                    .ToList();                  
+                exams = exams.Where (e => e.ClassShortName == classType).ToList();                  
                 if (exams.Count == 0) {
-                    string response = "There are no logged exams for " + exams
-                                                                            .Select(e => e.Class)
-                                                                            .FirstOrDefault() + "class!";
+                    string response = "There are no logged exams for " + exams.Select(e => e.Class).FirstOrDefault() + "class!";
                     await ctx.RespondAsync(response);
                     return;
                 } else {
                     string result = String.Empty;
                     foreach (Exam exam in exams) {
-                        result = result + "\n" + CultureInfo.CurrentCulture.TextInfo
-                                                .ToTitleCase(exam.Class) + $" exam will happen / happened on {exam.Date}";
+                        result = result + "\n" + CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class) + $" exam will happen / happened on {exam.Date}";
                     }
                     await ctx.RespondAsync(result);
                     return;

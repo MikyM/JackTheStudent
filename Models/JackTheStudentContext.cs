@@ -321,6 +321,11 @@ namespace JackTheStudent.Models
                     .IsRequired()
                     .HasColumnName("class")
                     .HasMaxLength(45);
+
+                 entity.Property(e => e.ClassShortName)
+                    .IsRequired()
+                    .HasColumnName("class_short_name")
+                    .HasMaxLength(3);
                 
                 entity.Property(e => e.Date)
                     .IsRequired()

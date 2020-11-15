@@ -167,12 +167,6 @@ namespace JackTheStudent
 
     private async Task StartReminders()
     {   
-        /*while (true)
-        {
-            var delayTask = Task.Delay(2000);
-            Remind();
-            await delayTask; // wait until at least 10s elapsed since delayTask created
-        }*/
         var startTimeSpan = TimeSpan.Zero;
         var periodTimeSpan = TimeSpan.FromSeconds(5);
         timer = new Timer((e) => {
@@ -183,18 +177,11 @@ namespace JackTheStudent
 
     private async Task Remind()
     {   
-        Console.WriteLine("here");
         if (reminderList.Count == 0) {
             return;
         }
-
-        int count = reminderList.Count();
-
-        Console.WriteLine($"im alive, count is {count}");
-        for (int i = 1; i <= count; i++) {
-            Console.WriteLine("im looping");
+        for (int i = 1; i <= reminderList.Count(); i++) {
             if (DateTime.Now >= reminderList[i-1].SetForDate) {
-                Console.WriteLine("im here");
                 await reminderList[i-1].Ping(_discord);
                 try {
                     using(var db = new JackTheStudentContext()) {

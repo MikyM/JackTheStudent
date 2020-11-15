@@ -7434,20 +7434,25 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\kr3xo\\.nuget\\packages\\": {}
+    "C:\\Users\\Kszysieg\\.nuget\\packages\\": {},
+    "F:\\Microsoft\\Xamarin\\NuGet\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\GitHub\\JackTheStudent\\JackTheStudent.csproj",
+      "projectUniqueName": "F:\\Code\\JackTheStudent\\JackTheStudent.csproj",
       "projectName": "JackTheStudent",
-      "projectPath": "D:\\GitHub\\JackTheStudent\\JackTheStudent.csproj",
-      "packagesPath": "C:\\Users\\kr3xo\\.nuget\\packages\\",
-      "outputPath": "D:\\GitHub\\JackTheStudent\\obj\\",
+      "projectPath": "F:\\Code\\JackTheStudent\\JackTheStudent.csproj",
+      "packagesPath": "C:\\Users\\Kszysieg\\.nuget\\packages\\",
+      "outputPath": "F:\\Code\\JackTheStudent\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "F:\\Microsoft\\Xamarin\\NuGet\\"
+      ],
       "configFilePaths": [
-        "C:\\Users\\kr3xo\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\Kszysieg\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp3.1"
