@@ -285,7 +285,7 @@ Measuring programming progress by lines of code is like measuring aircraft build
 Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it. – Brian W. Kernighan
 Always code as if the guy who ends up maintaining your code will be a violent psychopath who knows where you live. – Martin Golding
 When debugging, novices insert corrective code; experts remove defective code. – Richard Pattis
-Computer science education cannot make anybody an expert programmer any more than studying brushes and pigment can make somebody an expert painter. – Eric S. Raymond (American programmer, open source software advocate, author of “The Cathedral and the Bazaar”)
+Computer science education cannot make anybody an expert programmer any more than studying brushes and pigment can make somebody an expert painter. – Eric S. Raymond (American programmer, open source software advocate, author of 'The Cathedral and the Bazaar')
 Most good programmers do programming not because they expect to get paid or get adulation by the public, but because it is fun to program.- Linus Torvalds
 Programming today is a race between software engineers striving to build bigger and better idiot-proof programs, and the Universe trying to produce bigger and better idiots. So far, the Universe is winning. – Rich Cook
 Any fool can write code that a computer can understand. Good programmers write code that humans can understand.- Martin Fowler
@@ -356,7 +356,7 @@ Most software today is very much like an Egyptian pyramid with millions of brick
 The trouble with programmers is that you can never tell what a programmer is doing until it’s too late. - Seymour Cray
 To iterate is human, to recurse divine. - L. Peter Deutsch
 On two occasions I have been asked [by members of Parliament]: 'Pray, Mr. Babbage, if you put into the machine wrong figures, will the right answers come out?' I am not able rightly to apprehend the kind of confusion of ideas that could provoke such a question. - Charles Babbage
-Most good programmers do programming not because they expect to get paid or get adulation by the public, but because it is fun to program." - Linus Torvalds
+Most good programmers do programming not because they expect to get paid or get adulation by the public, but because it is fun to program. - Linus Torvalds
 Always code as if the guy who ends up maintaining your code will be a violent psychopath who knows where you live. - Martin Golding
 There are two ways of constructing a software design. One way is to make it so simple that there are obviously no deficiencies. And the other way is to make it so complicated that there are no obvious deficiencies. - C.A.R. Hoare
 Programming isn't about what you know; it's about what you can figure out. - Chris Pine
