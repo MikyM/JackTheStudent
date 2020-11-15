@@ -9,13 +9,14 @@ using DSharpPlus.CommandsNext;
 using DSharpPlus.Interactivity;
 using Microsoft.Extensions.Configuration;
 using System.Reflection;
+//using System.Timers;
 using System.Collections.Generic;
 using JackTheStudent.Models;
 using DSharpPlus.EventArgs;
 using DSharpPlus.Entities;
 using DSharpPlus.Interactivity.Enums;
 using DSharpPlus.Interactivity.Extensions;
-
+using Microsoft.EntityFrameworkCore;
 
 namespace JackTheStudent
 {
@@ -26,6 +27,7 @@ namespace JackTheStudent
     private DiscordClient _discord;
     private CommandsNextExtension _commands;
     private InteractivityExtension _interactivity;
+    private static Timer timer;
     public static List<PersonalReminder> reminderList = new List<PersonalReminder>();
     public static List<Class> classList = new List<Class>();
     public static List<string> groupList = new List<string>();
@@ -45,6 +47,7 @@ namespace JackTheStudent
     {
         try {
             using (var db = new JackTheStudentContext()){
+                //await db.Database.ExecuteSqlRawAsync("SET time_zone = Europe/Warsaw;");
                 classTypeList = db.ClassType.ToList();
                 groupList = db.Group.Select(x => x.GroupId).ToList();
                 classList = db.Class.ToList();
@@ -147,24 +150,36 @@ namespace JackTheStudent
         return Task.CompletedTask;
     }
 
-    private Task StartReminders()
+    private async Task StartReminders()
     {   
+        /*while (true)
+        {
+            var delayTask = Task.Delay(2000);
+            Remind();
+            await delayTask; // wait until at least 10s elapsed since delayTask created
+        }*/
         var startTimeSpan = TimeSpan.Zero;
-        var periodTimeSpan = TimeSpan.FromSeconds(1);
-        var timer = new System.Threading.Timer((e) => {
+        var periodTimeSpan = TimeSpan.FromSeconds(5);
+        timer = new Timer((e) => {
             Remind().ContinueWith(t => {Console.WriteLine(t.Exception);}, TaskContinuationOptions.OnlyOnFaulted);  
             AutoRemind().ContinueWith(t => {Console.WriteLine(t.Exception);}, TaskContinuationOptions.OnlyOnFaulted);  
         }, null, startTimeSpan, periodTimeSpan);
-        return Task.CompletedTask;
     }
 
     private async Task Remind()
     {   
+        Console.WriteLine("here");
         if (reminderList.Count == 0) {
             return;
         }
-        for (int i = 1; i <= reminderList.Count(); i++) {
+
+        int count = reminderList.Count();
+
+        Console.WriteLine($"im alive, count is {count}");
+        for (int i = 1; i <= count; i++) {
+            Console.WriteLine("im looping");
             if (DateTime.Now >= reminderList[i-1].SetForDate) {
+                Console.WriteLine("im here");
                 await reminderList[i-1].Ping(_discord);
                 try {
                     using(var db = new JackTheStudentContext()) {

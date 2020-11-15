@@ -29,8 +29,9 @@ public class PersonalReminderCommandsModule : Base​Command​Module
                                                         About = about,
                                                         UserMention = ctx.Message.Author.Mention,
                                                         ChannelId = ctx.Channel.Id};
+        JackTheStudent.Program.reminderList.Add(reminder);
         try {
-            JackTheStudent.Program.reminderList.Add(reminder);
+            
             using (var db = new JackTheStudentContext()) {
                 db.PersonalReminder.Add(reminder);
                 await db.SaveChangesAsync();
