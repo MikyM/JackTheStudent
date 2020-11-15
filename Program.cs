@@ -33,6 +33,7 @@ namespace JackTheStudent
     public static List<string> groupList = new List<string>();
     public static List<ClassType> classTypeList = new List<ClassType>();
     public static List<string> quotes = new List<string>();
+    public static List<string> weatherCities = new List<string>();
     public static List<Exam> examList = new List<Exam>();
     public static List<Test> testList = new List<Test>();
     public static List<Project> projectList = new List<Project>();
@@ -71,6 +72,20 @@ namespace JackTheStudent
                     String quote;
                     while ((quote = reader.ReadLine()) != null) {
                         quotes.Add(quote);
+                    }
+                reader.Close();
+                fileStream.Close();
+            } 
+        } catch(Exception ex) {
+            Console.Error.WriteLine("[Jack] " + ex.ToString());
+        }
+
+        try {
+            using (var fileStream = File.OpenRead(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resource", "weatherCities.txt")))
+                using (var reader = new StreamReader(fileStream)) {
+                    String city;
+                    while ((city = reader.ReadLine()) != null) {
+                        weatherCities.Add(city);
                     }
                 reader.Close();
                 fileStream.Close();
