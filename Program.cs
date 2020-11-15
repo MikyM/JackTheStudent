@@ -76,6 +76,20 @@ namespace JackTheStudent
             Console.Error.WriteLine("[Jack] " + ex.ToString());
         }
 
+        try {
+            using (var fileStream = File.OpenRead(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resource", "weatherCities.txt")))
+                using (var reader = new StreamReader(fileStream)) {
+                    String city;
+                    while ((city = reader.ReadLine()) != null) {
+                        weatherCities.Add(city);
+                    }
+                reader.Close();
+                fileStream.Close();
+            } 
+        } catch(Exception ex) {
+            Console.Error.WriteLine("[Jack] " + ex.ToString());
+        }
+
         CultureInfo culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
         culture.DateTimeFormat.ShortDatePattern = "dd-MM-yyyy HH:mm";
         culture.DateTimeFormat.LongTimePattern = "";
