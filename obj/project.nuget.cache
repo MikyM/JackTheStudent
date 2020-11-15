@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "bqexvnih/gbyR+YEqlAadzL0zL8bcv4ePHx1r50wQ0KElcLKPJlM7MS8DEAh8rBtZFt0JEgcSEb6PdXGzhXpPg==",
+  "dgSpecHash": "ifpOl+EgeaHzsDQpTOq3ddd7JtovMD4LrXwEitURybfz1A15RP8sWkjedCeEiDFLqVr+h84VYN01QRYUN2PBUA==",
   "success": true,
   "projectFilePath": "D:\\GitHub\\JackTheStudent\\JackTheStudent.csproj",
   "expectedPackageFiles": [
@@ -11,6 +11,7 @@
     "C:\\Users\\kr3xo\\.nuget\\packages\\dsharpplus.interactivity\\4.0.0-nightly-00748\\dsharpplus.interactivity.4.0.0-nightly-00748.nupkg.sha512",
     "C:\\Users\\kr3xo\\.nuget\\packages\\emzi0767.common\\2.2.2\\emzi0767.common.2.2.2.nupkg.sha512",
     "C:\\Users\\kr3xo\\.nuget\\packages\\google.protobuf\\3.11.4\\google.protobuf.3.11.4.nupkg.sha512",
+    "C:\\Users\\kr3xo\\.nuget\\packages\\htmlagilitypack\\1.11.28\\htmlagilitypack.1.11.28.nupkg.sha512",
     "C:\\Users\\kr3xo\\.nuget\\packages\\k4os.compression.lz4\\1.1.11\\k4os.compression.lz4.1.1.11.nupkg.sha512",
     "C:\\Users\\kr3xo\\.nuget\\packages\\k4os.compression.lz4.streams\\1.1.11\\k4os.compression.lz4.streams.1.1.11.nupkg.sha512",
     "C:\\Users\\kr3xo\\.nuget\\packages\\k4os.hash.xxhash\\1.0.6\\k4os.hash.xxhash.1.0.6.nupkg.sha512",

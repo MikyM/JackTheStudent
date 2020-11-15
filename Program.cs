@@ -31,6 +31,7 @@ namespace JackTheStudent
     public static List<string> groupList = new List<string>();
     public static List<ClassType> classTypeList = new List<ClassType>();
     public static List<string> quotes = new List<string>();
+    public static List<string> weatherCities = new List<string>();
     public static List<Exam> examList = new List<Exam>();
     public static List<Test> testList = new List<Test>();
     public static List<Project> projectList = new List<Project>();
