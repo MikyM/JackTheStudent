@@ -1,12 +1,9 @@
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
-using DSharpPlus.Entities;
-using DSharpPlus.Interactivity;
 using System;
 using System.Threading.Tasks;
 using JackTheStudent.Models;
 using System.Linq;
-using System.Collections.Generic;
 using System.Globalization;
 
 /* Create our class and extend from IModule */

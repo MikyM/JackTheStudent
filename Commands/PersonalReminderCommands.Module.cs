@@ -1,14 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using JackTheStudent.Models;
-using System.Linq;
-using System.Collections.Generic;
-using JackTheStudent;
-using DSharpPlus.Interactivity.Extensions;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
-using System.Globalization;
-using Microsoft.EntityFrameworkCore;
 
 namespace JackTheStudent.Commands
 {

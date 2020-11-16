@@ -1,7 +1,5 @@
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
-using DSharpPlus.Entities;
-using DSharpPlus.Interactivity;
 using System;
 using System.Threading.Tasks;
 using JackTheStudent.Models;
