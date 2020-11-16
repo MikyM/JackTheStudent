@@ -16,17 +16,20 @@ using DSharpPlus.Entities;
 using DSharpPlus.Interactivity.Enums;
 using DSharpPlus.Interactivity.Extensions;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Http;
 
 namespace JackTheStudent
 {
     class Program
     {
+    private static HttpClient httpClient = new HttpClient();
     private CancellationTokenSource _cts { get; set; }
     private IConfigurationRoot _config;
     private DiscordClient _discord;
     private CommandsNextExtension _commands;
     private InteractivityExtension _interactivity;
-    private static Timer timer;
+    private static Timer reminderTimer;
+    private static Timer timeCheckTimer;
     public static List<PersonalReminder> reminderList = new List<PersonalReminder>();
     public static List<Class> classList = new List<Class>();
     public static List<Group> groupList = new List<Group>();
@@ -47,7 +50,6 @@ namespace JackTheStudent
     {
         try {
             using (var db = new JackTheStudentContext()){
-                await db.Database.ExecuteSqlRawAsync("SET time_zone = '+01:00';");
                 classTypeList = db.ClassType.ToList();
                 groupList = db.Group.ToList();
                 classList = db.Class.ToList();
@@ -137,6 +139,8 @@ namespace JackTheStudent
 
             _discord.Ready += OnClientReady;
 
+            Console.WriteLine("[Jack] All lists have been successfully loaded from database!");
+
             RunAsync(args).Wait();
         }
         catch(Exception ex) {
@@ -154,23 +158,35 @@ namespace JackTheStudent
             await Task.Delay(TimeSpan.FromMinutes(1));
     }
 
-    private Task OnClientReady(DiscordClient _discord, ReadyEventArgs e)
+    private async Task OnClientReady(DiscordClient _discord, ReadyEventArgs e)
     {
         DiscordActivity status = new DiscordActivity("you fail exams :')", ActivityType.Watching);
-        _discord.UpdateStatusAsync(status);
+        await _discord.UpdateStatusAsync(status);
         Console.WriteLine($"[Jack] Updated status to \"{status.Name}\"!");
-        StartReminders();
-        Console.WriteLine($"[Jack] Personal reminders are up!");
-        return Task.CompletedTask;
+        await StartReminders();
+        Console.WriteLine("[Jack] Personal reminders are up!");
+        await StartTimeCheck();  
+        Console.WriteLine("[Jack] Database timezone has been updated!");
+        Console.WriteLine("[Jack] I'm now fully functional!");
+        //return Task.CompletedTask;
     }
 
     private async Task StartReminders()
     {   
         var startTimeSpan = TimeSpan.Zero;
         var periodTimeSpan = TimeSpan.FromSeconds(5);
-        timer = new Timer((e) => {
+        reminderTimer = new Timer((e) => {
             Remind().ContinueWith(t => {Console.WriteLine(t.Exception);}, TaskContinuationOptions.OnlyOnFaulted);  
             AutoRemind().ContinueWith(t => {Console.WriteLine(t.Exception);}, TaskContinuationOptions.OnlyOnFaulted);  
+        }, null, startTimeSpan, periodTimeSpan);
+    }
+
+    private async Task StartTimeCheck()
+    {   
+        var startTimeSpan = TimeSpan.Zero;
+        var periodTimeSpan = TimeSpan.FromHours(24);
+        timeCheckTimer = new Timer((e) => {
+            TimeCheck().ContinueWith(t => {Console.WriteLine(t.Exception);}, TaskContinuationOptions.OnlyOnFaulted); 
         }, null, startTimeSpan, periodTimeSpan);
     }
 
@@ -228,6 +244,31 @@ namespace JackTheStudent
             }
         }
     }   
+
+    private async Task TimeCheck()
+    {
+        string baseUrl = "http://worldtimeapi.org/api/timezone/Europe/Warsaw";
+        try {
+            using (HttpClient client = new HttpClient()) {
+                using (HttpResponseMessage res = await client.GetAsync(baseUrl)) {
+                    using (HttpContent content = res.Content) {
+                        var data = await content.ReadAsStringAsync();
+                        string[] splitResponse = data.Split(new char[] {'"'});
+                        string dateTime = splitResponse[11];
+                        string[] splitDatetime = dateTime.Split(new char[] {'+'});
+                        string timezone = splitDatetime[1];
+
+                        using (var db = new JackTheStudentContext()){
+                            await db.Database.ExecuteSqlRawAsync($"SET time_zone = '+{timezone}';");
+                        }
+                        Console.WriteLine($"[Jack] Database timezone has been set to +{timezone}!");
+                    }
+                }
+            }
+        } catch(Exception ex) {
+            Console.Error.WriteLine("[Jack] " + ex.ToString());
+        }      
+    }
     
 }
 }

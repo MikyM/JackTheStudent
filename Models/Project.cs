@@ -21,9 +21,7 @@ namespace JackTheStudent.Models
         {
             string participantsString = String.Empty; 
             using (var db = new JackTheStudentContext()){  
-                var participants = db.GroupProjectMember
-                                        .Where( x => x.ProjectId == this.Id)
-                                        .ToList();
+                var participants = db.GroupProjectMember.Where(p => p.ProjectId == this.Id).ToList();
                 return participants;
             }
         }
