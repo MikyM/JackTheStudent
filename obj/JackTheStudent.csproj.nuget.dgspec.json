@@ -57,7 +57,7 @@
             },
             "HtmlAgilityPack": {
               "target": "Package",
-              "version": "[*, )"
+              "version": "[1.11.28, )"
             },
             "Microsoft.EntityFrameworkCore.Design": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
@@ -90,10 +90,6 @@
             "MySql.Data.EntityFrameworkCore": {
               "target": "Package",
               "version": "[8.0.22, )"
-            },
-            "quartz": {
-              "target": "Package",
-              "version": "[3.2.3, )"
             }
           },
           "imports": [

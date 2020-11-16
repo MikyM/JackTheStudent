@@ -14,7 +14,6 @@ namespace JackTheStudent.Models
         public string LogById { get; set; }
         public string LogByUsername { get; set; }
         public string AdditionalInfo { get; set; }
-        public string Materials { get; set; }
         public bool wasReminded { get; set; } = false;
 
         public async Task Ping(DiscordClient client) 

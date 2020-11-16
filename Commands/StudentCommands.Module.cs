@@ -19,17 +19,15 @@ public class StudentCommandsModule : Base​Command​Module
     public async Task GroupLogs(CommandContext ctx)
     {
         try {
-            using (var db = new JackTheStudentContext()){
-                var groups = db.Group.ToList();
-                    if (groups.Count == 0) {
-                            await ctx.RespondAsync("No groups logged!");
-                    } else {
-                        string result = String.Empty;
-                        foreach (Group group in groups) {
-                            result = result + "\n" + group.GroupId;
-                        }
-                        await ctx.RespondAsync(result);
-                    }
+            var groups = JackTheStudent.Program.groupList.ToList();
+            if (groups.Count == 0) {
+                    await ctx.RespondAsync("No groups logged!");
+            } else {
+                string result = String.Empty;
+                for(int i = 0; i < groups.Count(); i++) {
+                    result = $"{result} \n{groups[i]}";
+                }
+                await ctx.RespondAsync(result);
             }
         } catch(Exception ex) {
                 Console.Error.WriteLine("[Jack] " + ex.ToString());
@@ -44,17 +42,15 @@ public class StudentCommandsModule : Base​Command​Module
     public async Task ClassesLogs(CommandContext ctx)
     {
         try {
-            using (var db = new JackTheStudentContext()){
-                var classes = db.Class.ToList();
-                    if (classes.Count == 0) {
-                            await ctx.RespondAsync("No classes logged!");
-                    } else {
-                        string result = String.Empty;
-                        foreach (Class uniClass in classes) {
-                             result = result + "\n" + "Class - " + uniClass.Name + ", short version - " + uniClass.ShortName;
-                        }
-                        await ctx.RespondAsync(result);
-                    }
+            var classes = JackTheStudent.Program.classList.ToList();
+            if (classes.Count == 0) {
+                    await ctx.RespondAsync("No classes logged!");
+            } else {
+                string result = String.Empty;
+                foreach (Class uniClass in classes) {
+                    result = $"{result} \n Class - {uniClass.Name}, short version - {uniClass.ShortName}";
+                }
+                await ctx.RespondAsync(result);
             }
         } catch(Exception ex) {
                 Console.Error.WriteLine("[Jack] " + ex.ToString());

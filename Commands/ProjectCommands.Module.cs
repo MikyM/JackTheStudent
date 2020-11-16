@@ -62,13 +62,17 @@ public class ProjectCommandsModule : Base​Command​Module
         } else if (isGroup == "0") {
             try {
                 using (var db = new JackTheStudentContext()){
-                var project = new Project {Class = classType,
-                                                Date = parsedEventDate.Date.Add(parsedEventTime.TimeOfDay),
-                                                GroupId = groupId,
-                                                isGroup = Convert.ToBoolean(Convert.ToInt16(isGroup)),
-                                                LogById = ctx.Message.Author.Id.ToString(),
-                                                LogByUsername = ctx.Message.Author.Username + "#" + ctx.Message.Author.Discriminator,
-                                                AdditionalInfo = additionalInfo};
+                var project = new Project {
+                    ClassShortName = classType,
+                    Class = JackTheStudent.Program.classList.Where(e => e.ShortName == classType).Select(e => e.Name).FirstOrDefault(),
+                    Date = parsedEventDate.Date.Add(parsedEventTime.TimeOfDay),
+                    GroupId = groupId,
+                    isGroup = Convert.ToBoolean(Convert.ToInt16(isGroup)),
+                    LogById = ctx.Message.Author.Id.ToString(),
+                    LogByUsername = ctx.Message.Author.Username + "#" + ctx.Message.Author.Discriminator,
+                    AdditionalInfo = additionalInfo
+                };
+                JackTheStudent.Program.projectList.Add(project);
                 db.Project.Add(project);
                 await db.SaveChangesAsync();
                 }
@@ -81,36 +85,39 @@ public class ProjectCommandsModule : Base​Command​Module
         return;
         } else {
             await ctx.RespondAsync("How many members does the project have?");
-            var intr = ctx.Client.GetInteractivity(); // Grab the interactivity module
+            var intr = ctx.Client.GetInteractivity(); 
             var response = await intr.WaitForMessageAsync(
-                c => c.Author.Id == ctx.Message.Author.Id, // Make sure the response is from the same person who sent the command
-                TimeSpan.FromSeconds(5) // Wait 60 seconds for a response instead of the default 30 we set earlier!
+                c => c.Author.Id == ctx.Message.Author.Id, 
+                TimeSpan.FromSeconds(5) 
             );
 
             short membersCount = 1;    
             while (!Int16.TryParse(response.Result.Content, out membersCount) && membersCount <= 2) {
                 await ctx.RespondAsync("Ever heard of intigers? Try again.");
                 response = await intr.WaitForMessageAsync(
-                    c => c.Author.Id == ctx.Message.Author.Id, // Make sure the response is from the same person who sent the command
-                    TimeSpan.FromSeconds(5) // Wait 60 seconds for a response instead of the default 30 we set earlier!
+                    c => c.Author.Id == ctx.Message.Author.Id, 
+                    TimeSpan.FromSeconds(5) 
                 );
             }
 
             try {
                 using (var db = new JackTheStudentContext()){
-                var project = new Project {Class = classType,
-                                                Date = parsedEventDate.Date.Add(parsedEventTime.TimeOfDay),
-                                                GroupId = groupId,
-                                                isGroup = Convert.ToBoolean(Convert.ToInt16(isGroup)),
-                                                LogById = ctx.Message.Author.Id.ToString(),
-                                                LogByUsername = ctx.Message.Author.Username + "#" + ctx.Message.Author.Discriminator,
-                                                AdditionalInfo = additionalInfo,
-                                                GroupProjectMembers = new List<GroupProjectMember>()};
+                var project = new Project {
+                    ClassShortName = classType,
+                    Class = JackTheStudent.Program.classList.Where(e => e.ShortName == classType).Select(e => e.Name).FirstOrDefault(),
+                    Date = parsedEventDate.Date.Add(parsedEventTime.TimeOfDay),
+                    GroupId = groupId,
+                    isGroup = Convert.ToBoolean(Convert.ToInt16(isGroup)),
+                    LogById = ctx.Message.Author.Id.ToString(),
+                    LogByUsername = ctx.Message.Author.Username + "#" + ctx.Message.Author.Discriminator,
+                    AdditionalInfo = additionalInfo,
+                    GroupProjectMembers = new List<GroupProjectMember>()
+                };
                 for (int i = 1; i <= membersCount; i++) {
                     await ctx.RespondAsync("What's the name of the " + i + " participant?");
                     var participant = await intr.WaitForMessageAsync(
-                        c => c.Author.Id == ctx.Message.Author.Id, // Make sure the response is from the same person who sent the command
-                        TimeSpan.FromSeconds(5) // Wait 60 seconds for a response instead of the default 30 we set earlier!
+                        c => c.Author.Id == ctx.Message.Author.Id, 
+                        TimeSpan.FromSeconds(5) 
                     );
                     var groupProjectMember = new GroupProjectMember { Member = participant.Result.Content};
                     project.GroupProjectMembers.Add(groupProjectMember);
@@ -137,9 +144,6 @@ public class ProjectCommandsModule : Base​Command​Module
         [Description("\nTakes 0 for only individual projects, 1 for group projects or \".\" for all projects\n")] string isGroup = ".",
         [Description("\nTakes \".\" or \"planned\", usage of \".\" will tell Jack to retrieve all LOGGED project, \"planned\" retrieves only future events.\n")] string span = "planned")
     {      
-
-        bool isParticipants = false;
-
         if (!JackTheStudent.Program.groupList.Contains(group) && group != ".") {
             await ctx.RespondAsync("There's no such group dumbass. Try again!");
             return;
@@ -149,33 +153,31 @@ public class ProjectCommandsModule : Base​Command​Module
         } else if (isGroup != "." && isGroup != "0" && isGroup != "1") {
             await ctx.RespondAsync("... isGroup only takes . , 0 i 1");
             return;
+        } else if (span != "." && span != "planned") {
+            await ctx.RespondAsync("Span only accepts . and planned values");
+            return;
         }
+
+        var projects = JackTheStudent.Program.projectList;
+        bool isParticipants = false;
+        string result = String.Empty;
+        string participantsString = String.Empty;
+
         if (group == "." && classType == "." && span == "planned") {
             try {
-                using (var db = new JackTheStudentContext()){
-                var projects = db.Project
-                            .Where(x => x.Date > DateTime.Now)
-                            .ToList();
+                projects = projects.Where(p => p.Date > DateTime.Now).ToList();
                     if (projects.Count == 0) {
                             await ctx.RespondAsync("Wait what!? There are literally no projects planned at all!");
                     } else {
-                        string result = String.Empty;
-                        string participantsString = String.Empty;
                         isParticipants = await ParticipantsQuestion(ctx);
-
                         foreach (Project project in projects) {                           
                             if (project.isGroup && isParticipants) {
                                 participantsString = await GetParticipantsString(await project.GetParticipants());
                             }
-                            result = result + "\n" + CultureInfo.CurrentCulture.TextInfo
-                                                        .ToTitleCase(JackTheStudent.Program.classList
-                                                        .Where( c => c.ShortName == project.Class)
-                                                        .Select( c => c.Name)
-                                                        .FirstOrDefault()) + " project for group " + project.GroupId + ", deadline is " + project.Date + participantsString;
+                            result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} project for group {project.GroupId}, deadline is {project.Date}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}")}.{participantsString}";
                         }
                         await ctx.RespondAsync(result);
                     }
-                }
             } catch(Exception ex) {
                 Console.Error.WriteLine("[Jack] " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
@@ -184,33 +186,22 @@ public class ProjectCommandsModule : Base​Command​Module
         return;
         } else if(classType == "." && span == "." && group != "." ) {
             try {
-                using (var db = new JackTheStudentContext()){
-                var projects = db.Project
-                    .Where( x => x.GroupId == group)
+                projects = projects.Where(p => p.GroupId == group)
                     .ToList();
                     if (projects.Count == 0) {
-                            await ctx.RespondAsync("There are no projects logged for group " + group + "!");
+                            await ctx.RespondAsync($"There are no projects logged for group {group}!");
                     } else {
-                        string result = String.Empty;
-                        string participantsString = String.Empty;
-
                         if (isGroup == "1" || isGroup == ".") {
                             isParticipants = await ParticipantsQuestion(ctx);
                         }
-
                         foreach (Project project in projects) {
                             if (project.isGroup && isParticipants) {
                                 participantsString = await GetParticipantsString(await project.GetParticipants());
                             }
-                            result = result + "\n" + CultureInfo.CurrentCulture.TextInfo
-                                                        .ToTitleCase(JackTheStudent.Program.classList
-                                                        .Where( c => c.ShortName == project.Class)
-                                                        .Select( c => c.Name)
-                                                        .FirstOrDefault()) + " project for group " + project.GroupId + ", deadline is/was " + project.Date + participantsString;
+                            result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} project for group {project.GroupId}, deadline is/was {project.Date}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}")}.{participantsString}";
                         }
                         await ctx.RespondAsync(result);
                     }
-                }
             } catch(Exception ex) {
                 Console.Error.WriteLine("[Jack] " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
@@ -219,33 +210,21 @@ public class ProjectCommandsModule : Base​Command​Module
         return;
         } else if (classType == "." && span == "planned" && group != ".") {
             try {
-                using (var db = new JackTheStudentContext()){
-                var projects = db.Project
-                    .Where(x => x.Date > DateTime.Now && x.GroupId == group)
-                    .ToList();
-                    if (projects.Count == 0) {
-                            await ctx.RespondAsync("Wait what!? There are no projects planned for any class for group " + group + "!");
-                    } else {
-                        string result = String.Empty;
-                        string participantsString = String.Empty;
-
-                        if (isGroup == "1" || isGroup == ".") {
-                            isParticipants = await ParticipantsQuestion(ctx);
+                projects = projects.Where(p => p.Date > DateTime.Now && p.GroupId == group).ToList();
+                if (projects.Count == 0) {
+                        await ctx.RespondAsync($"Wait what!? There are no projects planned for any class for group {group}!");
+                } else {
+                    if (isGroup == "1" || isGroup == ".") {
+                        isParticipants = await ParticipantsQuestion(ctx);
+                    }     
+                    foreach (Project project in projects) {
+                        if (project.isGroup && isParticipants) {
+                            participantsString = await GetParticipantsString(await project.GetParticipants());
                         }
-            
-                        foreach (Project project in projects) {
-                            if (project.isGroup && isParticipants) {
-                                participantsString = await GetParticipantsString(await project.GetParticipants());
-                            }
 
-                            result = result + "\n" + CultureInfo.CurrentCulture.TextInfo
-                                                        .ToTitleCase(JackTheStudent.Program.classList
-                                                        .Where( c => c.ShortName == project.Class)
-                                                        .Select( c => c.Name)
-                                                        .FirstOrDefault()) + " project for group " + project.GroupId + ", deadline is " + project.Date + participantsString;
-                        }
-                        await ctx.RespondAsync(result);
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} project for group {project.GroupId}, deadline is {project.Date}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}")}.{participantsString}";
                     }
+                    await ctx.RespondAsync(result);
                 }
             } catch(Exception ex) {
                 Console.Error.WriteLine("[Jack] " + ex.ToString());
@@ -254,130 +233,72 @@ public class ProjectCommandsModule : Base​Command​Module
             }
         return;
         } else if (classType != "." && span == "planned" && group != ".") {
-
-            if(JackTheStudent.Program.classList.Any(c => c.ShortName == classType)) {
-                try {
-                    using (var db = new JackTheStudentContext()){
-                        var projects = db.Project
-                            .Where(x => x.Date > DateTime.Now && x.Class == classType && x.GroupId == group)
-                            .ToList();                     
-
-                        if (projects.Count == 0) {
-                            string response = "There are no " + JackTheStudent.Program.classList
-                                                                .Where( c => c.ShortName == classType)
-                                                                .Select( c => c.Name)
-                                                                .FirstOrDefault() + " projects planned for group " + group + "!";
-                            await ctx.RespondAsync(response);
-                            return;
-                        } else {
-                            string result = String.Empty;
-                            string participantsString = String.Empty;
-
-                            if (isGroup == "1" || isGroup == ".") {
-                                isParticipants = await ParticipantsQuestion(ctx);
-                            }
-
-                            foreach (Project project in projects) {
-                                if (project.isGroup && isParticipants) {
-                                    participantsString = await GetParticipantsString(await project.GetParticipants());
-                                }
-                                result = result + "\n" + CultureInfo.CurrentCulture.TextInfo
-                                                            .ToTitleCase(JackTheStudent.Program.classList
-                                                            .Where( c => c.ShortName == project.Class)
-                                                            .Select( c => c.Name)
-                                                            .FirstOrDefault()) + " project for group " + project.GroupId + ", deadline is " + project.Date + participantsString;
-                            }
-                            await ctx.RespondAsync(result);
-                            return;
-                        }                           
-                    }
-                } catch(Exception ex) {
-                    Console.Error.WriteLine("[Jack] " + ex.ToString());
-                    await ctx.RespondAsync("Show logs failed");
+            try {
+                projects = projects.Where(p => p.Date > DateTime.Now && p.Class == classType && p.GroupId == group).ToList();                     
+                if (projects.Count == 0) {
+                    await ctx.RespondAsync($"There are no {projects.Select(p => p.Class).FirstOrDefault()} projects planned for group {group}!");
                     return;
-                }
-            } else {
-                await ctx.RespondAsync("Learn to read you dumbass. The command looks like: !projects <group> <group> <projectDate> <projectTime> Try again!");
+                } else {
+                    if (isGroup == "1" || isGroup == ".") {
+                        isParticipants = await ParticipantsQuestion(ctx);
+                    }
+                    foreach (Project project in projects) {
+                        if (project.isGroup && isParticipants) {
+                            participantsString = await GetParticipantsString(await project.GetParticipants());
+                        }
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} project for group {project.GroupId}, deadline is {project.Date}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}")}.{participantsString}";
+                    }
+                    await ctx.RespondAsync(result);
+                    return;
+                }                           
+            } catch(Exception ex) {
+                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                await ctx.RespondAsync("Show logs failed");
                 return;
-            }                    
+            }                
         } else if (classType != "." && span == "." && group != ".") {
-            if(JackTheStudent.Program.classList.Any(c => c.ShortName == classType)) {
-                try {
-                    using (var db = new JackTheStudentContext()){
-                        var projects = db.Project
-                            .Where(x => x.Class == classType && x.GroupId == group)
-                            .ToList();                     
-
-                        if (projects.Count == 0) {
-                            string response = "There is no project logged for " + JackTheStudent.Program.classList
-                                                                                    .Where( c => c.ShortName == classType)
-                                                                                    .Select( c => c.Name)
-                                                                                    .FirstOrDefault() + " class " + "for group " + group + "!";;
-                            await ctx.RespondAsync(response);
-                            return;
-                        } else {
-                            string result = String.Empty;
-                            string participantsString = String.Empty;
-
-                            if (isGroup == "1" || isGroup == ".") {
-                                isParticipants = await ParticipantsQuestion(ctx);
-                            }
-
-                            foreach (Project project in projects) {
-                                if (project.isGroup && isParticipants) {
-                                    participantsString = await GetParticipantsString(await project.GetParticipants());
-                                }
-                                result = result + "\n" + CultureInfo.CurrentCulture.TextInfo
-                                                            .ToTitleCase(JackTheStudent.Program.classList
-                                                            .Where( c => c.ShortName == project.Class)
-                                                            .Select( c => c.Name)
-                                                            .FirstOrDefault()) + " project for group " + project.GroupId + ", will happen / happened on " + project.Date + participantsString;
-                            }
-                            await ctx.RespondAsync(result);
-                            return;
-                        }                           
-                    }
-                } catch(Exception ex) {
-                    Console.Error.WriteLine("[Jack] " + ex.ToString());
-                    await ctx.RespondAsync("Show logs failed");
+            try {
+                projects = projects.Where(p => p.Class == classType && p.GroupId == group).ToList();                     
+                if (projects.Count == 0) {
+                    await ctx.RespondAsync($"There are no projects logged for {projects.Select(p => p.Class).FirstOrDefault()} class for group {group}!");
                     return;
-                }
-            } else {
-                await ctx.RespondAsync("Ya know there's only either all possible events or the ones that didn't happen right? Get yo facts straight negro!");
+                } else {
+                    if (isGroup == "1" || isGroup == ".") {
+                        isParticipants = await ParticipantsQuestion(ctx);
+                    }
+                    foreach (Project project in projects) {
+                        if (project.isGroup && isParticipants) {
+                            participantsString = await GetParticipantsString(await project.GetParticipants());
+                        }
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} project for group {project.GroupId}, will happen / happened on {project.Date}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}")}.{participantsString}";
+                    }
+                    await ctx.RespondAsync(result);
+                    return;
+                }                           
+            } catch(Exception ex) {
+                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                await ctx.RespondAsync("Show logs failed");
                 return;
-            }                   
+            }                 
         } else {
             try {
-                using (var db = new JackTheStudentContext()){
-                    var projects = db.Project.ToList();                     
-
-                    if (projects.Count == 0) {
-                        string response = "There aren no projects logged!";
-                        await ctx.RespondAsync(response);
-                        return;
-                    } else {
-                        string result = String.Empty;
-                        string participantsString = String.Empty;
-
-                        if (isGroup == "1" || isGroup == ".") {
-                            isParticipants = await ParticipantsQuestion(ctx);
+                projects = projects.ToList();                     
+                if (projects.Count == 0) {
+                    await ctx.RespondAsync("There are no projects logged!");
+                    return;
+                } else {
+                    if (isGroup == "1" || isGroup == ".") {
+                        isParticipants = await ParticipantsQuestion(ctx);
+                    }     
+                    foreach (Project project in projects) {
+                        if (project.isGroup && isParticipants) {
+                            participantsString = await GetParticipantsString(await project.GetParticipants());
                         }
-
-                        
-                        foreach (Project project in projects) {
-                            if (project.isGroup && isParticipants) {
-                                participantsString = await GetParticipantsString(await project.GetParticipants());
-                            }
-                            result = result + "\n" + CultureInfo.CurrentCulture.TextInfo
-                                                        .ToTitleCase(JackTheStudent.Program.classList
-                                                        .Where( c => c.ShortName == project.Class)
-                                                        .Select( c => c.Name)
-                                                        .FirstOrDefault()) + " project for group " + project.GroupId + ", will happen / happened " + project.Date + participantsString;
-                        }
-                        await ctx.RespondAsync(result);
-                        return;
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} project for group {project.GroupId}, will happen / happened on {project.Date}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}")}.{participantsString}";
                     }
-                }                           
+                    await ctx.RespondAsync(result);
+                    return;
+                }                       
             } catch(Exception ex) {
                 Console.Error.WriteLine("[Jack] " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");

@@ -48,7 +48,7 @@ namespace JackTheStudent
     {
         try {
             using (var db = new JackTheStudentContext()){
-                //await db.Database.ExecuteSqlRawAsync("SET time_zone = Europe/Warsaw;");
+                await db.Database.ExecuteSqlRawAsync("SET time_zone = '+01:00';");
                 classTypeList = db.ClassType.ToList();
                 groupList = db.Group.Select(x => x.GroupId).ToList();
                 classList = db.Class.ToList();

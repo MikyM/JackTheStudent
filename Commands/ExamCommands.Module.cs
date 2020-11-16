@@ -1,13 +1,10 @@
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
-using DSharpPlus.Entities;
-using DSharpPlus.Interactivity;
 using System;
 using System.Threading.Tasks;
 using JackTheStudent.Models;
 using System.Linq;
 using System.Globalization;
-using System.Collections.Generic;
 
 namespace JackTheStudent.Commands
 {
@@ -21,9 +18,7 @@ public class ExamCommandsModule : Base​Command​Module
         "\n!exam <classShortName> <examDate> <examTime> <additionalInfo> <materials>\n" + 
         "\nExamples:\n" +
         "\n!exam mat 05-05-2021 13:30" + 
-        "\n!exam ele 05-05-2021 12:30 \"Calculator required\"" +
-        "\n!exam mat 05-05-2021 13:30 \"Calculator required\" \"https://yourmaterials.com\"" +
-        "\n!exam eng 05-05-2021 13:30 . \"https://yourmaterials.com\"")]
+        "\n!exam ele 05-05-2021 12:30 \"Calculator required\"")]
     public async Task ExamLog(CommandContext ctx,
         [Description ("\nTakes class' short names, type !class to retrive all classes.\n")] string classType = "", 
         [Description ("\nTakes dates in dd/mm/yyyy format, accepts different separators.\n")] string examDate = "", 
@@ -57,12 +52,11 @@ public class ExamCommandsModule : Base​Command​Module
                 using (var db = new JackTheStudentContext()){
                 var exam = new Exam {
                     ClassShortName = classType,
-                    Class = JackTheStudent.Program.classList.Where(e => e.ShortName == classType).Select(e => e.Name).FirstOrDefault(),
+                    Class = JackTheStudent.Program.classList.Where(c => c.ShortName == classType).Select(c => c.Name).FirstOrDefault(),
                     Date = parsedEventDate.Date.Add(parsedEventTime.TimeOfDay),
                     LogById = ctx.Message.Author.Id.ToString(),
                     LogByUsername = ctx.Message.Author.Username + "#" + ctx.Message.Author.Discriminator,
-                    AdditionalInfo = additionalInfo,
-                    Materials = materials
+                    AdditionalInfo = additionalInfo
                 };
                 JackTheStudent.Program.examList.Add(exam);
                 db.Exam.Add(exam);
@@ -94,16 +88,25 @@ public class ExamCommandsModule : Base​Command​Module
         [Description("\nTakes class' short names or \".\", type !class to retrieve all classes, usage of \".\" will tell Jack to retrieve exam for ALL classes.\n")] string classType = ".",
         [Description("\nTakes \".\" or \"planned\", usage of \".\" will tell Jack to retrieve ALL logged exams, \"planned\" retrieves only future events.\n")] string span = "planned")
     {   
-        var exams = JackTheStudent.Program.examList;    
+        if (!JackTheStudent.Program.classList.Any(c => c.ShortName == classType) && classType != ".") {
+            await ctx.RespondAsync("There's no such class, you high bruh?");
+            return;
+        } else if (span != "." && span != "planned") {
+            await ctx.RespondAsync("Span only accepts . and planned values");
+            return;
+        }    
+
+        var exams = JackTheStudent.Program.examList;
+        var result = String.Empty;
+
         if (classType == "." && span == "planned") {
             try {
                 exams = exams.Where(e => e.Date > DateTime.Now).ToList();
                     if (exams.Count == 0) {
                             await ctx.RespondAsync("Wait what!? There are no exams planned, PAAAARTTTIEEEHH TIIIIIIIIMEEEEEEE!");
                     } else {
-                        string result = String.Empty;
                         foreach (Exam exam in exams) {
-                                result = result + "\n" + CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class) + " exam will happen on " + exam.Date;
+                                result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class)} exam will happen on {exam.Date}.{(exam.AdditionalInfo.Equals("") ? "" : $"Additional info: {exam.AdditionalInfo}")}";
                         }
                         await ctx.RespondAsync(result);
                     }
@@ -119,9 +122,8 @@ public class ExamCommandsModule : Base​Command​Module
                     if (exams.Count == 0) {
                             await ctx.RespondAsync("There are no exams logged!");
                     } else {
-                        string result = String.Empty;
                         foreach (Exam exam in exams) {
-                            result = result + "\n" + CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class) + " exam will happen / happened on " + exam.Date;
+                            result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class)} exam will happen / happened on {exam.Date}.{(exam.AdditionalInfo.Equals("") ? "" : $"Additional info: {exam.AdditionalInfo}")}";
                         }
                         await ctx.RespondAsync(result);
                     }
@@ -135,13 +137,11 @@ public class ExamCommandsModule : Base​Command​Module
                 try {
                     exams = exams.Where(e => e.Date > DateTime.Now && e.ClassShortName == classType).ToList();                     
                     if (exams.Count == 0) {
-                        string response = "There are no " + exams.Select(e => e.Class).FirstOrDefault() + " exams planned!";
-                        await ctx.RespondAsync(response);
+                        await ctx.RespondAsync($"There are no {exams.Select(e => e.Class).FirstOrDefault()} exams planned!");
                         return;
                     } else {
-                        string result = String.Empty;
                         foreach (Exam exam in exams) {
-                            result = result + "\n" + CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class) + $" exam will happen on {exam.Date}";
+                            result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class)} exam will happen on {exam.Date}.{(exam.AdditionalInfo.Equals("") ? "" : $"Additional info: {exam.AdditionalInfo}")}";
                         }
                         await ctx.RespondAsync(result);
                         return;
@@ -155,13 +155,11 @@ public class ExamCommandsModule : Base​Command​Module
             try {
                 exams = exams.Where (e => e.ClassShortName == classType).ToList();                  
                 if (exams.Count == 0) {
-                    string response = "There are no logged exams for " + exams.Select(e => e.Class).FirstOrDefault() + "class!";
-                    await ctx.RespondAsync(response);
+                    await ctx.RespondAsync($"There are no logged exams for {exams.Select(e => e.Class).FirstOrDefault()} class!");
                     return;
                 } else {
-                    string result = String.Empty;
                     foreach (Exam exam in exams) {
-                        result = result + "\n" + CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class) + $" exam will happen / happened on {exam.Date}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class)} exam will happen / happened on {exam.Date}.{(exam.AdditionalInfo.Equals("") ? "" : $"Additional info: {exam.AdditionalInfo}")}";
                     }
                     await ctx.RespondAsync(result);
                     return;
