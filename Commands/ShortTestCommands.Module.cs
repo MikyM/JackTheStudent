@@ -6,7 +6,6 @@ using JackTheStudent.Models;
 using System.Linq;
 using System.Globalization;
 
-/* Create our class and extend from IModule */
 namespace JackTheStudent.Commands
 {
 public class ShortTestCommandsModule : Base​Command​Module
@@ -34,7 +33,7 @@ public class ShortTestCommandsModule : Base​Command​Module
         if(groupId == "") {
             await ctx.RespondAsync("Learn to read you dumbass. The command looks like: !shorttest <group> <class> <shortTestDate> <shortTestTime> Try again!");
             return;
-        } else if (!JackTheStudent.Program.groupList.Contains(groupId)){
+        } else if (!JackTheStudent.Program.groupList.Any(g => g.GroupId == groupId)){
             await ctx.RespondAsync("There's no such group dumbass. Try again!");
             return;
         } else if (classType == "") {
@@ -101,7 +100,7 @@ public class ShortTestCommandsModule : Base​Command​Module
         [Description("\nTakes class' short names or \".\", type !class to retrieve all classes, usage of \".\" will tell Jack to retrieve short test for ALL classes.\n")] string classType = ".",
         [Description("\nTakes \".\" or \"planned\", usage of \".\" will tell Jack to retrieve all LOGGED short test, \"planned\" retrieves only future events.\n")] string span = "planned")
     {       
-        if (!JackTheStudent.Program.groupList.Contains(group) && group != ".") {
+        if (!JackTheStudent.Program.groupList.Any(g => g.GroupId == group) && group != ".") {
             await ctx.RespondAsync("There's no such group dumbass. Try again!");
             return;
         } else if (!JackTheStudent.Program.classList.Any(c => c.ShortName == classType) && classType != ".") {

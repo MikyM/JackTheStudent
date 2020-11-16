@@ -17,12 +17,14 @@ public class PersonalReminderCommandsModule : Base​Command​Module
         DateTime.TryParse(time, out parsedEventTime);
         DateTime.TryParse(date, out parsedEventDate);
         
-        PersonalReminder reminder = new PersonalReminder{SetForDate = parsedEventDate.Date.Add(parsedEventTime.TimeOfDay),
-                                                        LogById = ctx.Message.Author.Id,
-                                                        LogByUsername = ctx.Message.Author.Username + "#" + ctx.Message.Author.Discriminator,
-                                                        About = about,
-                                                        UserMention = ctx.Message.Author.Mention,
-                                                        ChannelId = ctx.Channel.Id};
+        PersonalReminder reminder = new PersonalReminder{
+            SetForDate = parsedEventDate.Date.Add(parsedEventTime.TimeOfDay),
+            LogById = ctx.Message.Author.Id,
+            LogByUsername = ctx.Message.Author.Username + "#" + ctx.Message.Author.Discriminator,
+            About = about,
+            UserMention = ctx.Message.Author.Mention,
+            ChannelId = ctx.Channel.Id
+        };
         JackTheStudent.Program.reminderList.Add(reminder);
         try {
             

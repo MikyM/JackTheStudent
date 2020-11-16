@@ -43,6 +43,7 @@ public class AdminCommandsModule : Base​Command​Module
                 await ctx.RespondAsync("Truncate failed");
                 return;
             }
+            JackTheStudent.Program.classList.Clear();
             await context.SaveChangesAsync();
             await ctx.RespondAsync("Truncate successful");
         }
@@ -110,8 +111,11 @@ public class AdminCommandsModule : Base​Command​Module
                     }
                 } 
  
-                var newClass = new Class {Name = classArray[0],
-                                          ShortName = classArray[1]};
+                var newClass = new Class {
+                    Name = classArray[0],
+                    ShortName = classArray[1]
+                };
+                JackTheStudent.Program.classList.Add(newClass);
                 db.Class.Add(newClass);
                 await ctx.RespondAsync($"Added class: {newClass.Name} with short name: {newClass.ShortName}");
                 Task.Delay(1000).Wait();          
@@ -161,6 +165,7 @@ public class AdminCommandsModule : Base​Command​Module
                 await ctx.RespondAsync("Truncate failed");
                 return;
             }
+            JackTheStudent.Program.groupList.Clear();
             await context.SaveChangesAsync();
             await ctx.RespondAsync("Truncate successful");
         }
@@ -207,6 +212,7 @@ public class AdminCommandsModule : Base​Command​Module
                 }
 
                 var newGroup = new Group {GroupId = groupId.Result.Content};
+                JackTheStudent.Program.groupList.Add(newGroup);
                 db.Group.Add(newGroup);
                 await ctx.RespondAsync($"Added group with ID: {newGroup.GroupId}.");
                 Task.Delay(1000).Wait();
@@ -230,7 +236,8 @@ public class AdminCommandsModule : Base​Command​Module
         using(var db = new JackTheStudentContext()) {
             await db.Database.ExecuteSqlRawAsync("truncate table `group`");
             foreach (Group backupGroup in backupList) {
-                    db.Group.Add(backupGroup);
+                db.Group.Add(backupGroup);
+                JackTheStudent.Program.groupList.Add(backupGroup);
             }
             await db.SaveChangesAsync();
         }
@@ -244,7 +251,8 @@ public class AdminCommandsModule : Base​Command​Module
         using(var db = new JackTheStudentContext()) {
             await db.Database.ExecuteSqlRawAsync("truncate table class");
             foreach (Class backupClass in backupList) {
-                    db.Class.Add(backupClass);
+                db.Class.Add(backupClass);
+                JackTheStudent.Program.classList.Add(backupClass);
             }
             await db.SaveChangesAsync();
         }

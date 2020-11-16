@@ -20,8 +20,8 @@ public class StudentCommandsModule : Base​Command​Module
                     await ctx.RespondAsync("No groups logged!");
             } else {
                 string result = String.Empty;
-                for(int i = 0; i < groups.Count(); i++) {
-                    result = $"{result} \n{groups[i]}";
+                foreach (Group group in groups) {
+                    result = $"{result} \n{group.GroupId}";
                 }
                 await ctx.RespondAsync(result);
             }
@@ -44,7 +44,7 @@ public class StudentCommandsModule : Base​Command​Module
             } else {
                 string result = String.Empty;
                 foreach (Class uniClass in classes) {
-                    result = $"{result} \n Class - {uniClass.Name}, short version - {uniClass.ShortName}";
+                    result = $"{result} \nClass - {uniClass.Name}, short version - {uniClass.ShortName}";
                 }
                 await ctx.RespondAsync(result);
             }

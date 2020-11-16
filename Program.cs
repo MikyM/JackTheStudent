@@ -9,7 +9,6 @@ using DSharpPlus.CommandsNext;
 using DSharpPlus.Interactivity;
 using Microsoft.Extensions.Configuration;
 using System.Reflection;
-//using System.Timers;
 using System.Collections.Generic;
 using JackTheStudent.Models;
 using DSharpPlus.EventArgs;
@@ -30,7 +29,7 @@ namespace JackTheStudent
     private static Timer timer;
     public static List<PersonalReminder> reminderList = new List<PersonalReminder>();
     public static List<Class> classList = new List<Class>();
-    public static List<string> groupList = new List<string>();
+    public static List<Group> groupList = new List<Group>();
     public static List<ClassType> classTypeList = new List<ClassType>();
     public static List<string> quotes = new List<string>();
     public static List<string> weatherCities = new List<string>();
@@ -41,7 +40,7 @@ namespace JackTheStudent
     public static List<ShortTest> shortTestList = new List<ShortTest>();
     public static List<TeamsLink> teamsLinkList = new List<TeamsLink>();
     public static List<Homework> homeworkList = new List<Homework>();
-    public static List<ClassMaterial> ClassMaterialList = new List<ClassMaterial>();
+    public static List<ClassMaterial> classMaterialList = new List<ClassMaterial>();
     static async Task Main(string[] args) => await new Program().InitBot(args);
 
     async Task InitBot(string[] args)
@@ -50,12 +49,12 @@ namespace JackTheStudent
             using (var db = new JackTheStudentContext()){
                 await db.Database.ExecuteSqlRawAsync("SET time_zone = '+01:00';");
                 classTypeList = db.ClassType.ToList();
-                groupList = db.Group.Select(x => x.GroupId).ToList();
+                groupList = db.Group.ToList();
                 classList = db.Class.ToList();
                 reminderList = db.PersonalReminder.ToList();
                 examList = db.Exam.ToList();
                 shortTestList = db.ShortTest.ToList();
-                ClassMaterialList = db.ClassMaterial.ToList();
+                classMaterialList = db.ClassMaterial.ToList();
                 homeworkList = db.Homework.ToList();
                 labReportList = db.LabReport.ToList();
                 projectList = db.Project.ToList();

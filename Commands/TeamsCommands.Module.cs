@@ -6,7 +6,6 @@ using JackTheStudent.Models;
 using System.Linq;
 using System.Globalization;
 
-/* Create our class and extend from IModule */
 namespace JackTheStudent.Commands
 {
 
@@ -64,7 +63,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
         } else if (!link.Contains("teams.microsoft.com/l/meetup-join/19%3ameeting")) {
             await ctx.RespondAsync("That's not a valid teams meetup link!");
             return;
-        } else if (!JackTheStudent.Program.groupList.Contains(groupId) && groupId != "."){
+        } else if (!JackTheStudent.Program.groupList.Any(g => g.GroupId == groupId) && groupId != "."){
             await ctx.RespondAsync("There's no such group dumbass. Try again!");
             return;      
         } else {
@@ -121,7 +120,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
         } else if (!JackTheStudent.Program.classTypeList.Any(c => c.ShortName == classType) && classType != ".") {
             await ctx.RespondAsync("There's no such class type!");
             return;
-        } else if (!JackTheStudent.Program.groupList.Contains(group) && group != ".") {
+        } else if (!JackTheStudent.Program.groupList.Any(g => g.GroupId == group) && group != ".") {
             await ctx.RespondAsync("There's no such group dumbass. Try again!");
             return;
         }

@@ -10,7 +10,6 @@ using System.IO;
 using DSharpPlus.Interactivity.Extensions;
 using JackTheStudent.CommandDescriptions;
 
-/* Create our class and extend from IModule */
 namespace JackTheStudent.Commands
 {
 public class ProjectCommandsModule : Base​Command​Module
@@ -36,7 +35,7 @@ public class ProjectCommandsModule : Base​Command​Module
         } else if(groupId == "") {
             await ctx.RespondAsync("Learn to read you dumbass. The command looks like: !project <isGroup> <group> <class> <projectDate> <projectTime> Try again!");
             return;
-        } else if (!JackTheStudent.Program.groupList.Contains(groupId)){
+        } else if (!JackTheStudent.Program.groupList.Any(g => g.GroupId == groupId)){
             await ctx.RespondAsync("There's no such group dumbass. Try again!");
             return;
         } else if (classType == "") {
@@ -142,7 +141,7 @@ public class ProjectCommandsModule : Base​Command​Module
         [Description("\nTakes 0 for only individual projects, 1 for group projects or \".\" for all projects\n")] string isGroup = ".",
         [Description("\nTakes \".\" or \"planned\", usage of \".\" will tell Jack to retrieve all LOGGED project, \"planned\" retrieves only future events.\n")] string span = "planned")
     {      
-        if (!JackTheStudent.Program.groupList.Contains(group) && group != ".") {
+        if (!JackTheStudent.Program.groupList.Any(g => g.GroupId == group) && group != ".") {
             await ctx.RespondAsync("There's no such group dumbass. Try again!");
             return;
         } else if (!JackTheStudent.Program.classList.Any(c => c.ShortName == classType) && classType != ".") {
