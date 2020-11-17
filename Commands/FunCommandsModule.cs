@@ -1,20 +1,21 @@
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
+using DSharp​Plus;
 using System;
 using System.Threading.Tasks;
 using System.Linq;
 using DSharpPlus.Interactivity.Extensions;
 using HtmlAgilityPack;
+using JackTheStudent.CommandDescriptions; 
+using System.Collections.Generic;
 
 namespace JackTheStudent.Commands
 {
 public class FunCommandsModule : Base​Command​Module
 {
-
-
     [Command("roll")]
-    [Description("Rolls a random number from 1 to 100 which's considered your lucky number.")]
+    [Description(FunDescriptions.rollDescription)]
     public async Task Roll(CommandContext ctx)
     {
         Random r = new Random();
@@ -24,7 +25,7 @@ public class FunCommandsModule : Base​Command​Module
 
 
     [Command("chances")]
-    [Description("A complex algorithm used to calculate your chances of passing an exam or any other thing you wish to pass.")]
+    [Description(FunDescriptions.chancesDescription)]    
     public async Task Chances(CommandContext ctx)
     {
         await ctx.TriggerTypingAsync();
@@ -55,6 +56,9 @@ public class FunCommandsModule : Base​Command​Module
                 await ctx.RespondAsync("Low skills and above average luck, but do you really want to trust on that?");
             } else if (luck > 75 && luck <= 100) {
                 await ctx.RespondAsync("Low skills and high luck, let the gamble begin!");
+            } else if (luck <= 0 || luck > 100) {
+                await ctx.RespondAsync("Too high, too low luck or you didn't type a number. Yikes. Please use !chances again and type luck from 1 to 100.");
+                return;
             }
              
         } else if (response.Result.Content == "4" || response.Result.Content == "5" || response.Result.Content == "6") {
@@ -74,6 +78,9 @@ public class FunCommandsModule : Base​Command​Module
                 await ctx.RespondAsync("Average skills and above average luck, kinda boring.");
             } else if (luck > 75 && luck <= 100) {
                 await ctx.RespondAsync("Average skills and high luck, has some potential to be good.");
+            } else if (luck <= 0 || luck > 100) {
+                await ctx.RespondAsync("Too high, too low luck or you didn't type a number. Yikes. Please use !chances again and type luck from 1 to 100.");
+                return;
             }
              
         } else if (response.Result.Content == "7" || response.Result.Content == "8" || response.Result.Content == "9") {
@@ -93,10 +100,13 @@ public class FunCommandsModule : Base​Command​Module
                 await ctx.RespondAsync("Above average skills and above average luck. You got this for sure.");
             } else if (luck > 75 && luck <= 100) {
                 await ctx.RespondAsync("Above average skills and high luck. Nothing can go wrong.");
+            } else if (luck <= 0 || luck > 100) {
+                await ctx.RespondAsync("Too high, too low luck or you didn't type a number. Yikes. Please use !chances again and type luck from 1 to 100.");
+                return;
             }
             
         } else if (response.Result.Content == "10") {
-            await ctx.RespondAsync("Wow, you really need this? What's your lucky number?");
+            await ctx.RespondAsync("Wow, do you really need this? What's your lucky number?");
             var response1 = await intr.WaitForMessageAsync(
                 c => c.Author.Id == ctx.Message.Author.Id,
                 TimeSpan.FromSeconds(15));
@@ -112,8 +122,21 @@ public class FunCommandsModule : Base​Command​Module
                 await ctx.RespondAsync("You know everything and have above average luck. Just go and write it already!");
             } else if (luck > 75 && luck <= 100) {
                 await ctx.RespondAsync("You know everything and have super high luck. Daaaaamn. This really can't go wrong.");
-            }    
-        }    
+            }  else if (luck <= 0 || luck > 100) {
+                await ctx.RespondAsync("Too high, too low luck or you didn't type a number. Yikes. Please use !chances again and type luck from 1 to 100.");
+                return;
+            }
+
+        } else if (response.Result.Content == "0") {
+            await ctx.RespondAsync("You can't know nothing, you always know something.");
+            return;
+
+        } else if (!(response.Result.Content == "1" || response.Result.Content == "2" || response.Result.Content == "3" || response.Result.Content == "4"
+        || response.Result.Content == "5" || response.Result.Content == "6" || response.Result.Content == "7" || response.Result.Content == "8" 
+        || response.Result.Content == "9" || response.Result.Content == "10")) {
+            await ctx.RespondAsync("Please use !chances again and type a number from 1 to 10.");
+            return;
+        }
 
         await ctx.RespondAsync("Despite my answer, I hope you pass it anyway. Good luck!");
 
@@ -121,7 +144,7 @@ public class FunCommandsModule : Base​Command​Module
 
     
     [Command("inspire")]
-    [Description("Throws a random inspirational quote straight at you.")]
+    [Description(FunDescriptions.inspireDescription)]
     public async Task Inspire(CommandContext ctx)    
     {
         var random = new Random();
@@ -131,16 +154,11 @@ public class FunCommandsModule : Base​Command​Module
 
 
     [Command("poll")]
-    [Description("Let the people decide!")]
-    public async Task Poll(CommandContext ctx, string dur = "" , params DiscordEmoji[] emojiOptions)
+    [Description(FunDescriptions.pollDescription)]
+    public async Task Poll(CommandContext ctx, string dur = "" , string input = "")
     {
         var intr = ctx.Client.GetInteractivity();
-
-        if (emojiOptions.Length == 0){
-            await ctx.RespondAsync("No emojis specified.");
-            return;
-        }
-            
+     
         try {
         TimeSpan durationX = TimeSpan.Parse(dur);
             }
@@ -160,41 +178,55 @@ public class FunCommandsModule : Base​Command​Module
             return;
         }
 
-        await ctx.TriggerTypingAsync();
-        await ctx.RespondAsync("What the poll should be about?");
-
-        var topic = await intr.WaitForMessageAsync(
-            c => c.Author.Id == ctx.Message.Author.Id, 
-            TimeSpan.FromSeconds(15));
-
-        if(topic.Result.Content == null) {
+        if(input == null) {
             await ctx.RespondAsync("Fuck your poll dude, I'm out.");
+            return;
         }
+
+        string[] emojiList = input.Split(new Char [] {','});
         
-        var pollEmojiOptions = emojiOptions.Select(e => e.ToString());
+        var pollEmojiOptions = emojiList.Select(e => e.ToString());
 
         var pollEmbed = new DiscordEmbedBuilder
         {
-            Title = "The poll is about: " + topic.Result.Content,
-            Description = "React with: " + string.Join(" ", pollEmojiOptions) + " to show others what you think.\nYou've got " + duration + ".\nGo go go!"
+            Title = "The poll is about: " + input,
+            Description = "React with :thumbsup: or :thumbsdown: to show what you think!\n\nYou have " + duration
         };
 
         var pollMsg = await ctx.RespondAsync(embed: pollEmbed);
 
-        foreach(var option in emojiOptions){
-            await pollMsg.CreateReactionAsync(option).ConfigureAwait(false);
+        List<string> list = new List<string>();
+
+        List<string> watermelon = new List<string>();
+        watermelon.Add(":thumbsup:");
+        watermelon.Add(":thumbsdown:");
+
+         for (int i = 0; i < 2; i++)
+        {
+            var random = new Random();
+            int index = random.Next(watermelon.Count());
+            await pollMsg.CreateReactionAsync(DiscordEmoji.FromName(ctx.Client, watermelon[index]));
+            watermelon.RemoveAt(index);
         }
+
+        //Result below, not emoji creation involed!!!
 
         var result = await intr.CollectReactionsAsync(pollMsg, duration).ConfigureAwait(false);
         var disctinctResult = result.Distinct();
         var results = disctinctResult.Select(x => $"{x.Emoji}: {x.Total}");
 
-        await ctx.RespondAsync("The poll about: " + topic.Result.Content + " has ended. Results:\n" + string.Join("\n", results) + "\nI hope you all enjoyed!");
+        var resultsEmbed = new DiscordEmbedBuilder
+        {
+            Title = "Results:",
+            Description = "Votes for: "+string.Join("\nVotes for: ", results)
+        };
+
+        var resultsMsg = await ctx.RespondAsync(embed: resultsEmbed);
     }   
 
 
     [Command("weather")]
-    [Description("Shows the weather!")]
+    [Description(FunDescriptions.weatherDescription)]
     public async Task Weather(CommandContext ctx, string city = "")
         {
             var url = "https://pogoda.wprost.pl/prognoza-pogody/" + city;

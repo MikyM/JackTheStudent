@@ -8,6 +8,7 @@ using JackTheStudent.Models;
 using System.Linq;
 using System.Globalization;
 using System.Collections.Generic;
+using JackTheStudent.CommandDescriptions;
 
 namespace JackTheStudent.Commands
 {
@@ -15,15 +16,7 @@ public class ExamCommandsModule : Base​Command​Module
 {
     
     [Command("exam")]
-    [Description("Command logging a exam, last two arguments are optional." +
-        "\nTo pass without addInfo but with materials use \".\" where addInfo should be.\n" +
-        "Words seperated with spaces must be wrapped with \"\"\n" +
-        "\n!exam <classShortName> <examDate> <examTime> <additionalInfo> <materials>\n" + 
-        "\nExamples:\n" +
-        "\n!exam mat 05-05-2021 13:30" + 
-        "\n!exam ele 05-05-2021 12:30 \"Calculator required\"" +
-        "\n!exam mat 05-05-2021 13:30 \"Calculator required\" \"https://yourmaterials.com\"" +
-        "\n!exam eng 05-05-2021 13:30 . \"https://yourmaterials.com\"")]
+    [Description(ExamDescriptions.examLogDescription)]
     public async Task ExamLog(CommandContext ctx,
         [Description ("\nTakes class' short names, type !class to retrive all classes.\n")] string classType = "", 
         [Description ("\nTakes dates in dd/mm/yyyy format, accepts different separators.\n")] string examDate = "", 
@@ -77,17 +70,7 @@ public class ExamCommandsModule : Base​Command​Module
     }
 
     [Command("exams")]
-    [Description("Command retrieving logged exam based on passed arguments, ALL arguments are optional and the command has default settings.\n" +
-        "\n!exams <classShortName> <alreadyTookPlace?>\n" + 
-        "\nType !classes to retrieve short names and !groups to retrieve group IDs" +
-        "\nUse \".\" to retrieve ALL possible entries for each argument, <alreadyTookPlace?> takes \"planned\" or \".\"\n" +
-        "\nExamples:\n" +
-        "\n!exams - will retrieve all PLANNED exam for all the classes" + 
-        "\n!exams mat - will retrieve all PLANNED exams for Maths class" +
-        "\n!exams mat planned - will retrieve all PLANNED exams for Maths class" +
-        "\n!exams mat . - will retrieve all LOGGGED exams for Maths class" +
-        "\n!exams . . - will retrieve all LOGGGED exams for ALL classes" + 
-        "\n!exams . planned - will retrieve all PLANNED exams for ALL classes")]
+    [Description(ExamDescriptions.examLogsDescription)]
     public async Task ExamLogs(CommandContext ctx, 
         [Description("\nTakes class' short names or \".\", type !class to retrieve all classes, usage of \".\" will tell Jack to retrieve exam for ALL classes.\n")] string classType = ".",
         [Description("\nTakes \".\" or \"planned\", usage of \".\" will tell Jack to retrieve ALL logged exams, \"planned\" retrieves only future events.\n")] string span = "planned")

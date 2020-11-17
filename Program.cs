@@ -23,7 +23,7 @@ namespace JackTheStudent
     {
     private CancellationTokenSource _cts { get; set; }
     private IConfigurationRoot _config;
-    private DiscordClient _discord;
+    private DiscordClient _discord;   
     private CommandsNextExtension _commands;
     private InteractivityExtension _interactivity;
     public static List<PersonalReminder> reminderList = new List<PersonalReminder>();

@@ -7422,7 +7422,7 @@
       "DSharpPlus >= 4.0.0-nightly-00748",
       "DSharpPlus.CommandsNext >= 4.0.0-nightly-00748",
       "DSharpPlus.Interactivity >= 4.0.0-nightly-00748",
-      "HtmlAgilityPack >= *",
+      "HtmlAgilityPack >= 1.11.28",
       "Microsoft.EntityFrameworkCore.Design >= 3.1.9",
       "Microsoft.EntityFrameworkCore.Tools >= 3.1.9",
       "Microsoft.Extensions.Configuration >= 3.1.9",
@@ -7485,7 +7485,7 @@
           },
           "HtmlAgilityPack": {
             "target": "Package",
-            "version": "[*, )"
+            "version": "[1.11.28, )"
           },
           "Microsoft.EntityFrameworkCore.Design": {
             "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",

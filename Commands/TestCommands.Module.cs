@@ -8,6 +8,7 @@ using JackTheStudent.Models;
 using System.Linq;
 using System.Collections.Generic;
 using System.Globalization;
+using JackTheStudent.CommandDescriptions;
 
 /* Create our class and extend from IModule */
 namespace JackTheStudent.Commands
@@ -16,15 +17,7 @@ public class TestCommandsModule : Base​Command​Module
 {
     
     [Command("test")]
-    [Description("Command logging a test, last two arguments are optional." +
-        "\nTo pass without addInfo but with materials use \".\" where addInfo should be.\n" +
-        "Words seperated with spaces must be wrapped with \"\"\n" +
-        "\n!test <groupId> <classShortName> <testDate> <testTime> <additionalInfo> <materials>\n" + 
-        "\nExamples:\n" +
-        "\n!test 3 mat 05-05-2021 13:30" + 
-        "\n!test 1 ele 05-05-2021 12:30 \"Calculator required\"" +
-        "\n!test 3 mat 05-05-2021 13:30 \"Calculator required\" \"https://yourmaterials.com\"" +
-        "\n!test 1 eng 05-05-2021 13:30 . \"https://yourmaterials.com\"")]
+    [Description(TestDescriptions.testLogDescription)]
     public async Task TestLog(CommandContext ctx,
         [Description ("\nTakes group IDs, type !group to retrieve all groups.\n")] string groupId = "", 
         [Description ("\nTakes class' short names, type !class to retrive all classes.\n")] string classType = "", 
@@ -85,20 +78,7 @@ public class TestCommandsModule : Base​Command​Module
     }
 
     [Command("tests")]
-    [Description("Command retrieving logged test based on passed arguments, ALL arguments are optional and the command has default settings.\n" +
-        "\n!tests <groupId> <classShortName> <alreadyTookPlace?>\n" + 
-        "\nType !classes to retrieve short names and !groups to retrieve group IDs" +
-        "\nUse \".\" to retrieve ALL possible entries for each argument, <alreadyTookPlace?> takes \"planned\" or \".\"\n" +
-        "\nExamples:\n" +
-        "\n!tests - will retrieve all PLANNED tests for all the groups and all the classes" + 
-        "\n!tests 1 - will retrieve all PLANNED tests for group 1 for all the classes" +
-        "\n!tests 1 mat - will retrieve all PLANNED tests for group 1 for Maths class" +
-        "\n!tests 1 mat planned - will retrieve all PLANNED tests for group 1 for Maths class" +
-        "\n!tests 1 mat . - will retrieve all LOGGED tests for group 1 for Maths class" +
-        "\n!tests 1 . . - will retrieve all LOGGED tests for group 1 for ALL classes" + 
-        "\n!tests . . . - will retrieve all LOGGED tests for ALL groups for ALL classes" +
-        "\n!tests . mat . - will retrieve all LOGGED tests for ALL groups for MAths class" +
-        "\n!tests . . planned - will retrieve all PLANNED tests for ALL groups for ALL classes")]
+    [Description(TestDescriptions.testLogsDescription)]
     public async Task TestLogs(CommandContext ctx, 
         [Description("\nTakes group IDs or \".\", type !group to retrieve all groups, usage of \".\" will tell Jack to retrieve test for ALL groups.\n")] string group = ".",
         [Description("\nTakes class' short names or \".\", type !class to retrieve all classes, usage of \".\" will tell Jack to retrieve test for ALL classes.\n")] string classType = ".",
