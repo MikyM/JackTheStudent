@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using JackTheStudent.Models;
 using System.Linq;
 using System.Globalization;
+using Serilog;
 
 namespace JackTheStudent.Commands
 {
@@ -68,9 +69,10 @@ public class HomeworkCommandsModule : Base​Command​Module
                 JackTheStudent.Program.homeworkList.Add(homeWork);
                 db.Homework.Add(homeWork);
                 await db.SaveChangesAsync();
+                Log.Logger.Information($"[Jack] {ctx.Message.Author.Id} logged new homework with ID: {homeWork.Id}");
                 }
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] New homework log, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Log failed");
                 return;
             }
@@ -125,7 +127,7 @@ public class HomeworkCommandsModule : Base​Command​Module
                         await ctx.RespondAsync(result);
                     }
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Homework logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
@@ -142,7 +144,7 @@ public class HomeworkCommandsModule : Base​Command​Module
                         await ctx.RespondAsync(result);
                     }
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Homework logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
@@ -159,7 +161,7 @@ public class HomeworkCommandsModule : Base​Command​Module
                         await ctx.RespondAsync(result);
                     }
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Homework logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
@@ -178,7 +180,7 @@ public class HomeworkCommandsModule : Base​Command​Module
                     return;
                 }                           
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Homework logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }                
@@ -196,7 +198,7 @@ public class HomeworkCommandsModule : Base​Command​Module
                     return;
                 }                           
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Homework logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }               
@@ -214,7 +216,7 @@ public class HomeworkCommandsModule : Base​Command​Module
                     return;
                 }                       
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Homework logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }

@@ -412,6 +412,11 @@ namespace JackTheStudent.Models
                     .IsRequired()
                     .HasColumnName("about")
                     .HasColumnType("longtext");
+                
+                entity.Property(e => e.WasReminded)
+                    .IsRequired()
+                    .HasColumnName("was_reminded")
+                    .HasColumnType("tinyint(1)");
 
                 entity.Property(e => e.LogById)
                     .IsRequired()

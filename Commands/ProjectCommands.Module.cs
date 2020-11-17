@@ -9,6 +9,7 @@ using System.Globalization;
 using System.IO;
 using DSharpPlus.Interactivity.Extensions;
 using JackTheStudent.CommandDescriptions;
+using Serilog;
 
 namespace JackTheStudent.Commands
 {
@@ -72,9 +73,10 @@ public class ProjectCommandsModule : Base​Command​Module
                 JackTheStudent.Program.projectList.Add(project);
                 db.Project.Add(project);
                 await db.SaveChangesAsync();
+                Log.Logger.Information($"{ctx.Message.Author.Id} logged new project with ID: {project.Id}");  
                 }
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] New project log, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Log failed");
                 return;
             }
@@ -122,13 +124,14 @@ public class ProjectCommandsModule : Base​Command​Module
                 JackTheStudent.Program.projectList.Add(project);
                 db.Project.Add(project);
                 await db.SaveChangesAsync();
+                Log.Logger.Information($"{ctx.Message.Author.Id} logged new project with ID: {project.Id}");  
             }
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] New project log, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Log failed");
                 return;
             }
-        await ctx.RespondAsync("Project logged successfully");     
+        await ctx.RespondAsync("Project logged successfully");   
         return;        
         }  
     }
@@ -176,7 +179,7 @@ public class ProjectCommandsModule : Base​Command​Module
                         await ctx.RespondAsync(result);
                     }
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Project logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
@@ -200,7 +203,7 @@ public class ProjectCommandsModule : Base​Command​Module
                         await ctx.RespondAsync(result);
                     }
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Project logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
@@ -224,7 +227,7 @@ public class ProjectCommandsModule : Base​Command​Module
                     await ctx.RespondAsync(result);
                 }
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Project logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
@@ -249,7 +252,7 @@ public class ProjectCommandsModule : Base​Command​Module
                     return;
                 }                           
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Project logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }                
@@ -273,7 +276,7 @@ public class ProjectCommandsModule : Base​Command​Module
                     return;
                 }                           
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Project logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }                 
@@ -297,7 +300,7 @@ public class ProjectCommandsModule : Base​Command​Module
                     return;
                 }                       
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Project logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }

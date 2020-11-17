@@ -4,6 +4,7 @@ using System;
 using System.Threading.Tasks;
 using JackTheStudent.Models;
 using System.Linq;
+using Serilog;
 using System.Globalization;
 
 namespace JackTheStudent.Commands
@@ -83,9 +84,10 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                 JackTheStudent.Program.teamsLinkList.Add(teamsLink);
                 db.TeamsLink.Add(teamsLink);
                 await db.SaveChangesAsync();
+                Log.Logger.Information($"[Jack] {ctx.Message.Author.Id} logged new teams link with ID: {teamsLink.Id}");
                 }
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] New teams link log, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Log failed");
                 return;
             }
@@ -151,7 +153,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                     await ctx.RespondAsync(result);
                 }
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Teams link logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
@@ -175,7 +177,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                     await ctx.RespondAsync(result);
                 }
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Teams link logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
@@ -199,7 +201,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                     await ctx.RespondAsync(result);
                 }
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Teams link logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
@@ -225,7 +227,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                     return;
                 }                           
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Teams link logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }                   
@@ -247,7 +249,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                     return;
                 }                           
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Teams link logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
@@ -268,7 +270,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                     return;
                 }                           
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Teams link logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }                
@@ -289,7 +291,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                     return;
                 }                          
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Teams link logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }

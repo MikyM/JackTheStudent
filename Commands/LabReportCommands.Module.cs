@@ -4,6 +4,7 @@ using System;
 using System.Threading.Tasks;
 using JackTheStudent.Models;
 using System.Linq;
+using Serilog;
 using System.Globalization;
 namespace JackTheStudent.Commands
 {
@@ -67,9 +68,10 @@ public class LabReportCommandsModule : Base​Command​Module
                 JackTheStudent.Program.labReportList.Add(labReport);
                 db.LabReport.Add(labReport);
                 await db.SaveChangesAsync();
+                Log.Logger.Information($"[Jack] {ctx.Message.Author.Id} logged new lab report with ID: {labReport.Id}");
                 }
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] New lab report log, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Log failed");
                 return;
             }
@@ -124,7 +126,7 @@ public class LabReportCommandsModule : Base​Command​Module
                     await ctx.RespondAsync(result);
                 }
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Lab report logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
@@ -141,7 +143,7 @@ public class LabReportCommandsModule : Base​Command​Module
                     await ctx.RespondAsync(result);
                 }
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Lab report logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
@@ -158,7 +160,7 @@ public class LabReportCommandsModule : Base​Command​Module
                     await ctx.RespondAsync(result);
                 }
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Lab report logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
@@ -177,7 +179,7 @@ public class LabReportCommandsModule : Base​Command​Module
                     return;
                 }                           
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Lab report logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }                 
@@ -195,7 +197,7 @@ public class LabReportCommandsModule : Base​Command​Module
                     return;
                 }                           
                 } catch(Exception ex) {
-                    Console.Error.WriteLine("[Jack] " + ex.ToString());
+                    Log.Logger.Error($"[Jack] Lab report logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                     await ctx.RespondAsync("Show logs failed");
                     return;
                 }                 
@@ -213,7 +215,7 @@ public class LabReportCommandsModule : Base​Command​Module
                     return;
                 }                        
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Lab report logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using JackTheStudent.Models;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
+using Serilog;
 
 namespace JackTheStudent.Commands
 {
@@ -33,11 +34,11 @@ public class PersonalReminderCommandsModule : Base​Command​Module
                 await db.SaveChangesAsync();
             }
         } catch(Exception ex) {
-            Console.Error.WriteLine("[Jack] " + ex.ToString());
+            Log.Logger.Error($"[Jack] New reminder log, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
             await ctx.RespondAsync("Log failed");
             return;
         }
-        
+        Log.Logger.Information($"[Jack] {ctx.Message.Author.Id} logged new personal reminder with ID: {reminder.Id}");
         await ctx.RespondAsync($"Reminder about \"{about}\" set for {date} {time}");
     }
 
@@ -46,16 +47,24 @@ public class PersonalReminderCommandsModule : Base​Command​Module
     [Description("Semester group class table rebuild")]
     public async Task ReminderLogs(CommandContext ctx)
     {
-        bool isEmpty = true;
-        foreach (PersonalReminder reminder in JackTheStudent.Program.reminderList) {
-            if (reminder.LogById == ctx.Message.Author.Id) {
-                await ctx.RespondAsync($"You have a reminder about \"{reminder.About}\" set for {reminder.SetForDate}.");
-                isEmpty = false;
+        try {
+            bool isEmpty = true;
+            foreach (PersonalReminder reminder in JackTheStudent.Program.reminderList) {
+                if (reminder.LogById == ctx.Message.Author.Id) {
+                    await ctx.RespondAsync($"You have a reminder about \"{reminder.About}\" set for {reminder.SetForDate}.");
+                    isEmpty = false;
+                }
             }
+            if(isEmpty) {
+                await ctx.RespondAsync("You don't have any reminders set.");
+                return;
+            }
+        } catch(Exception ex) {
+            Log.Logger.Error($"[Jack] Reminder logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
+            await ctx.RespondAsync("Log failed");
+            return;
         }
-        if(isEmpty) {
-            await ctx.RespondAsync("You don't have any reminders set.");
-        }
+        
     }
 
 }

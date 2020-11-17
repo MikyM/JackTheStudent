@@ -4,6 +4,7 @@ using System;
 using System.Threading.Tasks;
 using JackTheStudent.Models;
 using System.Linq;
+using Serilog;
 using System.Globalization;
 
 namespace JackTheStudent.Commands
@@ -69,9 +70,10 @@ public class ShortTestCommandsModule : Base​Command​Module
                 JackTheStudent.Program.shortTestList.Add(shortTest);
                 db.ShortTest.Add(shortTest);
                 await db.SaveChangesAsync();
+                Log.Logger.Information($"[Jack] {ctx.Message.Author.Id} logged new short test with ID: {shortTest.Id}");
                 }
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] New short test log, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Log failed");
                 return;
             }
@@ -126,7 +128,7 @@ public class ShortTestCommandsModule : Base​Command​Module
                     await ctx.RespondAsync(result);
                 }
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Short test logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
@@ -143,7 +145,7 @@ public class ShortTestCommandsModule : Base​Command​Module
                     await ctx.RespondAsync(result);
                 }
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Short test logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
@@ -160,7 +162,7 @@ public class ShortTestCommandsModule : Base​Command​Module
                     await ctx.RespondAsync(result);
                 }
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Short test logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
@@ -179,7 +181,7 @@ public class ShortTestCommandsModule : Base​Command​Module
                     return;
                 }                           
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Short test logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }                   
@@ -197,7 +199,7 @@ public class ShortTestCommandsModule : Base​Command​Module
                     return;
                 }                           
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Short test logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }                 
@@ -215,7 +217,7 @@ public class ShortTestCommandsModule : Base​Command​Module
                     return;
                 }                          
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Short test logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }

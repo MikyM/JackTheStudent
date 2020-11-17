@@ -4,6 +4,7 @@ using System;
 using System.Threading.Tasks;
 using JackTheStudent.Models;
 using System.Linq;
+using Serilog;
 
 /* Create our class and extend from IModule */
 namespace JackTheStudent.Commands
@@ -26,7 +27,7 @@ public class StudentCommandsModule : Base​Command​Module
                 await ctx.RespondAsync(result);
             }
         } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Group logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
         }
@@ -49,7 +50,7 @@ public class StudentCommandsModule : Base​Command​Module
                 await ctx.RespondAsync(result);
             }
         } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Class logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
         }

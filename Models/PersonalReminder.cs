@@ -15,6 +15,7 @@ namespace JackTheStudent.Models
         public string UserMention { get; set; }
         public DateTime SetForDate { get; set; }
         public ulong ChannelId { get; set; }
+        public bool WasReminded { get; set; }
         public string About { get; set; }
         public async Task Ping(DiscordClient client) 
         {

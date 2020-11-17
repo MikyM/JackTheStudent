@@ -164,16 +164,19 @@ namespace JackTheStudent
             return;
         }
         for (int i = 1; i <= reminderList.Count(); i++) {
-            if (DateTime.Now >= reminderList[i-1].SetForDate) {
+            if (DateTime.Now >= reminderList[i-1].SetForDate && reminderList[i-1].WasReminded == false) {           
                 await reminderList[i-1].Ping(_discord);
+                reminderList[i-1].WasReminded = true;
                 try {
                     using(var db = new JackTheStudentContext()) {
-                        db.PersonalReminder.Remove(reminderList[i-1]);
+                        var reminder = db.PersonalReminder.SingleOrDefault(r => r.Id == reminderList[i-1].Id);
+                        if (reminder != null) {
+                            reminder.WasReminded = true;
+                        }
                         await db.SaveChangesAsync();
                     }
-                    reminderList.Remove(reminderList[i-1]);
                 } catch(Exception ex) {
-                    Log.Logger.Error("[Jack] " + ex.ToString());
+                    Log.Logger.Error("[Jack] Personal reminder - " + ex.ToString());
                 }
             }
         }
@@ -207,7 +210,7 @@ namespace JackTheStudent
                         await db.SaveChangesAsync();
                         Log.Logger.Information($"Automatically reminded about {exam.Class} exam that happens on {exam.Date}.");
                     } catch(Exception ex) {
-                        Log.Logger.Error("[Jack] " + ex.ToString());
+                        Log.Logger.Error("[Jack] Auto reminder - " + ex.ToString());
                     }
                 }
             }
@@ -235,7 +238,7 @@ namespace JackTheStudent
                 }
             }
         } catch(Exception ex) {
-            Console.Error.WriteLine("[Jack] " + ex.ToString());
+            Console.Error.WriteLine("[Jack] Time check - " + ex.ToString());
         }      
     }
 
@@ -257,7 +260,7 @@ namespace JackTheStudent
                 teamsLinkList = db.TeamsLink.ToList();
             }
         } catch(Exception ex) {
-            Log.Logger.Error("[Jack] " + ex.ToString());
+            Log.Logger.Error("[Jack] Load from db - " + ex.ToString());
         }
     }
     
@@ -274,7 +277,7 @@ namespace JackTheStudent
                 fileStream.Close();
             } 
         } catch(Exception ex) {
-            Log.Logger.Error("[Jack] " + ex.ToString());
+            Log.Logger.Error("[Jack] Load form files - " + ex.ToString());
         }
 
         try {
@@ -288,7 +291,7 @@ namespace JackTheStudent
                 fileStream.Close();
             } 
         } catch(Exception ex) {
-            Log.Logger.Error("[Jack] " + ex.ToString());
+            Log.Logger.Error("[Jack] Load form files - " + ex.ToString());
         }
     }
     
