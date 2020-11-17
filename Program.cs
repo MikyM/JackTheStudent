@@ -64,7 +64,7 @@ namespace JackTheStudent
                .ReadFrom.Configuration(_config.Build())
                .Enrich.FromLogContext()
                .WriteTo.Console()
-               .WriteTo.Async(a => a.File("log-.txt", rollingInterval: RollingInterval.Day))
+               //.WriteTo.Async(a => a.File("log-.txt", rollingInterval: RollingInterval.Day))
                .CreateLogger();
 
             Log.Logger.Information("[Jack] Starting up..");
