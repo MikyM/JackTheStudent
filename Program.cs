@@ -200,7 +200,7 @@ namespace JackTheStudent
         for (int i = 1; i <= examList.Count(); i++) {
             timeLeft = examList[i-1].Date.Date - DateTime.Now.Date;
             isLessThanAWeek = timeLeft <= interval;
-            if (isLessThanAWeek) {
+            if (isLessThanAWeek && examList[i-1].wasReminded == false) {
                 await examList[i-1].Ping(_discord);
                 examList[i-1].wasReminded = true;
                 using (var db = new JackTheStudentContext()) {
