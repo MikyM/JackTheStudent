@@ -1,5 +1,14 @@
 {
     "discord": {
-      "CommandPrefix":  "!" 
+      "CommandPrefix":  "/" ,
+      "Serilog": {
+        "MinimumLevel": {
+          "Default": "Information",
+          "Override": {
+            "Microsoft": "Information",
+            "System": "Warning"
+          }
+        }
+      }
     }
   }

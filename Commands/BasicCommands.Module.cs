@@ -1,15 +1,11 @@
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
-using DSharpPlus.Interactivity;
 using System;
 using System.Threading.Tasks;
-using System.Linq;
-using JackTheStudent.Commands;
+using Serilog;
 using DSharpPlus.Interactivity.Extensions;
-using JackTheStudent.Models;
-using System.Data.SqlClient;
-using MySql.Data.MySqlClient;
+
 
 
 namespace JackTheStudent.Commands
@@ -34,25 +30,13 @@ public class BasicCommandsModule : Base​Command​Module
     [Description("Simple command to test if the bot is dead!")]
     public async Task Dead(CommandContext ctx)
     {
-        /* Trigger the Typing... in discord */
-        await ctx.TriggerTypingAsync();
-
-        /* Send the message "I'm Alive!" to the channel the message was recieved from */
-        await ctx.RespondAsync("I'm dead!");
-    }
-
-    [Command("truncate")]
-    [Description("Simple command to test if the bot is dead!")]
-    public async Task Truncate(CommandContext ctx)
-    {
         
-        using (var db = new JackTheStudentContext()){
-            
-        }                    
-
-        /* Send the message "I'm Alive!" to the channel the message was recieved from */
-        await ctx.RespondAsync("All tables have been cleared!");
+        DiscordEmoji emoji = DiscordEmoji.FromName(ctx.Client, ":thinking:");
+        await ctx.TriggerTypingAsync();
+        await ctx.RespondAsync(emoji);
+        Log.Logger.Information($"User {ctx.Message.Author.Mention} used dead command");
     }
+
 
     [Command("interact")]
     [Description("Simple command to test interaction!")]
