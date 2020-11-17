@@ -5,3 +5,4 @@ bin
 obj/Debug/
 /config.json
 /log*
+config.json
