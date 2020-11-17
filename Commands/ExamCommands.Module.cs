@@ -1,7 +1,5 @@
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
-using DSharpPlus.Entities;
-using DSharpPlus.Interactivity;
 using System;
 using System.Threading.Tasks;
 using JackTheStudent.Models;
@@ -9,6 +7,7 @@ using System.Linq;
 using System.Globalization;
 using System.Collections.Generic;
 using JackTheStudent.CommandDescriptions;
+using Serilog;
 
 namespace JackTheStudent.Commands
 {
@@ -48,19 +47,21 @@ public class ExamCommandsModule : Base​Command​Module
         } else {
             try {
                 using (var db = new JackTheStudentContext()){
-                var exam = new Exam {ClassShortName = classType,
-                                              Class = JackTheStudent.Program.classList.Where(e => e.ShortName == classType).Select(e => e.Name).FirstOrDefault(),
-                                              Date = parsedEventDate.Date.Add(parsedEventTime.TimeOfDay),
-                                              LogById = ctx.Message.Author.Id.ToString(),
-                                              LogByUsername = ctx.Message.Author.Username + "#" + ctx.Message.Author.Discriminator,
-                                              AdditionalInfo = additionalInfo,
-                                              Materials = materials};
+                var exam = new Exam {
+                    ClassShortName = classType,
+                    Class = JackTheStudent.Program.classList.Where(c => c.ShortName == classType).Select(c => c.Name).FirstOrDefault(),
+                    Date = parsedEventDate.Date.Add(parsedEventTime.TimeOfDay),
+                    LogById = ctx.Message.Author.Id.ToString(),
+                    LogByUsername = ctx.Message.Author.Username + "#" + ctx.Message.Author.Discriminator,
+                    AdditionalInfo = additionalInfo
+                };
                 JackTheStudent.Program.examList.Add(exam);
                 db.Exam.Add(exam);
                 await db.SaveChangesAsync();
+                Log.Logger.Information($"[Jack] {ctx.Message.Author.Id} logged new exam with ID: {exam.Id}");
                 }
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] New exam log, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Exam log failed");
                 return;
             }
@@ -75,23 +76,31 @@ public class ExamCommandsModule : Base​Command​Module
         [Description("\nTakes class' short names or \".\", type !class to retrieve all classes, usage of \".\" will tell Jack to retrieve exam for ALL classes.\n")] string classType = ".",
         [Description("\nTakes \".\" or \"planned\", usage of \".\" will tell Jack to retrieve ALL logged exams, \"planned\" retrieves only future events.\n")] string span = "planned")
     {   
-        var exams = JackTheStudent.Program.examList;    
+        if (!JackTheStudent.Program.classList.Any(c => c.ShortName == classType) && classType != ".") {
+            await ctx.RespondAsync("There's no such class, you high bruh?");
+            return;
+        } else if (span != "." && span != "planned") {
+            await ctx.RespondAsync("Span only accepts . and planned values");
+            return;
+        }    
+
+        var exams = JackTheStudent.Program.examList;
+        var result = String.Empty;
+
         if (classType == "." && span == "planned") {
             try {
                 exams = exams.Where(e => e.Date > DateTime.Now).ToList();
                     if (exams.Count == 0) {
                             await ctx.RespondAsync("Wait what!? There are no exams planned, PAAAARTTTIEEEHH TIIIIIIIIMEEEEEEE!");
                     } else {
-                        string result = String.Empty;
                         foreach (Exam exam in exams) {
-                                result = result + "\n" + CultureInfo.CurrentCulture.TextInfo
-                                    .ToTitleCase(exam.Class) + " exam will happen on " + exam.Date;
+                                result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class)} exam will happen on {exam.Date}.{(exam.AdditionalInfo.Equals("") ? "" : $"Additional info: {exam.AdditionalInfo}")}";
                         }
                         await ctx.RespondAsync(result);
                     }
                 
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Exam logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
@@ -101,66 +110,50 @@ public class ExamCommandsModule : Base​Command​Module
                     if (exams.Count == 0) {
                             await ctx.RespondAsync("There are no exams logged!");
                     } else {
-                        string result = String.Empty;
                         foreach (Exam exam in exams) {
-                            result = result + "\n" + CultureInfo.CurrentCulture.TextInfo
-                                .ToTitleCase(exam.Class) + " exam will happen / happened on " + exam.Date;
+                            result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class)} exam will happen / happened on {exam.Date}.{(exam.AdditionalInfo.Equals("") ? "" : $"Additional info: {exam.AdditionalInfo}")}";
                         }
                         await ctx.RespondAsync(result);
                     }
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Exam logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
         return;
         } else if (classType != "." && span == "planned") {
                 try {
-                    exams = exams
-                        .Where(e => e.Date > DateTime.Now && e.ClassShortName == classType)
-                        .ToList();                     
+                    exams = exams.Where(e => e.Date > DateTime.Now && e.ClassShortName == classType).ToList();                     
                     if (exams.Count == 0) {
-                        string response = "There are no " + exams
-                                                            .Select(e => e.Class)
-                                                            .FirstOrDefault() + " exams planned!";
-                        await ctx.RespondAsync(response);
+                        await ctx.RespondAsync($"There are no {exams.Select(e => e.Class).FirstOrDefault()} exams planned!");
                         return;
                     } else {
-                        string result = String.Empty;
                         foreach (Exam exam in exams) {
-                            result = result + "\n" + CultureInfo.CurrentCulture.TextInfo
-                                                    .ToTitleCase(exam.Class) + $" exam will happen on {exam.Date}";
+                            result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class)} exam will happen on {exam.Date}.{(exam.AdditionalInfo.Equals("") ? "" : $"Additional info: {exam.AdditionalInfo}")}";
                         }
                         await ctx.RespondAsync(result);
                         return;
                     }                           
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Exam logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }                                       
         } else {
             try {
-                exams = exams
-                    .Where (e => e.ClassShortName == classType)
-                    .ToList();                  
+                exams = exams.Where (e => e.ClassShortName == classType).ToList();                  
                 if (exams.Count == 0) {
-                    string response = "There are no logged exams for " + exams
-                                                                            .Select(e => e.Class)
-                                                                            .FirstOrDefault() + "class!";
-                    await ctx.RespondAsync(response);
+                    await ctx.RespondAsync($"There are no logged exams for {exams.Select(e => e.Class).FirstOrDefault()} class!");
                     return;
                 } else {
-                    string result = String.Empty;
                     foreach (Exam exam in exams) {
-                        result = result + "\n" + CultureInfo.CurrentCulture.TextInfo
-                                                .ToTitleCase(exam.Class) + $" exam will happen / happened on {exam.Date}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class)} exam will happen / happened on {exam.Date}.{(exam.AdditionalInfo.Equals("") ? "" : $"Additional info: {exam.AdditionalInfo}")}";
                     }
                     await ctx.RespondAsync(result);
                     return;
                 }                       
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] Exam logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }

@@ -1,21 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "D:\\GitHub\\JackTheStudent\\JackTheStudent.csproj": {}
+    "F:\\Code\\JackTheStudent\\JackTheStudent.csproj": {}
   },
   "projects": {
-    "D:\\GitHub\\JackTheStudent\\JackTheStudent.csproj": {
+    "F:\\Code\\JackTheStudent\\JackTheStudent.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\GitHub\\JackTheStudent\\JackTheStudent.csproj",
+        "projectUniqueName": "F:\\Code\\JackTheStudent\\JackTheStudent.csproj",
         "projectName": "JackTheStudent",
-        "projectPath": "D:\\GitHub\\JackTheStudent\\JackTheStudent.csproj",
-        "packagesPath": "C:\\Users\\kr3xo\\.nuget\\packages\\",
-        "outputPath": "D:\\GitHub\\JackTheStudent\\obj\\",
+        "projectPath": "F:\\Code\\JackTheStudent\\JackTheStudent.csproj",
+        "packagesPath": "C:\\Users\\Kszysieg\\.nuget\\packages\\",
+        "outputPath": "F:\\Code\\JackTheStudent\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "F:\\Microsoft\\Xamarin\\NuGet\\"
+        ],
         "configFilePaths": [
-          "C:\\Users\\kr3xo\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\Kszysieg\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.1"
@@ -79,17 +83,37 @@
               "target": "Package",
               "version": "[3.1.9, )"
             },
-            "Microsoft.Extensions.Configuration.Json": {
+            "Microsoft.Extensions.Hosting": {
               "target": "Package",
-              "version": "[3.1.9, )"
+              "version": "[3.1.6, )"
             },
             "MySql.Data.EntityFrameworkCore": {
               "target": "Package",
               "version": "[8.0.22, )"
             },
-            "quartz": {
+            "Serilog.Extensions.Hosting": {
               "target": "Package",
-              "version": "[3.2.3, )"
+              "version": "[3.1.0, )"
+            },
+            "Serilog.Settings.Configuration": {
+              "target": "Package",
+              "version": "[3.1.0, )"
+            },
+            "Serilog.Sinks.Async": {
+              "target": "Package",
+              "version": "[1.4.0, )"
+            },
+            "Serilog.Sinks.Console": {
+              "target": "Package",
+              "version": "[3.1.1, )"
+            },
+            "Serilog.Sinks.File": {
+              "target": "Package",
+              "version": "[4.1.0, )"
+            },
+            "serilog": {
+              "target": "Package",
+              "version": "[2.10.0, )"
             }
           },
           "imports": [

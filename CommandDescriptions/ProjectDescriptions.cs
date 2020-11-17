@@ -1,5 +1,3 @@
-using System;
-
 namespace JackTheStudent.CommandDescriptions
 {
     public class ProjectDescriptions

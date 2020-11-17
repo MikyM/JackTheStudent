@@ -8,6 +8,7 @@ namespace JackTheStudent.Models
     {
         public int Id { get; set; }
         public string Class { get; set; }
+        public string ClassShortName { get; set; }
         public string Date { get; set; }
         public string Link { get; set; }
         public string ClassType { get; set; }
