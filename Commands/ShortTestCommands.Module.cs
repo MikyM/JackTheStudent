@@ -106,7 +106,7 @@ public class ShortTestCommandsModule : Base​Command​Module
                         await ctx.RespondAsync("Wait what!? There are literally no short tests planned at all!");
                 } else {
                     foreach (ShortTest shortTest in shortTests) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(shortTest.Class)} short test for group {shortTest.GroupId}, will happen on {shortTest.Date}.{(shortTest.AdditionalInfo.Equals("") ? "" : $"Additional info: {shortTest.AdditionalInfo}")}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(shortTest.Class)} short test for group {shortTest.GroupId}, will happen on {shortTest.Date.ToString().Trim()}.{(shortTest.AdditionalInfo.Equals("") ? "" : $"Additional info: {shortTest.AdditionalInfo}")}";
                     }
                     await ctx.RespondAsync(result);
                 }
@@ -123,7 +123,7 @@ public class ShortTestCommandsModule : Base​Command​Module
                         await ctx.RespondAsync($"There are no short tests logged for group {group}!");
                 } else {
                     foreach (ShortTest shortTest in shortTests) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(shortTest.Class)} short test for group {shortTest.GroupId}, will happen/happened on {shortTest.Date}.{(shortTest.AdditionalInfo.Equals("") ? "" : $"Additional info: {shortTest.AdditionalInfo}")}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(shortTest.Class)} short test for group {shortTest.GroupId}, will happen/happened on {shortTest.Date.ToString().Trim()}.{(shortTest.AdditionalInfo.Equals("") ? "" : $"Additional info: {shortTest.AdditionalInfo}")}";
                     }
                     await ctx.RespondAsync(result);
                 }
@@ -140,7 +140,7 @@ public class ShortTestCommandsModule : Base​Command​Module
                         await ctx.RespondAsync($"Wait what!? There are no short tests planned for any class for group {group}!");
                 } else {
                     foreach (ShortTest shortTest in shortTests) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(shortTest.Class)} short test for group {shortTest.GroupId}, will happen on {shortTest.Date}.{(shortTest.AdditionalInfo.Equals("") ? "" : $"Additional info: {shortTest.AdditionalInfo}")}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(shortTest.Class)} short test for group {shortTest.GroupId}, will happen on {shortTest.Date.ToString().Trim()}.{(shortTest.AdditionalInfo.Equals("") ? "" : $"Additional info: {shortTest.AdditionalInfo}")}";
                     }
                     await ctx.RespondAsync(result);
                 }
@@ -158,7 +158,7 @@ public class ShortTestCommandsModule : Base​Command​Module
                     return;
                 } else {
                     foreach (ShortTest shortTest in shortTests) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(shortTest.Class)} short test for group {shortTest.GroupId}, will happen on {shortTest.Date}.{(shortTest.AdditionalInfo.Equals("") ? "" : $"Additional info: {shortTest.AdditionalInfo}")}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(shortTest.Class)} short test for group {shortTest.GroupId}, will happen on {shortTest.Date.ToString().Trim()}.{(shortTest.AdditionalInfo.Equals("") ? "" : $"Additional info: {shortTest.AdditionalInfo}")}";
                     }
                     await ctx.RespondAsync(result);
                     return;
@@ -176,7 +176,7 @@ public class ShortTestCommandsModule : Base​Command​Module
                     return;
                 } else {
                     foreach (ShortTest shortTest in shortTests) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(shortTest.Class)} short test for group {shortTest.GroupId}, will happen/happened on {shortTest.Date}.{(shortTest.AdditionalInfo.Equals("") ? "" : $"Additional info: {shortTest.AdditionalInfo}")}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(shortTest.Class)} short test for group {shortTest.GroupId}, will happen/happened on {shortTest.Date.ToString().Trim()}.{(shortTest.AdditionalInfo.Equals("") ? "" : $"Additional info: {shortTest.AdditionalInfo}")}";
                     }
                     await ctx.RespondAsync(result);
                     return;
@@ -194,7 +194,7 @@ public class ShortTestCommandsModule : Base​Command​Module
                     return;
                 } else {
                     foreach (ShortTest shortTest in shortTests) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(shortTest.Class)} short test for group {shortTest.GroupId}, will happen/happened on {shortTest.Date}.{(shortTest.AdditionalInfo.Equals("") ? "" : $"Additional info: {shortTest.AdditionalInfo}")}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(shortTest.Class)} short test for group {shortTest.GroupId}, will happen/happened on {shortTest.Date.ToString().Trim()}.{(shortTest.AdditionalInfo.Equals("") ? "" : $"Additional info: {shortTest.AdditionalInfo}")}";
                     }
                     await ctx.RespondAsync(result);
                     return;

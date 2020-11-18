@@ -161,7 +161,7 @@ namespace JackTheStudent.Models
                     .HasColumnName("id")
                     .HasColumnType("int(11)");
 
-                entity.Property(e => e.isGroup)
+                entity.Property(e => e.IsGroup)
                     .IsRequired()
                     .HasColumnName("is_group")
                     .HasColumnType("tinyint(1)");

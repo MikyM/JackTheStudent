@@ -128,7 +128,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                         } else {
                             chosenGroupString = $"group {teamsLink.GroupId}";
                         }
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(chosenUniClass)} {chosenClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date}. Link: {teamsLink.Link}";                         
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(chosenUniClass)} {chosenClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.Link}";                         
                     }
                     await ctx.RespondAsync(result);
                 }
@@ -152,7 +152,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                         } else {
                             chosenGroupString = $"group {teamsLink.GroupId}";
                         }
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(chosenUniClass)} {chosenClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date}. Link: {teamsLink.Link}";                                     
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(chosenUniClass)} {chosenClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.Link}";                                     
                     }
                     await ctx.RespondAsync(result);
                 }
@@ -176,7 +176,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                         } else {
                             chosenGroupString = $"group {teamsLink.GroupId}";
                         }
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(chosenUniClass)} {chosenClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date}. Link: {teamsLink.Link}";                          
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(chosenUniClass)} {chosenClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.Link}";                          
                     }
                     await ctx.RespondAsync(result);
                 }
@@ -201,7 +201,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                         } else {
                             chosenGroupString = $"group {teamsLink.GroupId}";
                         }
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(chosenUniClass)} {chosenClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date}. Link: {teamsLink.Link}";          
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(chosenUniClass)} {chosenClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.Link}";          
                     }
                     await ctx.RespondAsync(result);
                     return;
@@ -223,7 +223,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                     result = String.Empty;
                     foreach (TeamsLink teamsLink in teamsLinks) {
                         chosenUniClass = teamsLink.GetFullClassName();
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(chosenUniClass)} {chosenClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date}. Link: {teamsLink.Link}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(chosenUniClass)} {chosenClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.Link}";
                     }
                     await ctx.RespondAsync(result);
                     return;
@@ -244,7 +244,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                 } else {
                     foreach (TeamsLink teamsLink in teamsLinks) {
                         teamsLink.GetFullClassType();
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(chosenUniClass)} {chosenClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date}. Link: {teamsLink.Link}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(chosenUniClass)} {chosenClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.Link}";
                     }
                     await ctx.RespondAsync(result);
                     return;
@@ -265,7 +265,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                     return;
                 } else {
                     foreach (TeamsLink teamsLink in teamsLinks) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(chosenUniClass)} {chosenClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date}. Link: {teamsLink.Link}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(chosenUniClass)} {chosenClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.Link}";
                     }
                     await ctx.RespondAsync(result);
                     return;

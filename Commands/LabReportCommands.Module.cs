@@ -104,7 +104,7 @@ public class LabReportCommandsModule : Base​Command​Module
                         await ctx.RespondAsync("Wait what!? There are literally no lab reports planned at all!");
                 } else {
                     foreach (LabReport labReport in labReports) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(labReport.Class)} lab report for group {labReport.GroupId}, deadline is {labReport.Date}.{(labReport.AdditionalInfo.Equals("") ? "" : $"Additional info: {labReport.AdditionalInfo}")}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(labReport.Class)} lab report for group {labReport.GroupId}, deadline is {labReport.Date.ToString().Trim()}.{(labReport.AdditionalInfo.Equals("") ? "" : $"Additional info: {labReport.AdditionalInfo}")}";
                     }
                     await ctx.RespondAsync(result);
                 }
@@ -121,7 +121,7 @@ public class LabReportCommandsModule : Base​Command​Module
                         await ctx.RespondAsync($"There are no lab reports logged for group {group}!");
                 } else {
                     foreach (LabReport labReport in labReports) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(labReport.Class)} lab report for group {labReport.GroupId}, deadline is/was {labReport.Date}.{(labReport.AdditionalInfo.Equals("") ? "" : $"Additional info: {labReport.AdditionalInfo}")}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(labReport.Class)} lab report for group {labReport.GroupId}, deadline is/was {labReport.Date.ToString().Trim()}.{(labReport.AdditionalInfo.Equals("") ? "" : $"Additional info: {labReport.AdditionalInfo}")}";
                     }
                     await ctx.RespondAsync(result);
                 }
@@ -138,7 +138,7 @@ public class LabReportCommandsModule : Base​Command​Module
                         await ctx.RespondAsync($"Wait what!? There are no lab reports planned for any class for group {group}!");
                 } else {
                     foreach (LabReport labReport in labReports) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(labReport.Class)} lab report for group {labReport.GroupId}, deadline is {labReport.Date}.{(labReport.AdditionalInfo.Equals("") ? "" : $"Additional info: {labReport.AdditionalInfo}")}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(labReport.Class)} lab report for group {labReport.GroupId}, deadline is {labReport.Date.ToString().Trim()}.{(labReport.AdditionalInfo.Equals("") ? "" : $"Additional info: {labReport.AdditionalInfo}")}";
                     }
                     await ctx.RespondAsync(result);
                 }
@@ -156,7 +156,7 @@ public class LabReportCommandsModule : Base​Command​Module
                     return;
                 } else {
                     foreach (LabReport labReport in labReports) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(labReport.Class)} lab report for group {labReport.GroupId}, deadline is {labReport.Date}.{(labReport.AdditionalInfo.Equals("") ? "" : $"Additional info: {labReport.AdditionalInfo}")}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(labReport.Class)} lab report for group {labReport.GroupId}, deadline is {labReport.Date.ToString().Trim()}.{(labReport.AdditionalInfo.Equals("") ? "" : $"Additional info: {labReport.AdditionalInfo}")}";
                     }
                     await ctx.RespondAsync(result);
                     return;
@@ -174,7 +174,7 @@ public class LabReportCommandsModule : Base​Command​Module
                     return;
                 } else {
                     foreach (LabReport labReport in labReports) {
-                    result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(labReport.Class)} lab report for group {labReport.GroupId}, deadline is/was {labReport.Date}.{(labReport.AdditionalInfo.Equals("") ? "" : $"Additional info: {labReport.AdditionalInfo}")}";
+                    result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(labReport.Class)} lab report for group {labReport.GroupId}, deadline is/was {labReport.Date.ToString().Trim()}.{(labReport.AdditionalInfo.Equals("") ? "" : $"Additional info: {labReport.AdditionalInfo}")}";
                     }
                     await ctx.RespondAsync(result);
                     return;
@@ -192,7 +192,7 @@ public class LabReportCommandsModule : Base​Command​Module
                     return;
                 } else {
                     foreach (LabReport labReport in labReports) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(labReport.Class)} lab report for group {labReport.GroupId}, deadline is/was {labReport.Date}.{(labReport.AdditionalInfo.Equals("") ? "" : $"Additional info: {labReport.AdditionalInfo}")}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(labReport.Class)} lab report for group {labReport.GroupId}, deadline is/was {labReport.Date.ToString().Trim()}.{(labReport.AdditionalInfo.Equals("") ? "" : $"Additional info: {labReport.AdditionalInfo}")}";
                     }
                     await ctx.RespondAsync(result);
                     return;

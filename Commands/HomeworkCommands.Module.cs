@@ -104,7 +104,7 @@ public class HomeworkCommandsModule : Base​Command​Module
                             await ctx.RespondAsync("Wait what!? There is literally no homework planned at all!");
                     } else {
                         foreach (Homework homework in homeworks) {
-                            result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId} deadline is {homework.Date}.{(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
+                            result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId} deadline is {homework.Date.ToString().Trim()}.{(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
                         }
                         await ctx.RespondAsync(result);
                     }
@@ -121,7 +121,7 @@ public class HomeworkCommandsModule : Base​Command​Module
                             await ctx.RespondAsync($"Wait what!? There is no homework logged for group {group}!");
                     } else {
                         foreach (Homework homework in homeworks) {
-                            result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId} deadline is/was {homework.Date}.{(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
+                            result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId} deadline is/was {homework.Date.ToString().Trim()}.{(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
                         }
                         await ctx.RespondAsync(result);
                     }
@@ -138,7 +138,7 @@ public class HomeworkCommandsModule : Base​Command​Module
                             await ctx.RespondAsync($"Wait what!? There is no planned homework for group {group}, hmm... league?");
                     } else {
                         foreach (Homework homework in homeworks) {
-                            result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId} deadline is {homework.Date}.{(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
+                            result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId} deadline is {homework.Date.ToString().Trim()}.{(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
                         }
                         await ctx.RespondAsync(result);
                     }
@@ -156,7 +156,7 @@ public class HomeworkCommandsModule : Base​Command​Module
                     return;
                 } else {
                     foreach (Homework homework in homeworks) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId}, deadline is {homework.Date}.{(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId}, deadline is {homework.Date.ToString().Trim()}.{(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
                     }
                     await ctx.RespondAsync(result);
                     return;
@@ -174,7 +174,7 @@ public class HomeworkCommandsModule : Base​Command​Module
                     return;
                 } else {
                     foreach (Homework homework in homeworks) {
-                    result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId}, deadline is/was {homework.Date}.{(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
+                    result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId}, deadline is/was {homework.Date.ToString().Trim()}.{(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
                     }
                     await ctx.RespondAsync(result);
                     return;
@@ -192,7 +192,7 @@ public class HomeworkCommandsModule : Base​Command​Module
                     return;
                 } else {
                     foreach (Homework homework in homeworks) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId}, deadline is/was {homework.Date}.{(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId}, deadline is/was {homework.Date.ToString().Trim()}.{(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
                     }
                     await ctx.RespondAsync(result);
                     return;

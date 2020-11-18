@@ -18,7 +18,7 @@ public class ProjectCommandsModule : Base​Command​Module
     [Command("project")]
     [Description(ProjectDescriptions.projectLogDescription)]
     public async Task ProjectLog(CommandContext ctx,
-        [Description ("\nTakes either 1 (true) or 0 (false)\n")] string isGroup = "", 
+        [Description ("\nTakes either 1 (true) or 0 (false)\n")] string IsGroup = "", 
         [Description ("\nTakes group IDs, type !group to retrieve all groups.\n")] string groupId = "", 
         [Description ("\nTakes class' short names, type !class to retrive all classes.\n")] string classType = "", 
         [Description ("\nTakes dates in dd/mm/yyyy format, accepts different separators.\n")] string eventDate = "", 
@@ -27,20 +27,20 @@ public class ProjectCommandsModule : Base​Command​Module
     {
         DateTime parsedEventDate = new DateTime();
         DateTime parsedEventTime = new DateTime();
-        if(isGroup == "") {
-            await ctx.RespondAsync("Learn to read you dumbass. The command looks like: !project <isGroup> <group> <class> <projectDate> <projectTime> Try again!");
+        if(IsGroup == "") {
+            await ctx.RespondAsync("Learn to read you dumbass. The command looks like: !project <IsGroup> <group> <class> <projectDate> <projectTime> Try again!");
             return;
-        } else if (isGroup != "0" && isGroup != "1"){
-            await ctx.RespondAsync("How stupid are you, really? isGroup argument takes either 1 (true) or 0 (false)!");
+        } else if (IsGroup != "0" && IsGroup != "1"){
+            await ctx.RespondAsync("How stupid are you, really? IsGroup argument takes either 1 (true) or 0 (false)!");
             return;
         } else if(groupId == "") {
-            await ctx.RespondAsync("Learn to read you dumbass. The command looks like: !project <isGroup> <group> <class> <projectDate> <projectTime> Try again!");
+            await ctx.RespondAsync("Learn to read you dumbass. The command looks like: !project <IsGroup> <group> <class> <projectDate> <projectTime> Try again!");
             return;
         } else if (!JackTheStudent.Program.groupList.Any(g => g.GroupId == groupId)){
             await ctx.RespondAsync("There's no such group dumbass. Try again!");
             return;
         } else if (classType == "") {
-            await ctx.RespondAsync("Learn to read you dumbass. The command looks like: !project <isGroup> <group> <class> <projectDate> <projectTime> Try again!");
+            await ctx.RespondAsync("Learn to read you dumbass. The command looks like: !project <IsGroup> <group> <class> <projectDate> <projectTime> Try again!");
             return;      
         } else if (!JackTheStudent.Program.classList.Any(c => c.ShortName == classType)) {
             await ctx.RespondAsync("There's no such class, you high bruh?");
@@ -57,7 +57,7 @@ public class ProjectCommandsModule : Base​Command​Module
         } else if (!DateTime.TryParse(eventTime, out parsedEventTime)) {
             await ctx.RespondAsync("That's not a valid time you retard, learn to type!");
             return;
-        } else if (isGroup == "0") {
+        } else if (IsGroup == "0") {
             try {
                 using (var db = new JackTheStudentContext()){
                 var project = new Project {
@@ -65,10 +65,11 @@ public class ProjectCommandsModule : Base​Command​Module
                     Class = JackTheStudent.Program.classList.Where(e => e.ShortName == classType).Select(e => e.Name).FirstOrDefault(),
                     Date = parsedEventDate.Date.Add(parsedEventTime.TimeOfDay),
                     GroupId = groupId,
-                    isGroup = Convert.ToBoolean(Convert.ToInt16(isGroup)),
+                    IsGroup = Convert.ToBoolean(Convert.ToInt16(IsGroup)),
                     LogById = ctx.Message.Author.Id.ToString(),
                     LogByUsername = ctx.Message.Author.Username + "#" + ctx.Message.Author.Discriminator,
-                    AdditionalInfo = additionalInfo
+                    AdditionalInfo = additionalInfo,
+                    GroupProjectMembers = null                   
                 };
                 JackTheStudent.Program.projectList.Add(project);
                 db.Project.Add(project);
@@ -106,7 +107,7 @@ public class ProjectCommandsModule : Base​Command​Module
                     Class = JackTheStudent.Program.classList.Where(e => e.ShortName == classType).Select(e => e.Name).FirstOrDefault(),
                     Date = parsedEventDate.Date.Add(parsedEventTime.TimeOfDay),
                     GroupId = groupId,
-                    isGroup = Convert.ToBoolean(Convert.ToInt16(isGroup)),
+                    IsGroup = Convert.ToBoolean(Convert.ToInt16(IsGroup)),
                     LogById = ctx.Message.Author.Id.ToString(),
                     LogByUsername = ctx.Message.Author.Username + "#" + ctx.Message.Author.Discriminator,
                     AdditionalInfo = additionalInfo,
@@ -151,7 +152,7 @@ public class ProjectCommandsModule : Base​Command​Module
             await ctx.RespondAsync("There's no such class, you high bruh?");
             return;
         } else if (isGroup != "." && isGroup != "0" && isGroup != "1") {
-            await ctx.RespondAsync("... isGroup only takes . , 0 i 1");
+            await ctx.RespondAsync("... IsGroup only takes . , 0 i 1");
             return;
         } else if (span != "." && span != "planned") {
             await ctx.RespondAsync("Span only accepts . and planned values");
@@ -170,11 +171,13 @@ public class ProjectCommandsModule : Base​Command​Module
                             await ctx.RespondAsync("Wait what!? There are literally no projects planned at all!");
                     } else {
                         isParticipants = await ParticipantsQuestion(ctx);
-                        foreach (Project project in projects) {                           
-                            if (project.isGroup && isParticipants) {
+                        foreach (Project project in projects) {                        
+                            if (project.IsGroup && isParticipants) {
                                 participantsString = await GetParticipantsString(await project.GetParticipants());
+                            } else {
+                                participantsString = String.Empty;
                             }
-                            result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} project for group {project.GroupId}, deadline is {project.Date}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}")}.{participantsString}";
+                            result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} {(project.IsGroup ? "group project" : "project")} for group {project.GroupId}, deadline is {project.Date.ToString().Trim()}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}.")}{participantsString}";
                         }
                         await ctx.RespondAsync(result);
                     }
@@ -195,10 +198,10 @@ public class ProjectCommandsModule : Base​Command​Module
                             isParticipants = await ParticipantsQuestion(ctx);
                         }
                         foreach (Project project in projects) {
-                            if (project.isGroup && isParticipants) {
+                            if (project.IsGroup && isParticipants) {
                                 participantsString = await GetParticipantsString(await project.GetParticipants());
                             }
-                            result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} project for group {project.GroupId}, deadline is/was {project.Date}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}")}.{participantsString}";
+                            result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} {(project.IsGroup ? "group project" : "project")} for group {project.GroupId}, deadline is/was {project.Date.ToString().Trim()}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}.")}{participantsString}";
                         }
                         await ctx.RespondAsync(result);
                     }
@@ -218,11 +221,11 @@ public class ProjectCommandsModule : Base​Command​Module
                         isParticipants = await ParticipantsQuestion(ctx);
                     }     
                     foreach (Project project in projects) {
-                        if (project.isGroup && isParticipants) {
+                        if (project.IsGroup && isParticipants) {
                             participantsString = await GetParticipantsString(await project.GetParticipants());
                         }
 
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} project for group {project.GroupId}, deadline is {project.Date}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}")}.{participantsString}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} {(project.IsGroup ? "group project" : "project")} for group {project.GroupId}, deadline is {project.Date.ToString().Trim()}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}.")}{participantsString}";
                     }
                     await ctx.RespondAsync(result);
                 }
@@ -243,10 +246,10 @@ public class ProjectCommandsModule : Base​Command​Module
                         isParticipants = await ParticipantsQuestion(ctx);
                     }
                     foreach (Project project in projects) {
-                        if (project.isGroup && isParticipants) {
+                        if (project.IsGroup && isParticipants) {
                             participantsString = await GetParticipantsString(await project.GetParticipants());
                         }
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} project for group {project.GroupId}, deadline is {project.Date}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}")}.{participantsString}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} {(project.IsGroup ? "group project" : "project")} for group {project.GroupId}, deadline is {project.Date.ToString().Trim()}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}.")}{participantsString}";
                     }
                     await ctx.RespondAsync(result);
                     return;
@@ -267,10 +270,10 @@ public class ProjectCommandsModule : Base​Command​Module
                         isParticipants = await ParticipantsQuestion(ctx);
                     }
                     foreach (Project project in projects) {
-                        if (project.isGroup && isParticipants) {
+                        if (project.IsGroup && isParticipants) {
                             participantsString = await GetParticipantsString(await project.GetParticipants());
                         }
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} project for group {project.GroupId}, will happen / happened on {project.Date}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}")}.{participantsString}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} {(project.IsGroup ? "group project" : "project")} for group {project.GroupId}, will happen / happened on {project.Date.ToString().Trim()}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}.")}{participantsString}";
                     }
                     await ctx.RespondAsync(result);
                     return;
@@ -291,10 +294,10 @@ public class ProjectCommandsModule : Base​Command​Module
                         isParticipants = await ParticipantsQuestion(ctx);
                     }     
                     foreach (Project project in projects) {
-                        if (project.isGroup && isParticipants) {
+                        if (project.IsGroup && isParticipants) {
                             participantsString = await GetParticipantsString(await project.GetParticipants());
                         }
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} project for group {project.GroupId}, will happen / happened on {project.Date}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}")}.{participantsString}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} {(project.IsGroup ? "group project" : "project")} for group {project.GroupId}, will happen / happened on {project.Date.ToString().Trim()}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}.")}{participantsString}";
                     }
                     await ctx.RespondAsync(result);
                     return;

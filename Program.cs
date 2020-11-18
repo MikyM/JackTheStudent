@@ -40,6 +40,7 @@ namespace JackTheStudent
     public static List<Exam> examList = new List<Exam>();
     public static List<Test> testList = new List<Test>();
     public static List<Project> projectList = new List<Project>();
+    public static List<GroupProjectMember> projectMembersList = new List<GroupProjectMember>();
     public static List<LabReport> labReportList = new List<LabReport>();
     public static List<ShortTest> shortTestList = new List<ShortTest>();
     public static List<TeamsLink> teamsLinkList = new List<TeamsLink>();
@@ -252,7 +253,14 @@ namespace JackTheStudent
                 labReportList = db.LabReport.ToList();
                 projectList = db.Project.ToList();
                 testList = db.Test.ToList();
+                projectMembersList = db.GroupProjectMember.ToList();
                 teamsLinkList = db.TeamsLink.ToList();
+
+                foreach (Project project in projectList) {
+                    if (project.IsGroup) {
+                        project.GroupProjectMembers = projectMembersList.Where(m => m.ProjectId == project.Id).ToList();
+                    }
+                }              
             }
         } catch(Exception ex) {
             Log.Logger.Error("[Jack] Load from db - " + ex.ToString());

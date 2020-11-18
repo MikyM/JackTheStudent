@@ -7,7 +7,7 @@ namespace JackTheStudent.Models
     public partial class Project
     {
         public int Id { get; set; }
-        public Boolean isGroup { get; set; }
+        public Boolean IsGroup { get; set; }
         public string Class { get; set; }
         public string ClassShortName { get; set; }
         public DateTime Date { get; set; }
@@ -19,11 +19,10 @@ namespace JackTheStudent.Models
 
         public async Task<List<GroupProjectMember>> GetParticipants()
         {
-            string participantsString = String.Empty; 
-            using (var db = new JackTheStudentContext()){  
-                var participants = db.GroupProjectMember.Where(p => p.ProjectId == this.Id).ToList();
-                return participants;
+            if (this.IsGroup) {
+                return this.GroupProjectMembers.ToList();
             }
+            return null;
         }
     }
 }

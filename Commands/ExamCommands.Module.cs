@@ -94,7 +94,7 @@ public class ExamCommandsModule : Base​Command​Module
                             await ctx.RespondAsync("Wait what!? There are no exams planned, PAAAARTTTIEEEHH TIIIIIIIIMEEEEEEE!");
                     } else {
                         foreach (Exam exam in exams) {
-                                result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class)} exam will happen on {exam.Date}.{(exam.AdditionalInfo.Equals("") ? "" : $"Additional info: {exam.AdditionalInfo}")}";
+                                result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class)} exam will happen on {exam.Date.ToString().Trim()}.{(exam.AdditionalInfo.Equals("") ? "" : $"Additional info: {exam.AdditionalInfo}")}";
                         }
                         await ctx.RespondAsync(result);
                     }
@@ -111,7 +111,7 @@ public class ExamCommandsModule : Base​Command​Module
                             await ctx.RespondAsync("There are no exams logged!");
                     } else {
                         foreach (Exam exam in exams) {
-                            result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class)} exam will happen / happened on {exam.Date}.{(exam.AdditionalInfo.Equals("") ? "" : $"Additional info: {exam.AdditionalInfo}")}";
+                            result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class)} exam will happen / happened on {exam.Date.ToString().Trim()}.{(exam.AdditionalInfo.Equals("") ? "" : $"Additional info: {exam.AdditionalInfo}")}";
                         }
                         await ctx.RespondAsync(result);
                     }
@@ -129,7 +129,7 @@ public class ExamCommandsModule : Base​Command​Module
                         return;
                     } else {
                         foreach (Exam exam in exams) {
-                            result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class)} exam will happen on {exam.Date}.{(exam.AdditionalInfo.Equals("") ? "" : $"Additional info: {exam.AdditionalInfo}")}";
+                            result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class)} exam will happen on {exam.Date.ToString().Trim()}.{(exam.AdditionalInfo.Equals("") ? "" : $"Additional info: {exam.AdditionalInfo}")}";
                         }
                         await ctx.RespondAsync(result);
                         return;
@@ -147,7 +147,7 @@ public class ExamCommandsModule : Base​Command​Module
                     return;
                 } else {
                     foreach (Exam exam in exams) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class)} exam will happen / happened on {exam.Date}.{(exam.AdditionalInfo.Equals("") ? "" : $"Additional info: {exam.AdditionalInfo}")}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class)} exam will happen / happened on {exam.Date.ToString().Trim()}.{(exam.AdditionalInfo.Equals("") ? "" : $"Additional info: {exam.AdditionalInfo}")}";
                     }
                     await ctx.RespondAsync(result);
                     return;

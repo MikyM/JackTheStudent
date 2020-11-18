@@ -104,7 +104,7 @@ public class TestCommandsModule : Base​Command​Module
                         await ctx.RespondAsync("Wait what!? There are literally no tests planned at all!");
                 } else {                  
                     foreach (Test test in tests) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(test.Class)} test for group {test.GroupId}, will happen on {test.Date}.{(test.AdditionalInfo.Equals("") ? "" : $"Additional info: {test.AdditionalInfo}")}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(test.Class)} test for group {test.GroupId}, will happen on {test.Date.ToString().Trim()}.{(test.AdditionalInfo.Equals("") ? "" : $"Additional info: {test.AdditionalInfo}")}";
                     }
                     await ctx.RespondAsync(result);
                 }
@@ -121,7 +121,7 @@ public class TestCommandsModule : Base​Command​Module
                         await ctx.RespondAsync($"There are no tests logged for group {group}!");
                 } else {                  
                     foreach (Test test in tests) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(test.Class)} test for group {test.GroupId}, will happen/happened on {test.Date}.{(test.AdditionalInfo.Equals("") ? "" : $"Additional info: {test.AdditionalInfo}")}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(test.Class)} test for group {test.GroupId}, will happen/happened on {test.Date.ToString().Trim()}.{(test.AdditionalInfo.Equals("") ? "" : $"Additional info: {test.AdditionalInfo}")}";
                     }
                     await ctx.RespondAsync(result);
                 }
@@ -138,7 +138,7 @@ public class TestCommandsModule : Base​Command​Module
                         await ctx.RespondAsync($"Wait what!? There are no tests planned for any class for group {group}!");
                 } else {                  
                     foreach (Test test in tests) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(test.Class)} test for group {test.GroupId}, will happen on {test.Date}.{(test.AdditionalInfo.Equals("") ? "" : $"Additional info: {test.AdditionalInfo}")}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(test.Class)} test for group {test.GroupId}, will happen on {test.Date.ToString().Trim()}.{(test.AdditionalInfo.Equals("") ? "" : $"Additional info: {test.AdditionalInfo}")}";
                     }
                     await ctx.RespondAsync(result);
                 }
@@ -156,7 +156,7 @@ public class TestCommandsModule : Base​Command​Module
                     return;
                 } else {                  
                     foreach (Test test in tests) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(test.Class)} test for group {test.GroupId}, will happen on {test.Date}.{(test.AdditionalInfo.Equals("") ? "" : $"Additional info: {test.AdditionalInfo}")}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(test.Class)} test for group {test.GroupId}, will happen on {test.Date.ToString().Trim()}.{(test.AdditionalInfo.Equals("") ? "" : $"Additional info: {test.AdditionalInfo}")}";
                     }
                     await ctx.RespondAsync(result);
                     return;
@@ -174,7 +174,7 @@ public class TestCommandsModule : Base​Command​Module
                     return;
                 } else {                   
                     foreach (Test test in tests) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(test.Class)} test for group {test.GroupId}, will happen/happened on {test.Date}.{(test.AdditionalInfo.Equals("") ? "" : $"Additional info: {test.AdditionalInfo}")}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(test.Class)} test for group {test.GroupId}, will happen/happened on {test.Date.ToString().Trim()}.{(test.AdditionalInfo.Equals("") ? "" : $"Additional info: {test.AdditionalInfo}")}";
                     }
                     await ctx.RespondAsync(result);
                     return;
@@ -192,7 +192,7 @@ public class TestCommandsModule : Base​Command​Module
                     return;
                 } else {
                     foreach (Test test in tests) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(test.Class)} test for group {test.GroupId}, will happen/happened on {test.Date}.{(test.AdditionalInfo.Equals("") ? "" : $"Additional info: {test.AdditionalInfo}")}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(test.Class)} test for group {test.GroupId}, will happen/happened on {test.Date.ToString().Trim()}.{(test.AdditionalInfo.Equals("") ? "" : $"Additional info: {test.AdditionalInfo}")}";
                     }
                     await ctx.RespondAsync(result);
                     return;
