@@ -25,7 +25,7 @@ namespace JackTheStudent
     {
     private static HttpClient httpClient = new HttpClient();
     private CancellationTokenSource _cts { get; set; }
-    private ConfigurationBuilder _config;
+    private IConfigurationRoot _config;
     private DiscordClient _discord;
     private CommandsNextExtension _commands;
     private InteractivityExtension _interactivity;
@@ -57,11 +57,13 @@ namespace JackTheStudent
         try {
             _cts = new CancellationTokenSource(); 
 
-            _config = new ConfigurationBuilder();
-            BuildConfig(_config);
+            _config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("config.json", optional: false, reloadOnChange: true)
+                .Build();
 
             Log.Logger = new LoggerConfiguration()
-               .ReadFrom.Configuration(_config.Build())
+               .ReadFrom.Configuration(_config)
                .Enrich.FromLogContext()
                .WriteTo.Console()
                //.WriteTo.Async(a => a.File("log-.txt", rollingInterval: RollingInterval.Day))
@@ -84,10 +86,10 @@ namespace JackTheStudent
             }); 
 
             _commands = _discord.UseCommandsNext(new CommandsNextConfiguration {
-                StringPrefixes = new string[] {_config.Build().GetValue<string>("discord:CommandPrefix")}, 
-                EnableDms = true,
+                StringPrefixes = new string[] {_config.GetValue<string>("discord:CommandPrefix")}, 
+                EnableDms = false,
                 EnableMentionPrefix = true,
-                DmHelp = true
+                DmHelp = false
             });
 
             Log.Logger.Information("[Jack] Loading command modules..");
@@ -118,13 +120,6 @@ namespace JackTheStudent
         
         while (!_cts.IsCancellationRequested)
             await Task.Delay(TimeSpan.FromMinutes(1));
-    }
-
-    static void BuildConfig(IConfigurationBuilder builder)
-    {
-        builder.SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("config.json", optional: false, reloadOnChange: true)
-            .Build();
     }
 
     private async Task OnClientReady(DiscordClient _discord, ReadyEventArgs e)
@@ -164,8 +159,8 @@ namespace JackTheStudent
             return;
         }
         for (int i = 1; i <= reminderList.Count(); i++) {
-            if (DateTime.Now >= reminderList[i-1].SetForDate && reminderList[i-1].WasReminded == false) {           
-                await reminderList[i-1].Ping(_discord);
+            if (DateTime.Now >= reminderList[i-1].SetForDate && !reminderList[i-1].WasReminded) {           
+                await reminderList[i-1].Ping(_discord, _config.GetValue<ulong>("discord:LogChannelId"));
                 reminderList[i-1].WasReminded = true;
                 try {
                     using(var db = new JackTheStudentContext()) {
@@ -189,24 +184,24 @@ namespace JackTheStudent
         }
         TimeSpan interval = new TimeSpan(7, 00, 00, 00);
         TimeSpan timeLeft = new TimeSpan();
-        TimeSpan checkTime = new TimeSpan(18, 00, 00);
-        bool isTime = DateTime.Now.TimeOfDay >= checkTime;
-        bool isLessThanAWeek =  false;
+        TimeSpan checkTimeStart = _config.GetValue<TimeSpan>("discord:AutoRemind:StartTime");
+        TimeSpan checkTimeEnd = checkTimeStart + new TimeSpan(00, 01, 00);
+        bool isTime = DateTime.Now.TimeOfDay >= checkTimeStart && DateTime.Now.TimeOfDay <= checkTimeEnd;
+        bool isLessThanAWeek = false;
 
         if(!isTime) {
             return;
         }   
-
         for (int i = 1; i <= examList.Count(); i++) {
             timeLeft = examList[i-1].Date.Date - DateTime.Now.Date;
             isLessThanAWeek = timeLeft <= interval;
-            if (isLessThanAWeek && examList[i-1].wasReminded == false) {
-                await examList[i-1].Ping(_discord);
-                examList[i-1].wasReminded = true;
+            if (isLessThanAWeek && !examList[i-1].WasReminded) {
+                await examList[i-1].Ping(_discord, _config.GetValue<ulong>("discord:LogChannelId"), _config.GetValue<ulong>("discord:AutoRemind:RoleId"));
+                examList[i-1].WasReminded = true;
                 using (var db = new JackTheStudentContext()) {
                     try {
                         var exam = db.Exam.Where(e => e.Id == examList[i-1].Id).FirstOrDefault();
-                        exam.wasReminded = true;
+                        exam.WasReminded = true;
                         await db.SaveChangesAsync();
                         Log.Logger.Information($"Automatically reminded about {exam.Class} exam that happens on {exam.Date}.");
                     } catch(Exception ex) {

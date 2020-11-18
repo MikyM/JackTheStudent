@@ -23,8 +23,7 @@ public class PersonalReminderCommandsModule : Base​Command​Module
             LogById = ctx.Message.Author.Id,
             LogByUsername = ctx.Message.Author.Username + "#" + ctx.Message.Author.Discriminator,
             About = about,
-            UserMention = ctx.Message.Author.Mention,
-            ChannelId = ctx.Channel.Id
+            UserMention = ctx.Message.Author.Mention
         };
         JackTheStudent.Program.reminderList.Add(reminder);
         try {

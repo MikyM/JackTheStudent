@@ -14,13 +14,12 @@ namespace JackTheStudent.Models
         public string LogByUsername { get; set; }
         public string UserMention { get; set; }
         public DateTime SetForDate { get; set; }
-        public ulong ChannelId { get; set; }
         public bool WasReminded { get; set; }
         public string About { get; set; }
-        public async Task Ping(DiscordClient client) 
+        public async Task Ping(DiscordClient client, ulong channelId) 
         {
-            var channel = await client.GetChannelAsync(777157335885414411);
-            await channel.SendMessageAsync($"Wake up {this.UserMention}, it's time for {this.About}.");            
+            var channel = await client.GetChannelAsync(channelId);
+            await channel.SendMessageAsync($"Wake up {this.UserMention} you slack! It's time for {this.About}.");            
         }
     }
 }

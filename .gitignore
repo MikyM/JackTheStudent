@@ -3,6 +3,4 @@ bin/
 bin
 .vscode
 obj/Debug/
-/config.json
 /log*
-config.json

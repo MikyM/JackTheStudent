@@ -155,74 +155,69 @@ public class FunCommandsModule : Base​Command​Module
 
     [Command("poll")]
     [Description(FunDescriptions.pollDescription)]
-    public async Task Poll(CommandContext ctx, string dur = "" , string input = "")
+    public async Task Poll(CommandContext ctx, string topic = "", string options = "", string dur = "" , params DiscordEmoji[] emojiOptions)
     {
         var intr = ctx.Client.GetInteractivity();
-     
-        try {
-        TimeSpan durationX = TimeSpan.Parse(dur);
-            }
-        catch (FormatException) {
-        await ctx.RespondAsync(dur + " is not a valid format. Use hh:mm:ss format instead. Sorry for that.");
-        return;
-            }   
-        catch (OverflowException) {
-        await ctx.RespondAsync("Overflow duuude. Seconds max is 60, same for minutes.");
-        return;
-            }
+        TimeSpan duration;
 
-        TimeSpan duration = TimeSpan.Parse(dur);
+        if (topic == null) {
+            await ctx.RespondAsync("No topic, dude, I'm out.");
+            return;
+        } else if(options == null) {
+            await ctx.RespondAsync("No options, dude, I'm out.");
+            return;
+        } else
+        if (emojiOptions.Length == 0){
+            await ctx.RespondAsync("No emojis specified.");
+            return;
+        } else if (emojiOptions.Count() != options.Split(new Char [] {','}).Count()) {
+            await ctx.RespondAsync("You're an idiot.");
+            return;
+        }
+
+        try {
+            duration = TimeSpan.Parse(dur);
+        }
+        catch (FormatException) {
+            await ctx.RespondAsync(dur + " is not a valid format. Use hh:mm:ss format instead. Sorry for that.");
+        return;
+        } catch (OverflowException) {
+            await ctx.RespondAsync("Overflow duuude. Seconds max is 60, same for minutes.");
+        return;
+        }
 
         if(duration.Days >= 1){
             await ctx.RespondAsync("Max poll duration is 23:59:59. Use hh:mm:ss format.");
             return;
+        } 
+ 
+        string [] optionsList = options.Split(new Char [] {','});
+
+        var pollEmojiOptionsList = emojiOptions.Select(e => e.ToString()).ToList();
+
+        string desc = "";
+        for (int i = 0; i < optionsList.Length; i++) {
+            desc = $"{desc} \n{optionsList[i]} - {pollEmojiOptionsList[i]}";
         }
-
-        if(input == null) {
-            await ctx.RespondAsync("Fuck your poll dude, I'm out.");
-            return;
-        }
-
-        string[] emojiList = input.Split(new Char [] {','});
-        
-        var pollEmojiOptions = emojiList.Select(e => e.ToString());
-
         var pollEmbed = new DiscordEmbedBuilder
         {
-            Title = "The poll is about: " + input,
-            Description = "React with :thumbsup: or :thumbsdown: to show what you think!\n\nYou have " + duration
+            Title = "The poll is about: " + topic,
+            Description = $"To show others what you think react with:{desc}\n\nYou've got {duration}.\nGo go go!"
         };
 
         var pollMsg = await ctx.RespondAsync(embed: pollEmbed);
 
-        List<string> list = new List<string>();
-
-        List<string> watermelon = new List<string>();
-        watermelon.Add(":thumbsup:");
-        watermelon.Add(":thumbsdown:");
-
-         for (int i = 0; i < 2; i++)
-        {
-            var random = new Random();
-            int index = random.Next(watermelon.Count());
-            await pollMsg.CreateReactionAsync(DiscordEmoji.FromName(ctx.Client, watermelon[index]));
-            watermelon.RemoveAt(index);
+        foreach(var option in emojiOptions){
+            await pollMsg.CreateReactionAsync(option).ConfigureAwait(false);
+            await Task.Delay(500);
         }
-
-        //Result below, not emoji creation involed!!!
 
         var result = await intr.CollectReactionsAsync(pollMsg, duration).ConfigureAwait(false);
         var disctinctResult = result.Distinct();
         var results = disctinctResult.Select(x => $"{x.Emoji}: {x.Total}");
 
-        var resultsEmbed = new DiscordEmbedBuilder
-        {
-            Title = "Results:",
-            Description = "Votes for: "+string.Join("\nVotes for: ", results)
-        };
-
-        var resultsMsg = await ctx.RespondAsync(embed: resultsEmbed);
-    }   
+        await ctx.RespondAsync("The poll about: " + topic + " has ended. Results:\n" + string.Join("\n", results) + "\nI hope you all enjoyed!");
+    }    
 
 
     [Command("weather")]

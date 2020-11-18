@@ -304,7 +304,7 @@ namespace JackTheStudent.Models
                     .HasColumnName("log_by_username")
                     .HasColumnType("longtext");    
 
-                entity.Property(e => e.wasReminded)
+                entity.Property(e => e.WasReminded)
                     .HasColumnName("was_reminded")
                     .IsRequired();
             });
@@ -431,11 +431,6 @@ namespace JackTheStudent.Models
                 entity.Property(e => e.SetForDate)
                     .IsRequired()
                     .HasColumnName("set_for_date");
-
-                entity.Property(e => e.ChannelId)
-                    .IsRequired()
-                    .HasColumnName("channel_id")
-                    .HasColumnType("bigint(20)");
 
                 entity.Property(e => e.UserMention)
                     .IsRequired()
