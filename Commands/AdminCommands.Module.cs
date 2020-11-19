@@ -241,8 +241,7 @@ public class AdminCommandsModule : Base​Command​Module
     public async Task Ban(CommandContext ctx, string mention, string reason = "")
     {
         string userMention = mention;
-        userMention = Regex.Replace(userMention, @"[><@]", "");
-        ulong userId = ulong.Parse(userMention);
+        ulong userId = ulong.Parse(Regex.Replace(userMention, @"[><@!]", ""));
         DiscordMember member = await ctx.Guild.GetMemberAsync(userId);
         await member.BanAsync(7, reason);
         await ctx.RespondAsync($"User {mention} has been banned.");
@@ -255,8 +254,7 @@ public class AdminCommandsModule : Base​Command​Module
     public async Task Unban(CommandContext ctx, string mention)
     {
         string userMention = mention;
-        userMention = Regex.Replace(userMention, @"[><@]", "");
-        ulong userId = ulong.Parse(userMention);
+        ulong userId = ulong.Parse(Regex.Replace(userMention, @"[><@!]", ""));
         DiscordMember member = await ctx.Guild.GetMemberAsync(userId);
         await member.UnbanAsync();
         await ctx.RespondAsync($"User {mention} has been unbanned.");
@@ -269,8 +267,7 @@ public class AdminCommandsModule : Base​Command​Module
     public async Task Kick(CommandContext ctx, string mention, string reason = "")
     {
         string userMention = mention;
-        userMention = Regex.Replace(userMention, @"[><@]", "");
-        ulong userId = ulong.Parse(userMention);
+        ulong userId = ulong.Parse(Regex.Replace(userMention, @"[><@!]", ""));
         DiscordMember member = await ctx.Guild.GetMemberAsync(userId);
         await member.RemoveAsync(reason);
         await ctx.RespondAsync($"User {mention} has been kicked.");
@@ -282,15 +279,8 @@ public class AdminCommandsModule : Base​Command​Module
     [Description("Mutes a member for specified time")]
     public async Task MuteVoice(CommandContext ctx, string mention, string reason = "")
     {   
-        ulong userId;
         string userMention = mention;
-        userMention = Regex.Replace(userMention, @"[><@]", "");
-        Log.Logger.Error($"Before fail {mention}, {userMention}");
-        if (!ulong.TryParse(userMention, out userId)) {
-            Log.Logger.Error("[Jack] String wasn't in a correct format");
-            Log.Logger.Error($"After fail {mention}, {userMention}");
-            return;
-        }
+        ulong userId = ulong.Parse(Regex.Replace(userMention, @"[><@!]", ""));
         DiscordMember member = await ctx.Guild.GetMemberAsync(userId);
         if(member.VoiceState.Channel == null) {
             await ctx.RespondAsync("This user isn't connected to any voice channels.");
@@ -307,8 +297,7 @@ public class AdminCommandsModule : Base​Command​Module
     public async Task UnmuteVoice(CommandContext ctx, string mention)
     {
         string userMention = mention;
-        userMention = Regex.Replace(userMention, @"[><@]", "");
-        ulong userId = ulong.Parse(userMention);
+        ulong userId = ulong.Parse(Regex.Replace(userMention, @"[><@!]", ""));
         DiscordMember member = await ctx.Guild.GetMemberAsync(userId);
         if(member.VoiceState.Channel == null) {
             await ctx.RespondAsync("This user isn't connected to any voice channels.");
