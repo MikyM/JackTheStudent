@@ -9,7 +9,6 @@ using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using Microsoft.EntityFrameworkCore;
 using DSharp​Plus.Entities;
-using System.Text.RegularExpressions;
 
 namespace JackTheStudent.Commands
 {
@@ -143,7 +142,7 @@ public class AdminCommandsModule : Base​Command​Module
     [Description("Semester group class table rebuild")]
     public async Task SemesterGroup(CommandContext ctx)
     {
-        List<Models.Group> backupGroups = new List<Models.Group>();
+        List<Group> backupGroups = new List<Group>();
 
         await ctx.RespondAsync("Are you absolutely sure you wanna do it?");
         var intr = ctx.Client.GetInteractivity(); 
@@ -214,7 +213,7 @@ public class AdminCommandsModule : Base​Command​Module
                     return;
                 }
 
-                var newGroup = new Models.Group {GroupId = groupId.Result.Content};
+                var newGroup = new Group {GroupId = groupId.Result.Content};
                 JackTheStudent.Program.groupList.Add(newGroup);
                 db.Group.Add(newGroup);
                 await ctx.RespondAsync($"Added group with ID: {newGroup.GroupId}.");
@@ -240,8 +239,7 @@ public class AdminCommandsModule : Base​Command​Module
     public async Task Ban(CommandContext ctx, string mention, string reason = "")
     {
         string userMention = mention;
-        userMention = Regex.Replace(userMention, @"[><@]", "");
-        ulong userId = ulong.Parse(userMention);
+        ulong userId = ulong.Parse(userMention.Replace(">", "").Replace("<", "").Replace("@", ""));
         DiscordMember member = await ctx.Guild.GetMemberAsync(userId);
         await member.BanAsync(7, reason);
         await ctx.RespondAsync($"User {mention} has been banned.");
@@ -254,8 +252,7 @@ public class AdminCommandsModule : Base​Command​Module
     public async Task Unban(CommandContext ctx, string mention)
     {
         string userMention = mention;
-        userMention = Regex.Replace(userMention, @"[><@]", "");
-        ulong userId = ulong.Parse(userMention);
+        ulong userId = ulong.Parse(userMention.Replace(">", "").Replace("<", "").Replace("@", ""));
         DiscordMember member = await ctx.Guild.GetMemberAsync(userId);
         await member.UnbanAsync();
         await ctx.RespondAsync($"User {mention} has been unbanned.");
@@ -268,8 +265,7 @@ public class AdminCommandsModule : Base​Command​Module
     public async Task Kick(CommandContext ctx, string mention, string reason = "")
     {
         string userMention = mention;
-        userMention = Regex.Replace(userMention, @"[><@]", "");
-        ulong userId = ulong.Parse(userMention);
+        ulong userId = ulong.Parse(userMention.Replace(">", "").Replace("<", "").Replace("@", ""));
         DiscordMember member = await ctx.Guild.GetMemberAsync(userId);
         await member.RemoveAsync(reason);
         await ctx.RespondAsync($"User {mention} has been kicked.");
@@ -282,8 +278,7 @@ public class AdminCommandsModule : Base​Command​Module
     public async Task MuteVoice(CommandContext ctx, string mention, string reason = "")
     {   
         string userMention = mention;
-        userMention = Regex.Replace(userMention, @"[><@]", "");
-        ulong userId = ulong.Parse(userMention);
+        ulong userId = ulong.Parse(userMention.Replace(">", "").Replace("<", "").Replace("@", ""));
         DiscordMember member = await ctx.Guild.GetMemberAsync(userId);
         if(member.VoiceState.Channel == null) {
             await ctx.RespondAsync("This user isn't connected to any voice channels.");
@@ -297,11 +292,10 @@ public class AdminCommandsModule : Base​Command​Module
     [Hidden]
     [Command("unmutevoice")]
     [Description("Unmutes a member")]
-    public async Task UnMuteVoice(CommandContext ctx, string mention)
+    public async Task UnmuteVoice(CommandContext ctx, string mention)
     {
         string userMention = mention;
-        userMention = Regex.Replace(userMention, @"[><@]", "");
-        ulong userId = ulong.Parse(userMention);
+        ulong userId = ulong.Parse(userMention.Replace(">", "").Replace("<", "").Replace("@", ""));
         DiscordMember member = await ctx.Guild.GetMemberAsync(userId);
         if(member.VoiceState.Channel == null) {
             await ctx.RespondAsync("This user isn't connected to any voice channels.");
@@ -310,12 +304,13 @@ public class AdminCommandsModule : Base​Command​Module
         await member.SetMuteAsync(false);
         await ctx.RespondAsync($"User {mention} has been unmuted in voice channels.");
     }
-    public async Task RestoreGroups(List<Models.Group> backupList, CommandContext ctx)
+
+    public async Task RestoreGroups(List<Group> backupList, CommandContext ctx)
     {
         await ctx.RespondAsync("Failed, aborting and restoring from backup.");
         using(var db = new JackTheStudentContext()) {
             await db.Database.ExecuteSqlRawAsync("truncate table `group`");
-            foreach (Models.Group backupGroup in backupList) {
+            foreach (Group backupGroup in backupList) {
                 db.Group.Add(backupGroup);
                 JackTheStudent.Program.groupList.Add(backupGroup);
             }
