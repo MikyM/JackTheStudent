@@ -19,17 +19,6 @@ public class BasicCommandsModule : Base​Command​Module
         await ctx.RespondAsync("I'm alive!");
     }
 
-    [Command("dead")]
-    [Description("Simple command to test if the bot is dead!")]
-    public async Task Dead(CommandContext ctx)
-    {
-        
-        DiscordEmoji emoji = DiscordEmoji.FromName(ctx.Client, ":thinking:");
-        await ctx.TriggerTypingAsync();
-        await ctx.RespondAsync(emoji);
-    }
-
-
     [Command("interact")]
     [Description("Simple command to test interaction!")]
     public async Task Interact(CommandContext ctx)
@@ -77,7 +66,6 @@ public class BasicCommandsModule : Base​Command​Module
                 await ctx.RespondAsync("I'm glad!");
             }
         } 
-        
         await ctx.RespondAsync("Thank you for telling me how you are!");
     }
     

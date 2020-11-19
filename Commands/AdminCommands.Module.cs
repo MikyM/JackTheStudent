@@ -2,11 +2,14 @@ using System;
 using System.Threading.Tasks;
 using JackTheStudent.Models;
 using System.Linq;
+using DSharpPlus;
 using System.Collections.Generic;
 using DSharpPlus.Interactivity.Extensions;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using Microsoft.EntityFrameworkCore;
+using DSharp​Plus.Entities;
+using System.Text.RegularExpressions;
 
 namespace JackTheStudent.Commands
 {
@@ -58,7 +61,7 @@ public class AdminCommandsModule : Base​Command​Module
                 TimeSpan.FromSeconds(10) 
             );
 
-            if (amountOfClassesResponse.Result == null) {
+            if (amountOfClassesResponse.TimedOut) {
                 await RestoreClasses(backupClasses, ctx);
                 return;
             }
@@ -77,7 +80,7 @@ public class AdminCommandsModule : Base​Command​Module
                 }
             }
 
-            if (amountOfClassesResponse.Result == null) {
+            if (amountOfClassesResponse.TimedOut) {
                 await RestoreClasses(backupClasses, ctx);
                 return;
             }
@@ -138,9 +141,9 @@ public class AdminCommandsModule : Base​Command​Module
     [Hidden]
     [Command("newsemestergroup")]
     [Description("Semester group class table rebuild")]
-    public async Task SemeterGroup(CommandContext ctx)
+    public async Task SemesterGroup(CommandContext ctx)
     {
-        List<Group> backupGroups = new List<Group>();
+        List<Models.Group> backupGroups = new List<Models.Group>();
 
         await ctx.RespondAsync("Are you absolutely sure you wanna do it?");
         var intr = ctx.Client.GetInteractivity(); 
@@ -178,7 +181,7 @@ public class AdminCommandsModule : Base​Command​Module
                 TimeSpan.FromSeconds(10) 
             );
 
-            if (amountOfGroupsResponse.Result == null) {
+            if (amountOfGroupsResponse.TimedOut) {
                 await RestoreGroups(backupGroups, ctx);
                 return;
             }
@@ -206,12 +209,12 @@ public class AdminCommandsModule : Base​Command​Module
                     TimeSpan.FromSeconds(30) 
                 );
 
-                if (groupId.Result == null) {                  
+                if (groupId.TimedOut) {                  
                     await RestoreGroups(backupGroups, ctx);
                     return;
                 }
 
-                var newGroup = new Group {GroupId = groupId.Result.Content};
+                var newGroup = new Models.Group {GroupId = groupId.Result.Content};
                 JackTheStudent.Program.groupList.Add(newGroup);
                 db.Group.Add(newGroup);
                 await ctx.RespondAsync($"Added group with ID: {newGroup.GroupId}.");
@@ -230,12 +233,89 @@ public class AdminCommandsModule : Base​Command​Module
         return;
     }
 
-    public async Task RestoreGroups(List<Group> backupList, CommandContext ctx)
+    [RequirePermissions(Permissions.BanMembers)]
+    [Hidden]
+    [Command("ban")]
+    [Description("Bans a member from the server")]
+    public async Task Ban(CommandContext ctx, string mention, string reason = "")
+    {
+        string userMention = mention;
+        userMention = Regex.Replace(userMention, @"[><@]", "");
+        ulong userId = ulong.Parse(userMention);
+        DiscordMember member = await ctx.Guild.GetMemberAsync(userId);
+        await member.BanAsync(7, reason);
+        await ctx.RespondAsync($"User {mention} has been banned.");
+    }
+
+    [RequirePermissions(Permissions.BanMembers)]
+    [Hidden]
+    [Command("unban")]
+    [Description("Unbans a member")]
+    public async Task Unban(CommandContext ctx, string mention)
+    {
+        string userMention = mention;
+        userMention = Regex.Replace(userMention, @"[><@]", "");
+        ulong userId = ulong.Parse(userMention);
+        DiscordMember member = await ctx.Guild.GetMemberAsync(userId);
+        await member.UnbanAsync();
+        await ctx.RespondAsync($"User {mention} has been unbanned.");
+    }
+
+    [RequirePermissions(Permissions.KickMembers)]
+    [Hidden]
+    [Command("kick")]
+    [Description("Kicks a member from the server")]
+    public async Task Kick(CommandContext ctx, string mention, string reason = "")
+    {
+        string userMention = mention;
+        userMention = Regex.Replace(userMention, @"[><@]", "");
+        ulong userId = ulong.Parse(userMention);
+        DiscordMember member = await ctx.Guild.GetMemberAsync(userId);
+        await member.RemoveAsync(reason);
+        await ctx.RespondAsync($"User {mention} has been kicked.");
+    }
+
+    [RequirePermissions(Permissions.MuteMembers)]
+    [Hidden]
+    [Command("mutevoice")]
+    [Description("Mutes a member for specified time")]
+    public async Task MuteVoice(CommandContext ctx, string mention, string reason = "")
+    {   
+        string userMention = mention;
+        userMention = Regex.Replace(userMention, @"[><@]", "");
+        ulong userId = ulong.Parse(userMention);
+        DiscordMember member = await ctx.Guild.GetMemberAsync(userId);
+        if(member.VoiceState.Channel == null) {
+            await ctx.RespondAsync("This user isn't connected to any voice channels.");
+            return;
+        }
+        await member.SetMuteAsync(true, reason);
+        await ctx.RespondAsync($"User {mention} has been muted in voice channels.");
+    }
+
+    [RequirePermissions(Permissions.MuteMembers)]
+    [Hidden]
+    [Command("unmutevoice")]
+    [Description("Unmutes a member")]
+    public async Task UnMuteVoice(CommandContext ctx, string mention)
+    {
+        string userMention = mention;
+        userMention = Regex.Replace(userMention, @"[><@]", "");
+        ulong userId = ulong.Parse(userMention);
+        DiscordMember member = await ctx.Guild.GetMemberAsync(userId);
+        if(member.VoiceState.Channel == null) {
+            await ctx.RespondAsync("This user isn't connected to any voice channels.");
+            return;
+        }
+        await member.SetMuteAsync(false);
+        await ctx.RespondAsync($"User {mention} has been unmuted in voice channels.");
+    }
+    public async Task RestoreGroups(List<Models.Group> backupList, CommandContext ctx)
     {
         await ctx.RespondAsync("Failed, aborting and restoring from backup.");
         using(var db = new JackTheStudentContext()) {
             await db.Database.ExecuteSqlRawAsync("truncate table `group`");
-            foreach (Group backupGroup in backupList) {
+            foreach (Models.Group backupGroup in backupList) {
                 db.Group.Add(backupGroup);
                 JackTheStudent.Program.groupList.Add(backupGroup);
             }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using JackTheStudent.Models;
 using System.Linq;
 using Serilog;
+using DSharpPlus.Entities;
 
 namespace JackTheStudent.Commands
 {
@@ -48,7 +49,7 @@ public class MaterialCommandsModule : Base​Command​Module
                 JackTheStudent.Program.classMaterialList.Add(material);
                 db.ClassMaterial.Add(material);
                 await db.SaveChangesAsync();
-                Log.Logger.Information($"[Jack] Logged new class material with ID: {material.Id}");
+                Log.Logger.Information($"[Jack] Logged new class material with ID: {material.Id} {DateTime.Now}");
                 }
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] New material log, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
@@ -91,18 +92,17 @@ public class MaterialCommandsModule : Base​Command​Module
                 materials = materials.ToList();
                 if (materials.Count == 0) {
                         await ctx.RespondAsync("There are no materials logged!");
+                        return;
                 } else {                  
                     foreach (ClassMaterial material in materials) {
                         result = $"{result} \nMaterial link for {material.Class} class - {material.Link}. {(material.AdditionalInfo.Equals("") ? "" : $"Additional info: {material.AdditionalInfo}")}";
                     }
-                    await ctx.RespondAsync(result);
                 }
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] Material logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
-            }
-        return;            
+            }         
         } else {
             try {
                 materials = materials.Where(m => m.ClassShortName == className).ToList();                     
@@ -113,15 +113,21 @@ public class MaterialCommandsModule : Base​Command​Module
                     foreach (ClassMaterial material in materials) {
                         result = $"{result} \nMaterial link for {material.Class} class - {material.Link}. {(material.AdditionalInfo.Equals("") ? "" : $"Additional info: {material.AdditionalInfo}")}";
                     }
-                    await ctx.RespondAsync(result);
-                    return;
                 }                          
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] Material logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
-        }    
+        }
+
+        var emoji = DiscordEmoji.FromName(ctx.Client, ":books:");
+        var embed = new DiscordEmbedBuilder {
+            Title = $"{emoji} Found materials:",
+            Description = result,
+            Color = new DiscordColor(0x6b6510) 
+        };
+        await ctx.RespondAsync("", embed: embed);    
     }
 }
 }

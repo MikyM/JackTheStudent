@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Collections.Generic;
 using JackTheStudent.CommandDescriptions;
 using Serilog;
+using DSharpPlus.Entities;
 
 namespace JackTheStudent.Commands
 {
@@ -64,7 +65,7 @@ public class ExamCommandsModule : Base​Command​Module
                 JackTheStudent.Program.examList.Add(exam);
                 db.Exam.Add(exam);
                 await db.SaveChangesAsync();
-                Log.Logger.Information($"[Jack] Logged new exam with ID: {exam.Id}");
+                Log.Logger.Information($"[Jack] Logged new exam with ID: {exam.Id} {DateTime.Now}");
                 }
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] New exam log, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
@@ -98,35 +99,32 @@ public class ExamCommandsModule : Base​Command​Module
                 exams = exams.Where(e => e.Date > DateTime.Now).ToList();
                     if (exams.Count == 0) {
                             await ctx.RespondAsync("Wait what!? There are no exams planned, PAAAARTTTIEEEHH TIIIIIIIIMEEEEEEE!");
+                            return;
                     } else {
                         foreach (Exam exam in exams) {
                                 result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class)} exam will happen on {exam.Date.ToString().Trim()}.{(exam.AdditionalInfo.Equals("") ? "" : $"Additional info: {exam.AdditionalInfo}")}";
                         }
-                        await ctx.RespondAsync(result);
-                    }
-                
+                    }     
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] Exam logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
-        return;
         } else if (classType == "." && span == ".") {
             try {
                     if (exams.Count == 0) {
                             await ctx.RespondAsync("There are no exams logged!");
+                            return;
                     } else {
                         foreach (Exam exam in exams) {
                             result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class)} exam will happen / happened on {exam.Date.ToString().Trim()}.{(exam.AdditionalInfo.Equals("") ? "" : $"Additional info: {exam.AdditionalInfo}")}";
                         }
-                        await ctx.RespondAsync(result);
                     }
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] Exam logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
-        return;
         } else if (classType != "." && span == "planned") {
                 try {
                     exams = exams.Where(e => e.Date > DateTime.Now && e.ClassShortName == classType).ToList();                     
@@ -137,8 +135,6 @@ public class ExamCommandsModule : Base​Command​Module
                         foreach (Exam exam in exams) {
                             result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class)} exam will happen on {exam.Date.ToString().Trim()}.{(exam.AdditionalInfo.Equals("") ? "" : $"Additional info: {exam.AdditionalInfo}")}";
                         }
-                        await ctx.RespondAsync(result);
-                        return;
                     }                           
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] Exam logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
@@ -155,15 +151,20 @@ public class ExamCommandsModule : Base​Command​Module
                     foreach (Exam exam in exams) {
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class)} exam will happen / happened on {exam.Date.ToString().Trim()}.{(exam.AdditionalInfo.Equals("") ? "" : $"Additional info: {exam.AdditionalInfo}")}";
                     }
-                    await ctx.RespondAsync(result);
-                    return;
                 }                       
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] Exam logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
-        }    
+        }
+        var emoji = DiscordEmoji.FromName(ctx.Client, ":heart_exclamation:");
+        var embed = new DiscordEmbedBuilder {
+            Title = $"{emoji} Found exams:",
+            Description = result,
+            Color = new DiscordColor(0xb01a38) 
+        };
+        await ctx.RespondAsync("", embed: embed);     
     }
 }
 }

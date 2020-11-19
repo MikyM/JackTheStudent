@@ -7,6 +7,7 @@ using System.Linq;
 using Serilog;
 using System.Globalization;
 using JackTheStudent.CommandDescriptions;
+using DSharpPlus.Entities;
 
 namespace JackTheStudent.Commands
 {
@@ -70,7 +71,7 @@ public class LabReportCommandsModule : Base​Command​Module
                 JackTheStudent.Program.labReportList.Add(labReport);
                 db.LabReport.Add(labReport);
                 await db.SaveChangesAsync();
-                Log.Logger.Information($"[Jack] Logged new lab report with ID: {labReport.Id}");
+                Log.Logger.Information($"[Jack] Logged new lab report with ID: {labReport.Id} {DateTime.Now}");
                 }
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] New lab report log, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
@@ -108,52 +109,50 @@ public class LabReportCommandsModule : Base​Command​Module
             labReports = labReports.Where(l => l.Date > DateTime.Now).ToList();
                 if (labReports.Count == 0) {
                         await ctx.RespondAsync("Wait what!? There are literally no lab reports planned at all!");
+                        return;
                 } else {
                     foreach (LabReport labReport in labReports) {
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(labReport.Class)} lab report for group {labReport.GroupId}, deadline is {labReport.Date.ToString().Trim()}.{(labReport.AdditionalInfo.Equals("") ? "" : $"Additional info: {labReport.AdditionalInfo}")}";
                     }
-                    await ctx.RespondAsync(result);
                 }
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] Lab report logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
-        return;
         } else if(classType == "." && span == "." && group != "." ) {
             try {
             labReports = labReports.Where(l => l.GroupId == group).ToList();
                 if (labReports.Count == 0) {
                         await ctx.RespondAsync($"There are no lab reports logged for group {group}!");
+                        return;
                 } else {
                     foreach (LabReport labReport in labReports) {
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(labReport.Class)} lab report for group {labReport.GroupId}, deadline is/was {labReport.Date.ToString().Trim()}.{(labReport.AdditionalInfo.Equals("") ? "" : $"Additional info: {labReport.AdditionalInfo}")}";
                     }
-                    await ctx.RespondAsync(result);
                 }
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] Lab report logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
-        return;
         } else if (classType == "." && span == "planned") {
             try {
             labReports = labReports.Where(l => l.Date > DateTime.Now && l.GroupId == group).ToList();
                 if (labReports.Count == 0) {
                         await ctx.RespondAsync($"Wait what!? There are no lab reports planned for any class for group {group}!");
+                        return;
                 } else {
                     foreach (LabReport labReport in labReports) {
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(labReport.Class)} lab report for group {labReport.GroupId}, deadline is {labReport.Date.ToString().Trim()}.{(labReport.AdditionalInfo.Equals("") ? "" : $"Additional info: {labReport.AdditionalInfo}")}";
                     }
-                    await ctx.RespondAsync(result);
+
                 }
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] Lab report logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
-        return;
         } else if (classType != "." && span == "planned" && group != ".") {
             try {
                 labReports = labReports.Where(l => l.Date > DateTime.Now && l.Class == classType && l.GroupId == group).ToList();                     
@@ -164,8 +163,6 @@ public class LabReportCommandsModule : Base​Command​Module
                     foreach (LabReport labReport in labReports) {
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(labReport.Class)} lab report for group {labReport.GroupId}, deadline is {labReport.Date.ToString().Trim()}.{(labReport.AdditionalInfo.Equals("") ? "" : $"Additional info: {labReport.AdditionalInfo}")}";
                     }
-                    await ctx.RespondAsync(result);
-                    return;
                 }                           
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] Lab report logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
@@ -182,8 +179,6 @@ public class LabReportCommandsModule : Base​Command​Module
                     foreach (LabReport labReport in labReports) {
                     result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(labReport.Class)} lab report for group {labReport.GroupId}, deadline is/was {labReport.Date.ToString().Trim()}.{(labReport.AdditionalInfo.Equals("") ? "" : $"Additional info: {labReport.AdditionalInfo}")}";
                     }
-                    await ctx.RespondAsync(result);
-                    return;
                 }                           
                 } catch(Exception ex) {
                     Log.Logger.Error($"[Jack] Lab report logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
@@ -200,15 +195,21 @@ public class LabReportCommandsModule : Base​Command​Module
                     foreach (LabReport labReport in labReports) {
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(labReport.Class)} lab report for group {labReport.GroupId}, deadline is/was {labReport.Date.ToString().Trim()}.{(labReport.AdditionalInfo.Equals("") ? "" : $"Additional info: {labReport.AdditionalInfo}")}";
                     }
-                    await ctx.RespondAsync(result);
-                    return;
                 }                        
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] Lab report logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
-        }    
+        }
+
+        var emoji = DiscordEmoji.FromName(ctx.Client, ":books:");
+        var embed = new DiscordEmbedBuilder {
+            Title = $"{emoji} Found lab reports:",
+            Description = result,
+            Color = new DiscordColor(0x106b2b) 
+        };
+        await ctx.RespondAsync("", embed: embed);       
     }
 }
 }

@@ -31,7 +31,7 @@ public class UtilityCommandsModule : Base​Command​Module
             await ctx.RespondAsync("No emojis specified.");
             return;
         } else if (emojiOptions.Count() != options.Split(new Char [] {','}).Count()) {
-            await ctx.RespondAsync("You're an idiot.");
+            await ctx.RespondAsync("You must supply same amount of options and emoticons.");
             return;
         }
 

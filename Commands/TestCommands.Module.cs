@@ -7,6 +7,7 @@ using System.Linq;
 using System.Globalization;
 using JackTheStudent.CommandDescriptions;
 using Serilog;
+using DSharpPlus.Entities;
 
 namespace JackTheStudent.Commands
 {
@@ -70,7 +71,7 @@ public class TestCommandsModule : Base​Command​Module
                 JackTheStudent.Program.testList.Add(test);
                 db.Test.Add(test);
                 await db.SaveChangesAsync();
-                Log.Logger.Information($"[Jack] Logged test with ID: {test.Id}");
+                Log.Logger.Information($"[Jack] Logged test with ID: {test.Id} {DateTime.Now}");
                 }
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] New test log, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
@@ -108,52 +109,49 @@ public class TestCommandsModule : Base​Command​Module
                 tests = tests.Where(t => t.Date > DateTime.Now).ToList();
                 if (tests.Count == 0) {
                         await ctx.RespondAsync("Wait what!? There are literally no tests planned at all!");
+                        return;
                 } else {                  
                     foreach (Test test in tests) {
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(test.Class)} test for group {test.GroupId}, will happen on {test.Date.ToString().Trim()}.{(test.AdditionalInfo.Equals("") ? "" : $"Additional info: {test.AdditionalInfo}")}";
                     }
-                    await ctx.RespondAsync(result);
                 }
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] Test logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
-        return;
         } else if(classType == "." && span == "." && group != "." ) {
             try {
                 tests = tests.Where(t => t.GroupId == group).ToList();
                 if (tests.Count == 0) {
                         await ctx.RespondAsync($"There are no tests logged for group {group}!");
+                        return;
                 } else {                  
                     foreach (Test test in tests) {
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(test.Class)} test for group {test.GroupId}, will happen/happened on {test.Date.ToString().Trim()}.{(test.AdditionalInfo.Equals("") ? "" : $"Additional info: {test.AdditionalInfo}")}";
                     }
-                    await ctx.RespondAsync(result);
                 }
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] Test logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
-        return;
         } else if (classType == "." && span == "planned" && group != ".") {
             try {
                 tests = tests.Where(t => t.Date > DateTime.Now && t.GroupId == group).ToList();
                 if (tests.Count == 0) {
                         await ctx.RespondAsync($"Wait what!? There are no tests planned for any class for group {group}!");
+                        return;
                 } else {                  
                     foreach (Test test in tests) {
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(test.Class)} test for group {test.GroupId}, will happen on {test.Date.ToString().Trim()}.{(test.AdditionalInfo.Equals("") ? "" : $"Additional info: {test.AdditionalInfo}")}";
                     }
-                    await ctx.RespondAsync(result);
                 }
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] Test logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
-        return;
         } else if (classType != "." && span == "planned" && group != ".") {
             try {
                 tests = tests.Where(t => t.Date > DateTime.Now && t.Class == classType && t.GroupId == group).ToList();                     
@@ -164,8 +162,6 @@ public class TestCommandsModule : Base​Command​Module
                     foreach (Test test in tests) {
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(test.Class)} test for group {test.GroupId}, will happen on {test.Date.ToString().Trim()}.{(test.AdditionalInfo.Equals("") ? "" : $"Additional info: {test.AdditionalInfo}")}";
                     }
-                    await ctx.RespondAsync(result);
-                    return;
                 }                           
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] Test logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
@@ -182,8 +178,6 @@ public class TestCommandsModule : Base​Command​Module
                     foreach (Test test in tests) {
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(test.Class)} test for group {test.GroupId}, will happen/happened on {test.Date.ToString().Trim()}.{(test.AdditionalInfo.Equals("") ? "" : $"Additional info: {test.AdditionalInfo}")}";
                     }
-                    await ctx.RespondAsync(result);
-                    return;
                 }                           
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] Test logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
@@ -200,15 +194,21 @@ public class TestCommandsModule : Base​Command​Module
                     foreach (Test test in tests) {
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(test.Class)} test for group {test.GroupId}, will happen/happened on {test.Date.ToString().Trim()}.{(test.AdditionalInfo.Equals("") ? "" : $"Additional info: {test.AdditionalInfo}")}";
                     }
-                    await ctx.RespondAsync(result);
-                    return;
                 }                          
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] Test logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
-        }    
+        }
+
+        var emoji = DiscordEmoji.FromName(ctx.Client, ":writing_hand:");
+        var embed = new DiscordEmbedBuilder {
+            Title = $"{emoji} Found tests:",
+            Description = result,
+            Color = new DiscordColor(0x0f4191) 
+        };
+        await ctx.RespondAsync("", embed: embed);    
     }
 }
 }

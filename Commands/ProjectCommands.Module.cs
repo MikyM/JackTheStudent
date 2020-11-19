@@ -6,7 +6,7 @@ using JackTheStudent.Models;
 using System.Linq;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
+using DSharpPlus.Entities;
 using DSharpPlus.Interactivity.Extensions;
 using JackTheStudent.CommandDescriptions;
 using Serilog;
@@ -80,7 +80,7 @@ public class ProjectCommandsModule : Base​Command​Module
                 JackTheStudent.Program.projectList.Add(project);
                 db.Project.Add(project);
                 await db.SaveChangesAsync();
-                Log.Logger.Information($"Logged new project with ID: {project.Id}");  
+                Log.Logger.Information($"Logged new project with ID: {project.Id} {DateTime.Now}");  
                 }
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] New project log, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
@@ -131,10 +131,10 @@ public class ProjectCommandsModule : Base​Command​Module
                 JackTheStudent.Program.projectList.Add(project);
                 db.Project.Add(project);
                 await db.SaveChangesAsync();
-                Log.Logger.Information($"Logged new project with ID: {project.Id}");  
+                Log.Logger.Information($"Logged new group project with ID: {project.Id} {DateTime.Now}");  
             }
             } catch(Exception ex) {
-                Log.Logger.Error($"[Jack] New project log, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
+                Log.Logger.Error($"[Jack] New group project log, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Log failed");
                 return;
             }
@@ -175,6 +175,7 @@ public class ProjectCommandsModule : Base​Command​Module
                 projects = projects.Where(p => p.Date > DateTime.Now).ToList();
                     if (projects.Count == 0) {
                             await ctx.RespondAsync("Wait what!? There are literally no projects planned at all!");
+                            return;
                     } else {
                         isParticipants = await ParticipantsQuestion(ctx);
                         foreach (Project project in projects) {                        
@@ -185,20 +186,19 @@ public class ProjectCommandsModule : Base​Command​Module
                             }
                             result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} {(project.IsGroup ? "group project" : "project")} for group {project.GroupId}, deadline is {project.Date.ToString().Trim()}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}.")}{participantsString}";
                         }
-                        await ctx.RespondAsync(result);
                     }
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] Project logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
-        return;
         } else if(classType == "." && span == "." && group != "." ) {
             try {
                 projects = projects.Where(p => p.GroupId == group)
                     .ToList();
                     if (projects.Count == 0) {
                             await ctx.RespondAsync($"There are no projects logged for group {group}!");
+                            return;
                     } else {
                         if (isGroup == "1" || isGroup == ".") {
                             isParticipants = await ParticipantsQuestion(ctx);
@@ -209,19 +209,18 @@ public class ProjectCommandsModule : Base​Command​Module
                             }
                             result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} {(project.IsGroup ? "group project" : "project")} for group {project.GroupId}, deadline is/was {project.Date.ToString().Trim()}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}.")}{participantsString}";
                         }
-                        await ctx.RespondAsync(result);
                     }
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] Project logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
-        return;
         } else if (classType == "." && span == "planned" && group != ".") {
             try {
                 projects = projects.Where(p => p.Date > DateTime.Now && p.GroupId == group).ToList();
                 if (projects.Count == 0) {
                         await ctx.RespondAsync($"Wait what!? There are no projects planned for any class for group {group}!");
+                        return;
                 } else {
                     if (isGroup == "1" || isGroup == ".") {
                         isParticipants = await ParticipantsQuestion(ctx);
@@ -233,14 +232,12 @@ public class ProjectCommandsModule : Base​Command​Module
 
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} {(project.IsGroup ? "group project" : "project")} for group {project.GroupId}, deadline is {project.Date.ToString().Trim()}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}.")}{participantsString}";
                     }
-                    await ctx.RespondAsync(result);
                 }
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] Project logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
-        return;
         } else if (classType != "." && span == "planned" && group != ".") {
             try {
                 projects = projects.Where(p => p.Date > DateTime.Now && p.Class == classType && p.GroupId == group).ToList();                     
@@ -257,8 +254,6 @@ public class ProjectCommandsModule : Base​Command​Module
                         }
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} {(project.IsGroup ? "group project" : "project")} for group {project.GroupId}, deadline is {project.Date.ToString().Trim()}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}.")}{participantsString}";
                     }
-                    await ctx.RespondAsync(result);
-                    return;
                 }                           
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] Project logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
@@ -281,8 +276,6 @@ public class ProjectCommandsModule : Base​Command​Module
                         }
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} {(project.IsGroup ? "group project" : "project")} for group {project.GroupId}, will happen / happened on {project.Date.ToString().Trim()}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}.")}{participantsString}";
                     }
-                    await ctx.RespondAsync(result);
-                    return;
                 }                           
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] Project logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
@@ -305,15 +298,20 @@ public class ProjectCommandsModule : Base​Command​Module
                         }
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} {(project.IsGroup ? "group project" : "project")} for group {project.GroupId}, will happen / happened on {project.Date.ToString().Trim()}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}.")}{participantsString}";
                     }
-                    await ctx.RespondAsync(result);
-                    return;
                 }                       
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] Project logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
-        }    
+        }
+        var emoji = DiscordEmoji.FromName(ctx.Client, ":mortar_board:");
+        var embed = new DiscordEmbedBuilder {
+            Title = $"{emoji} Logged projects:",
+            Description = result,
+            Color = new DiscordColor(0x8c770a) 
+        };
+        await ctx.RespondAsync("", embed: embed);       
     }
     public async Task<bool> ParticipantsQuestion(CommandContext ctx) 
     {

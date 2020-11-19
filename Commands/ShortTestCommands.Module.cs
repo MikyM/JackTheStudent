@@ -7,7 +7,7 @@ using System.Linq;
 using Serilog;
 using System.Globalization;
 using JackTheStudent.CommandDescriptions;
-
+using DSharpPlus.Entities;
 
 
 namespace JackTheStudent.Commands
@@ -72,7 +72,7 @@ public class ShortTestCommandsModule : Base​Command​Module
                 JackTheStudent.Program.shortTestList.Add(shortTest);
                 db.ShortTest.Add(shortTest);
                 await db.SaveChangesAsync();
-                Log.Logger.Information($"[Jack] Logged new short test with ID: {shortTest.Id}");
+                Log.Logger.Information($"[Jack] Logged new short test with ID: {shortTest.Id} {DateTime.Now}");
                 }
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] New short test log, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
@@ -110,52 +110,49 @@ public class ShortTestCommandsModule : Base​Command​Module
                 shortTests = shortTests.Where(s => s.Date > DateTime.Now).ToList();
                 if (shortTests.Count == 0) {
                         await ctx.RespondAsync("Wait what!? There are literally no short tests planned at all!");
+                        return;
                 } else {
                     foreach (ShortTest shortTest in shortTests) {
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(shortTest.Class)} short test for group {shortTest.GroupId}, will happen on {shortTest.Date.ToString().Trim()}.{(shortTest.AdditionalInfo.Equals("") ? "" : $"Additional info: {shortTest.AdditionalInfo}")}";
                     }
-                    await ctx.RespondAsync(result);
                 }
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] Short test logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
-        return;
         } else if(classType == "." && span == "." && group != "." ) {
             try {
                 shortTests = shortTests.Where(s => s.GroupId == group).ToList();
                 if (shortTests.Count == 0) {
                         await ctx.RespondAsync($"There are no short tests logged for group {group}!");
+                        return;
                 } else {
                     foreach (ShortTest shortTest in shortTests) {
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(shortTest.Class)} short test for group {shortTest.GroupId}, will happen/happened on {shortTest.Date.ToString().Trim()}.{(shortTest.AdditionalInfo.Equals("") ? "" : $"Additional info: {shortTest.AdditionalInfo}")}";
                     }
-                    await ctx.RespondAsync(result);
                 }
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] Short test logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
-        return;
         } else if (classType == "." && span == "planned" && group != ".") {
             try {
                 shortTests = shortTests.Where(s => s.Date > DateTime.Now && s.GroupId == group).ToList();
                 if (shortTests.Count == 0) {
                         await ctx.RespondAsync($"Wait what!? There are no short tests planned for any class for group {group}!");
+                        return;
                 } else {
                     foreach (ShortTest shortTest in shortTests) {
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(shortTest.Class)} short test for group {shortTest.GroupId}, will happen on {shortTest.Date.ToString().Trim()}.{(shortTest.AdditionalInfo.Equals("") ? "" : $"Additional info: {shortTest.AdditionalInfo}")}";
                     }
-                    await ctx.RespondAsync(result);
                 }
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] Short test logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
-        return;
         } else if (classType != "." && span == "planned" && group != ".") {
             try {
                 shortTests = shortTests.Where(s => s.Date > DateTime.Now && s.Class == classType && s.GroupId == group).ToList();                     
@@ -166,8 +163,6 @@ public class ShortTestCommandsModule : Base​Command​Module
                     foreach (ShortTest shortTest in shortTests) {
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(shortTest.Class)} short test for group {shortTest.GroupId}, will happen on {shortTest.Date.ToString().Trim()}.{(shortTest.AdditionalInfo.Equals("") ? "" : $"Additional info: {shortTest.AdditionalInfo}")}";
                     }
-                    await ctx.RespondAsync(result);
-                    return;
                 }                           
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] Short test logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
@@ -184,8 +179,6 @@ public class ShortTestCommandsModule : Base​Command​Module
                     foreach (ShortTest shortTest in shortTests) {
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(shortTest.Class)} short test for group {shortTest.GroupId}, will happen/happened on {shortTest.Date.ToString().Trim()}.{(shortTest.AdditionalInfo.Equals("") ? "" : $"Additional info: {shortTest.AdditionalInfo}")}";
                     }
-                    await ctx.RespondAsync(result);
-                    return;
                 }                           
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] Short test logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
@@ -202,15 +195,21 @@ public class ShortTestCommandsModule : Base​Command​Module
                     foreach (ShortTest shortTest in shortTests) {
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(shortTest.Class)} short test for group {shortTest.GroupId}, will happen/happened on {shortTest.Date.ToString().Trim()}.{(shortTest.AdditionalInfo.Equals("") ? "" : $"Additional info: {shortTest.AdditionalInfo}")}";
                     }
-                    await ctx.RespondAsync(result);
-                    return;
                 }                          
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] Short test logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
             }
-        }    
+        }
+        var emoji = DiscordEmoji.FromName(ctx.Client, ":pencil:");
+        var embed = new DiscordEmbedBuilder {
+            Title = $"{emoji} Found short tests:",
+            Description = result,
+            Color = new DiscordColor(0x4c910f) 
+        };
+        await ctx.RespondAsync("", embed: embed);
+            
     }
 }
 }

@@ -115,6 +115,11 @@ namespace JackTheStudent.Models
                     .IsRequired()
                     .HasMaxLength(5);
 
+                entity.Property(e => e.ClassTypeFull)
+                    .HasColumnName("class_type_full")
+                    .IsRequired()
+                    .HasMaxLength(45);
+
                 entity.Property(e => e.AdditionalInfo)
                     .HasColumnName("additional_info")
                     .HasColumnType("longtext");
