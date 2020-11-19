@@ -27,6 +27,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
     {
         DayOfWeek parsedEventDayOfWeek = new DayOfWeek();
         DateTime parsedEventTime = new DateTime();
+
         if (uniClass == "") {
             await ctx.RespondAsync("Learn to read you dumbass. The command looks like: !teamsLink <group> <class> <teamsLinkDate> <teamsLinkTime> Try again!");
             return;      
@@ -59,12 +60,18 @@ public class TeamsLinksCommandsModule : Base​Command​Module
             return;
         } else if (!JackTheStudent.Program.groupList.Any(g => g.GroupId == groupId) && groupId != "."){
             await ctx.RespondAsync("There's no such group dumbass. Try again!");
-            return;      
+            return;
+        } else if(JackTheStudent.Program.teamsLinkList.Any(t => t.Date == $"{parsedEventDayOfWeek} {eventTime}" && t.ClassShortName == uniClass && t.GroupId == groupId && t.ClassType == classType && t.Link == link)) {
+            await ctx.RespondAsync("Someone has already logged this link.");
+            return;   
+        } else if(JackTheStudent.Program.teamsLinkList.Any(t => t.Date == $"{parsedEventDayOfWeek} {eventTime}" && t.GroupId == groupId)) {
+            await ctx.RespondAsync("There's a class logged for this group/everyone that takes place same time.");
+            return;         
         } else {
             try {
                 using (var db = new JackTheStudentContext()){
                 var teamsLink = new TeamsLink { 
-                    Class = JackTheStudent.Program.classList.Where(c => c.ShortName == classType).Select(c => c.Name).FirstOrDefault(),
+                    Class = JackTheStudent.Program.classList.Where(c => c.ShortName == uniClass).Select(c => c.Name).FirstOrDefault(),
                     ClassShortName = uniClass,
                     ClassType = classType,
                     Date = $"{parsedEventDayOfWeek} {eventTime}",

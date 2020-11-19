@@ -49,6 +49,12 @@ public class TestCommandsModule : Base​Command​Module
         } else if (!DateTime.TryParse(eventTime, out parsedEventTime)) {
             await ctx.RespondAsync("That's not a valid time you retard, learn to type!");
             return;
+        } else if(JackTheStudent.Program.testList.Any(t => t.Date == parsedEventDate.Date.Add(parsedEventTime.TimeOfDay) && t.ClassShortName == classType && t.GroupId == groupId)) {
+            await ctx.RespondAsync("Someone has already logged this test.");
+            return;
+        } else if(JackTheStudent.Program.testList.Any(t => t.Date == parsedEventDate.Date.Add(parsedEventTime.TimeOfDay) && t.GroupId == groupId)) {
+            await ctx.RespondAsync("There's a test logged for this group that takes place same time.");
+            return;         
         } else {
             try {
                 using (var db = new JackTheStudentContext()){

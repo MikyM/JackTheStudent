@@ -44,6 +44,12 @@ public class ExamCommandsModule : Base​Command​Module
         } else if (!DateTime.TryParse(examTime, out parsedEventTime)) {
             await ctx.RespondAsync("That's not a valid time you retard, learn to type!");
             return;
+        } else if(JackTheStudent.Program.examList.Any(t => t.Date == parsedEventDate.Date.Add(parsedEventTime.TimeOfDay) && t.ClassShortName == classType)) {
+            await ctx.RespondAsync("Someone has already logged this exam.");
+            return;
+        } else if(JackTheStudent.Program.examList.Any(t => t.Date == parsedEventDate.Date.Add(parsedEventTime.TimeOfDay))) {
+            await ctx.RespondAsync("There's an exam logged that takes place same time.");
+            return;
         } else {
             try {
                 using (var db = new JackTheStudentContext()){

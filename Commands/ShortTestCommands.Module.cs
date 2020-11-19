@@ -51,6 +51,12 @@ public class ShortTestCommandsModule : Base​Command​Module
         } else if (!DateTime.TryParse(eventTime, out parsedEventTime)) {
             await ctx.RespondAsync("That's not a valid time you retard, learn to type!");
             return;
+        } else if(JackTheStudent.Program.shortTestList.Any(s => s.Date == parsedEventDate.Date.Add(parsedEventTime.TimeOfDay) && s.ClassShortName == classType && s.GroupId == groupId)) {
+            await ctx.RespondAsync("Someone has already logged this short test.");
+            return;
+        } else if(JackTheStudent.Program.shortTestList.Any(s => s.Date == parsedEventDate.Date.Add(parsedEventTime.TimeOfDay) && s.GroupId == groupId)) {
+            await ctx.RespondAsync("There's a short test logged for this group that takes place same time.");
+            return;         
         } else {
             try {
                 using (var db = new JackTheStudentContext()){

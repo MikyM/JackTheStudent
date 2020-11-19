@@ -56,5 +56,28 @@ public class StudentCommandsModule : Base​Command​Module
         }
         return; 
     }
+
+    [Command("classtypes")]
+    [Description("Command retrieving class types")]
+    public async Task ClassTypesLogs(CommandContext ctx)
+    {
+        try {
+            var classTypes = JackTheStudent.Program.classTypeList.ToList();
+            if (classTypes.Count == 0) {
+                    await ctx.RespondAsync("No class types logged!");
+            } else {
+                string result = String.Empty;
+                foreach (ClassType classType in classTypes) {
+                    result = $"{result} \nClass type - {classType.Name}, short version - {classType.ShortName}";
+                }
+                await ctx.RespondAsync(result);
+            }
+        } catch(Exception ex) {
+                Log.Logger.Error($"[Jack] Class types logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
+                await ctx.RespondAsync("Show logs failed");
+                return;
+        }
+        return; 
+    }
 }
 }

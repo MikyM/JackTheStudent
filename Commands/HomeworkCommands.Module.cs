@@ -49,6 +49,12 @@ public class HomeworkCommandsModule : Base​Command​Module
         } else if (!DateTime.TryParse(eventTime, out parsedEventTime)) {
             await ctx.RespondAsync("That's not a valid time you retard, learn to type!");
             return;
+        } else if(JackTheStudent.Program.homeworkList.Any(h => h.Date == parsedEventDate.Date.Add(parsedEventTime.TimeOfDay) && h.ClassShortName == classType && h.GroupId == groupId)) {
+            await ctx.RespondAsync("Someone has already logged this homework.");
+            return;
+        } else if(JackTheStudent.Program.homeworkList.Any(h => h.Date == parsedEventDate.Date.Add(parsedEventTime.TimeOfDay) && h.GroupId == groupId)) {
+            await ctx.RespondAsync("There's a homework logged for this group that takes place same time.");
+            return;         
         } else {
             try {
                 using (var db = new JackTheStudentContext()){

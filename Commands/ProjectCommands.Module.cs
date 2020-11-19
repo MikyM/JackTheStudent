@@ -57,6 +57,12 @@ public class ProjectCommandsModule : Base​Command​Module
         } else if (!DateTime.TryParse(eventTime, out parsedEventTime)) {
             await ctx.RespondAsync("That's not a valid time you retard, learn to type!");
             return;
+        } else if(JackTheStudent.Program.projectList.Any(p => p.Date == parsedEventDate.Date.Add(parsedEventTime.TimeOfDay) && p.ClassShortName == classType && p.GroupId == groupId)) {
+            await ctx.RespondAsync("Someone has already logged this project.");
+            return;
+        } else if(JackTheStudent.Program.projectList.Any(p => p.Date == parsedEventDate.Date.Add(parsedEventTime.TimeOfDay))) {
+            await ctx.RespondAsync("There's a project logged for this group that takes place same time.");
+            return;
         } else if (IsGroup == "0") {
             try {
                 using (var db = new JackTheStudentContext()){

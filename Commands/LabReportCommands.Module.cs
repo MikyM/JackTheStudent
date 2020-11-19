@@ -49,6 +49,12 @@ public class LabReportCommandsModule : Base​Command​Module
         } else if (!DateTime.TryParse(eventTime, out parsedEventTime)) {
             await ctx.RespondAsync("That's not a valid time you retard, learn to type!");
             return;
+        } else if(JackTheStudent.Program.labReportList.Any(l => l.Date == parsedEventDate.Date.Add(parsedEventTime.TimeOfDay) && l.ClassShortName == classType && l.GroupId == groupId)) {
+            await ctx.RespondAsync("Someone has already logged this lab report.");
+            return;
+        } else if(JackTheStudent.Program.labReportList.Any(l => l.Date == parsedEventDate.Date.Add(parsedEventTime.TimeOfDay) && l.GroupId == groupId)) {
+            await ctx.RespondAsync("There's a lab report logged for this group that takes place same time.");
+            return;         
         } else {
             try {
                 using (var db = new JackTheStudentContext()){

@@ -4,6 +4,7 @@ using JackTheStudent.Models;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using Serilog;
+using System.Linq;
 
 namespace JackTheStudent.Commands
 {
@@ -29,9 +30,12 @@ public class PersonalReminderCommandsModule : Base​Command​Module
             await ctx.RespondAsync("That's not a valid time!");
             return;
         } else if (about == "") {
-            await ctx.RespondAsync("You forgot to add what will the alarm be about");
+            await ctx.RespondAsync("You forgot to add what will the alarm be about.");
             return;
-        }        
+        } else if(JackTheStudent.Program.reminderList.Any(r => r.SetForDate == parsedEventDate.Date.Add(parsedEventTime.TimeOfDay))) {
+            await ctx.RespondAsync("You already have a reminder logged for this exact time.");
+            return;
+        }
         
         PersonalReminder reminder = new PersonalReminder{
             SetForDate = parsedEventDate.Date.Add(parsedEventTime.TimeOfDay),
