@@ -285,8 +285,10 @@ public class AdminCommandsModule : Base​Command​Module
         ulong userId;
         string userMention = mention;
         userMention = Regex.Replace(userMention, @"[><@]", "");
+        Log.Logger.Error($"Before fail {mention}, {userMention}");
         if (!ulong.TryParse(userMention, out userId)) {
             Log.Logger.Error("[Jack] String wasn't in a correct format");
+            Log.Logger.Error($"After fail {mention}, {userMention}");
             return;
         }
         DiscordMember member = await ctx.Guild.GetMemberAsync(userId);
