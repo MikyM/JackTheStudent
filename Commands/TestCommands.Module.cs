@@ -64,7 +64,7 @@ public class TestCommandsModule : Base​Command​Module
                 JackTheStudent.Program.testList.Add(test);
                 db.Test.Add(test);
                 await db.SaveChangesAsync();
-                Log.Logger.Information($"[Jack] {ctx.Message.Author.Id} logged test with ID: {test.Id}");
+                Log.Logger.Information($"[Jack] Logged test with ID: {test.Id}");
                 }
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] New test log, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());

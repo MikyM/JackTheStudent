@@ -435,7 +435,7 @@ namespace JackTheStudent.Models
                 entity.Property(e => e.UserMention)
                     .IsRequired()
                     .HasColumnName("user_mention")
-                    .HasMaxLength(50);
+                    .HasColumnType("longtext");
             });
 
             modelBuilder.Entity<ShortTest>(entity =>

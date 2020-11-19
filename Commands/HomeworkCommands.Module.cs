@@ -64,7 +64,7 @@ public class HomeworkCommandsModule : Base​Command​Module
                 JackTheStudent.Program.homeworkList.Add(homeWork);
                 db.Homework.Add(homeWork);
                 await db.SaveChangesAsync();
-                Log.Logger.Information($"[Jack] {ctx.Message.Author.Id} logged new homework with ID: {homeWork.Id}");
+                Log.Logger.Information($"[Jack] Logged new homework with ID: {homeWork.Id}");
                 }
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] New homework log, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());

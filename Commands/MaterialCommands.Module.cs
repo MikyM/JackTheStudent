@@ -48,7 +48,7 @@ public class MaterialCommandsModule : Base​Command​Module
                 JackTheStudent.Program.classMaterialList.Add(material);
                 db.ClassMaterial.Add(material);
                 await db.SaveChangesAsync();
-                Log.Logger.Information($"[Jack] {ctx.Message.Author.Id} logged new class material with ID: {material.Id}");
+                Log.Logger.Information($"[Jack] Logged new class material with ID: {material.Id}");
                 }
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] New material log, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());

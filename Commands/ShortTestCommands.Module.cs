@@ -66,7 +66,7 @@ public class ShortTestCommandsModule : Base​Command​Module
                 JackTheStudent.Program.shortTestList.Add(shortTest);
                 db.ShortTest.Add(shortTest);
                 await db.SaveChangesAsync();
-                Log.Logger.Information($"[Jack] {ctx.Message.Author.Id} logged new short test with ID: {shortTest.Id}");
+                Log.Logger.Information($"[Jack] Logged new short test with ID: {shortTest.Id}");
                 }
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] New short test log, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());

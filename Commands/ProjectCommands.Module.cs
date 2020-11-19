@@ -74,7 +74,7 @@ public class ProjectCommandsModule : Base​Command​Module
                 JackTheStudent.Program.projectList.Add(project);
                 db.Project.Add(project);
                 await db.SaveChangesAsync();
-                Log.Logger.Information($"{ctx.Message.Author.Id} logged new project with ID: {project.Id}");  
+                Log.Logger.Information($"Logged new project with ID: {project.Id}");  
                 }
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] New project log, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
@@ -125,7 +125,7 @@ public class ProjectCommandsModule : Base​Command​Module
                 JackTheStudent.Program.projectList.Add(project);
                 db.Project.Add(project);
                 await db.SaveChangesAsync();
-                Log.Logger.Information($"{ctx.Message.Author.Id} logged new project with ID: {project.Id}");  
+                Log.Logger.Information($"Logged new project with ID: {project.Id}");  
             }
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] New project log, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());

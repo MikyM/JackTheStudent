@@ -15,6 +15,9 @@ using DSharpPlus.EventArgs;
 using DSharpPlus.Entities;
 using DSharpPlus.Interactivity.Enums;
 using DSharpPlus.Interactivity.Extensions;
+using DSharpPlus.CommandsNext.Exceptions;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
 using System.Net.Http;
 using Serilog;
@@ -24,19 +27,15 @@ namespace JackTheStudent
     class Program
     {
     private static HttpClient httpClient = new HttpClient();
-    private CancellationTokenSource _cts { get; set; }
-    private IConfigurationRoot _config;
-    private DiscordClient _discord;
-    private CommandsNextExtension _commands;
-    private InteractivityExtension _interactivity;
     private static Timer reminderTimer;
     private static Timer timeCheckTimer;
+    
+    public static List<string> quotes = new List<string>();
+    public static List<string> weatherCities = new List<string>();
     public static List<PersonalReminder> reminderList = new List<PersonalReminder>();
     public static List<Class> classList = new List<Class>();
     public static List<Group> groupList = new List<Group>();
     public static List<ClassType> classTypeList = new List<ClassType>();
-    public static List<string> quotes = new List<string>();
-    public static List<string> weatherCities = new List<string>();
     public static List<Exam> examList = new List<Exam>();
     public static List<Test> testList = new List<Test>();
     public static List<Project> projectList = new List<Project>();
@@ -46,9 +45,16 @@ namespace JackTheStudent
     public static List<TeamsLink> teamsLinkList = new List<TeamsLink>();
     public static List<Homework> homeworkList = new List<Homework>();
     public static List<ClassMaterial> classMaterialList = new List<ClassMaterial>();
-    static async Task Main(string[] args) => await new Program().InitBot(args);
+    private CancellationTokenSource _cts { get; set; }
+    private IConfigurationRoot _config;
+    private DiscordClient _discord;
+    private CommandsNextExtension _commands;
+    private InteractivityExtension _interactivity;
+    public readonly EventId BotEventId = new EventId(1, "[Jack]");
 
-    async Task InitBot(string[] args)
+    static async Task Main(string[] args) => await new Program().InitBotAsync(args);
+
+    public async Task InitBotAsync(string[] args)
     {
         CultureInfo culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
         culture.DateTimeFormat.ShortDatePattern = "dd-MM-yyyy HH:mm";
@@ -100,6 +106,9 @@ namespace JackTheStudent
             Log.Logger.Information("[Jack] Command modules loaded.");
 
             _discord.Ready += OnClientReady;
+            _discord.ClientErrored += ClientError;
+            _commands.CommandErrored += CommandErrored;
+            _commands.CommandExecuted += CommandExecuted;
 
             await LoadFromDb();
             Log.Logger.Information("[Jack] All lists have been successfully loaded from database!");
@@ -107,6 +116,7 @@ namespace JackTheStudent
             Log.Logger.Information("[Jack] All files have been loaded!");
 
             RunAsync(args).Wait();
+            await Task.Delay(-1);
         }
         catch(Exception ex) {
             Log.Logger.Error("[Jack] " + ex.ToString());
@@ -125,6 +135,7 @@ namespace JackTheStudent
 
     private async Task OnClientReady(DiscordClient _discord, ReadyEventArgs e)
     {
+        Log.Logger.Information(BotEventId.ToString() + " Client is ready to process events.");
         DiscordActivity status = new DiscordActivity("you fail exams :')", ActivityType.Watching);
         await _discord.UpdateStatusAsync(status);
         Log.Logger.Information($"[Jack] Updated status to \"{status.Name}\"!");
@@ -133,6 +144,36 @@ namespace JackTheStudent
         await StartTimeCheck();  
         Log.Logger.Information("[Jack] Database timezone has been updated!");
         Log.Logger.Information("[Jack] I'm now fully functional!");
+    }
+
+    private Task ClientError(DiscordClient sender, ClientErrorEventArgs e)
+    {
+        Log.Logger.Error(BotEventId.ToString() + "Exception occured: " + e.Exception);
+        return Task.CompletedTask;
+    }
+
+    private Task CommandExecuted(CommandsNextExtension sender, CommandExecutionEventArgs e)
+    {
+        Log.Logger.Information(BotEventId.ToString() + $" {e.Context.User.Username}, with ID: {e.Context.User.Id} successfully executed '{e.Command.QualifiedName}' {DateTime.Now}");
+        return Task.CompletedTask;
+    }
+
+    private async Task CommandErrored(CommandsNextExtension sender, CommandErrorEventArgs e)
+    {
+        Log.Logger.Error(BotEventId.ToString() + $" {e.Context.User.Username}, with ID: {e.Context.User.Id} tried executing '{e.Command?.QualifiedName ?? "<unknown command>"}' but it errored: {e.Exception.GetType()}: {e.Exception.Message ?? "<no message>"}", DateTime.Now);
+        if (e.Exception is ChecksFailedException ex) {
+            var emoji = DiscordEmoji.FromName(e.Context.Client, ":no_entry:");
+            var embed = new DiscordEmbedBuilder {
+                Title = "Access denied",
+                Description = $"{emoji} You do not have the permissions required to execute this command.",
+                Color = new DiscordColor(0xFF0000) 
+            };
+            await e.Context.RespondAsync("", embed: embed);
+        } else if (e.Exception is CommandNotFoundException) {   
+            await e.Context.RespondAsync("There's no such command, learn to type...");
+        } else if (e.Exception is Invalid​Overload​Exception) {
+            await e.Context.RespondAsync("... try again");
+        }
     }
 
     private async Task StartReminders()
@@ -221,6 +262,7 @@ namespace JackTheStudent
                 using (HttpResponseMessage res = await client.GetAsync(baseUrl)) {
                     using (HttpContent content = res.Content) {
                         var data = await content.ReadAsStringAsync();
+                        await Task.Delay(1000);
                         string[] splitResponse = data.Split(new char[] {'"'});
                         string dateTime = splitResponse[11];
                         string[] splitDatetime = dateTime.Split(new char[] {'+'});
@@ -234,7 +276,7 @@ namespace JackTheStudent
                 }
             }
         } catch(Exception ex) {
-            Console.Error.WriteLine("[Jack] Time check - " + ex.ToString());
+            Log.Logger.Error("[Jack] Time check - " + ex.ToString());
         }      
     }
 

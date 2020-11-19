@@ -3,7 +3,6 @@ using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 using System;
 using System.Threading.Tasks;
-using Serilog;
 using DSharpPlus.Interactivity.Extensions;
 
 
@@ -28,7 +27,6 @@ public class BasicCommandsModule : Base​Command​Module
         DiscordEmoji emoji = DiscordEmoji.FromName(ctx.Client, ":thinking:");
         await ctx.TriggerTypingAsync();
         await ctx.RespondAsync(emoji);
-        Log.Logger.Information($"User {ctx.Message.Author.Mention} used dead command");
     }
 
 

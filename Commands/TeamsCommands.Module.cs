@@ -77,7 +77,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                 JackTheStudent.Program.teamsLinkList.Add(teamsLink);
                 db.TeamsLink.Add(teamsLink);
                 await db.SaveChangesAsync();
-                Log.Logger.Information($"[Jack] {ctx.Message.Author.Id} logged new teams link with ID: {teamsLink.Id}");
+                Log.Logger.Information($"[Jack] Logged new teams link with ID: {teamsLink.Id}");
                 }
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] New teams link log, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());

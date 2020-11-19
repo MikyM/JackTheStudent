@@ -58,7 +58,7 @@ public class ExamCommandsModule : Base​Command​Module
                 JackTheStudent.Program.examList.Add(exam);
                 db.Exam.Add(exam);
                 await db.SaveChangesAsync();
-                Log.Logger.Information($"[Jack] {ctx.Message.Author.Id} logged new exam with ID: {exam.Id}");
+                Log.Logger.Information($"[Jack] Logged new exam with ID: {exam.Id}");
                 }
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] New exam log, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());

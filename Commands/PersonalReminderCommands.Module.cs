@@ -29,7 +29,7 @@ public class PersonalReminderCommandsModule : Base​Command​Module
             await ctx.RespondAsync("That's not a valid time!");
             return;
         } else if (about == "") {
-            await ctx.RespondAsync("You forgot to add what will the alarm be abou!t");
+            await ctx.RespondAsync("You forgot to add what will the alarm be about");
             return;
         }        
         
@@ -53,7 +53,7 @@ public class PersonalReminderCommandsModule : Base​Command​Module
             await ctx.RespondAsync("Log failed");
             return;
         }
-        Log.Logger.Information($"[Jack] {ctx.Message.Author.Id} logged new personal reminder with ID: {reminder.Id}");
+        Log.Logger.Information($"[Jack] Logged new personal reminder with ID: {reminder.Id}");
         await ctx.RespondAsync($"Reminder about \"{about}\" set for {date} {time}");
     }
 

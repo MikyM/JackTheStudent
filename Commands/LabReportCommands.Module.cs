@@ -64,7 +64,7 @@ public class LabReportCommandsModule : Base​Command​Module
                 JackTheStudent.Program.labReportList.Add(labReport);
                 db.LabReport.Add(labReport);
                 await db.SaveChangesAsync();
-                Log.Logger.Information($"[Jack] {ctx.Message.Author.Id} logged new lab report with ID: {labReport.Id}");
+                Log.Logger.Information($"[Jack] Logged new lab report with ID: {labReport.Id}");
                 }
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] New lab report log, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
