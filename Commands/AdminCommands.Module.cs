@@ -9,6 +9,8 @@ using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using Microsoft.EntityFrameworkCore;
 using DSharp​Plus.Entities;
+using System.Text.RegularExpressions;
+using Serilog;
 
 namespace JackTheStudent.Commands
 {
@@ -41,7 +43,7 @@ public class AdminCommandsModule : Base​Command​Module
             try {
                 await context.Database.ExecuteSqlRawAsync(truncateText);
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] New semester classes, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Truncate failed");
                 return;
             }
@@ -126,14 +128,13 @@ public class AdminCommandsModule : Base​Command​Module
             try {
                 await db.SaveChangesAsync();      
             } catch (Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] New semester classes, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await RestoreClasses(backupClasses, ctx);
                 return;
             } 
-            await db.SaveChangesAsync();            
+            Log.Logger.Information("[Jack} Class table repopulated successfully " + DateTime.Now);             
             await ctx.RespondAsync("Class table repopulated successfully");          
         }
-        return;
     }
 
     [RequireOwner]
@@ -142,7 +143,7 @@ public class AdminCommandsModule : Base​Command​Module
     [Description("Semester group class table rebuild")]
     public async Task SemesterGroup(CommandContext ctx)
     {
-        List<Group> backupGroups = new List<Group>();
+        List<Models.Group> backupGroups = new List<Models.Group>();
 
         await ctx.RespondAsync("Are you absolutely sure you wanna do it?");
         var intr = ctx.Client.GetInteractivity(); 
@@ -163,7 +164,7 @@ public class AdminCommandsModule : Base​Command​Module
             try {
                 await context.Database.ExecuteSqlRawAsync(truncateText);
             } catch(Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] New semester groups, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Truncate failed");
                 return;
             }
@@ -213,7 +214,7 @@ public class AdminCommandsModule : Base​Command​Module
                     return;
                 }
 
-                var newGroup = new Group {GroupId = groupId.Result.Content};
+                var newGroup = new Models.Group {GroupId = groupId.Result.Content};
                 JackTheStudent.Program.groupList.Add(newGroup);
                 db.Group.Add(newGroup);
                 await ctx.RespondAsync($"Added group with ID: {newGroup.GroupId}.");
@@ -223,10 +224,11 @@ public class AdminCommandsModule : Base​Command​Module
             try {
                 await db.SaveChangesAsync();      
             } catch (Exception ex) {
-                Console.Error.WriteLine("[Jack] " + ex.ToString());
+                Log.Logger.Error($"[Jack] New semester groups, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await RestoreGroups(backupGroups, ctx);
                 return;
-            }  
+            }
+            Log.Logger.Information("[Jack} Group table repopulated successfully " + DateTime.Now);  
             await ctx.RespondAsync("Group table repopulated successfully");   
         }
         return;
@@ -239,7 +241,8 @@ public class AdminCommandsModule : Base​Command​Module
     public async Task Ban(CommandContext ctx, string mention, string reason = "")
     {
         string userMention = mention;
-        ulong userId = ulong.Parse(userMention.Replace(">", "").Replace("<", "").Replace("@", ""));
+        userMention = Regex.Replace(userMention, @"[><@]", "");
+        ulong userId = ulong.Parse(userMention);
         DiscordMember member = await ctx.Guild.GetMemberAsync(userId);
         await member.BanAsync(7, reason);
         await ctx.RespondAsync($"User {mention} has been banned.");
@@ -252,7 +255,8 @@ public class AdminCommandsModule : Base​Command​Module
     public async Task Unban(CommandContext ctx, string mention)
     {
         string userMention = mention;
-        ulong userId = ulong.Parse(userMention.Replace(">", "").Replace("<", "").Replace("@", ""));
+        userMention = Regex.Replace(userMention, @"[><@]", "");
+        ulong userId = ulong.Parse(userMention);
         DiscordMember member = await ctx.Guild.GetMemberAsync(userId);
         await member.UnbanAsync();
         await ctx.RespondAsync($"User {mention} has been unbanned.");
@@ -265,7 +269,8 @@ public class AdminCommandsModule : Base​Command​Module
     public async Task Kick(CommandContext ctx, string mention, string reason = "")
     {
         string userMention = mention;
-        ulong userId = ulong.Parse(userMention.Replace(">", "").Replace("<", "").Replace("@", ""));
+        userMention = Regex.Replace(userMention, @"[><@]", "");
+        ulong userId = ulong.Parse(userMention);
         DiscordMember member = await ctx.Guild.GetMemberAsync(userId);
         await member.RemoveAsync(reason);
         await ctx.RespondAsync($"User {mention} has been kicked.");
@@ -277,8 +282,13 @@ public class AdminCommandsModule : Base​Command​Module
     [Description("Mutes a member for specified time")]
     public async Task MuteVoice(CommandContext ctx, string mention, string reason = "")
     {   
+        ulong userId;
         string userMention = mention;
-        ulong userId = ulong.Parse(userMention.Replace(">", "").Replace("<", "").Replace("@", ""));
+        userMention = Regex.Replace(userMention, @"[><@]", "");
+        if (!ulong.TryParse(userMention, out userId)) {
+            Log.Logger.Error("[Jack] String wasn't in a correct format");
+            return;
+        }
         DiscordMember member = await ctx.Guild.GetMemberAsync(userId);
         if(member.VoiceState.Channel == null) {
             await ctx.RespondAsync("This user isn't connected to any voice channels.");
@@ -295,7 +305,8 @@ public class AdminCommandsModule : Base​Command​Module
     public async Task UnmuteVoice(CommandContext ctx, string mention)
     {
         string userMention = mention;
-        ulong userId = ulong.Parse(userMention.Replace(">", "").Replace("<", "").Replace("@", ""));
+        userMention = Regex.Replace(userMention, @"[><@]", "");
+        ulong userId = ulong.Parse(userMention);
         DiscordMember member = await ctx.Guild.GetMemberAsync(userId);
         if(member.VoiceState.Channel == null) {
             await ctx.RespondAsync("This user isn't connected to any voice channels.");
@@ -305,19 +316,18 @@ public class AdminCommandsModule : Base​Command​Module
         await ctx.RespondAsync($"User {mention} has been unmuted in voice channels.");
     }
 
-    public async Task RestoreGroups(List<Group> backupList, CommandContext ctx)
+    public async Task RestoreGroups(List<Models.Group> backupList, CommandContext ctx)
     {
         await ctx.RespondAsync("Failed, aborting and restoring from backup.");
         using(var db = new JackTheStudentContext()) {
             await db.Database.ExecuteSqlRawAsync("truncate table `group`");
-            foreach (Group backupGroup in backupList) {
+            foreach (Models.Group backupGroup in backupList) {
                 db.Group.Add(backupGroup);
                 JackTheStudent.Program.groupList.Add(backupGroup);
             }
             await db.SaveChangesAsync();
         }
         await ctx.RespondAsync("Groups restored from backup.");
-        return;
     }
 
     public async Task RestoreClasses(List<Class> backupList, CommandContext ctx)
@@ -332,7 +342,6 @@ public class AdminCommandsModule : Base​Command​Module
             await db.SaveChangesAsync();
         }
         await ctx.RespondAsync("Groups restored from backup.");
-        return;
     }
 
 }
