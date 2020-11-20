@@ -245,6 +245,7 @@ public class AdminCommandsModule : Base​Command​Module
         DiscordMember member = await ctx.Guild.GetMemberAsync(userId);
         await member.BanAsync(7, reason);
         await ctx.RespondAsync($"User {mention} has been banned.");
+        Log.Logger.Information($"[Jack] {ctx.Message.Author.Username} with ID: {ctx.Message.Author.Id} banned {member.DisplayName} with ID: {userId}");
     }
 
     [RequirePermissions(Permissions.BanMembers)]
@@ -258,6 +259,7 @@ public class AdminCommandsModule : Base​Command​Module
         DiscordMember member = await ctx.Guild.GetMemberAsync(userId);
         await member.UnbanAsync();
         await ctx.RespondAsync($"User {mention} has been unbanned.");
+        Log.Logger.Information($"[Jack] {ctx.Message.Author.Username} with ID: {ctx.Message.Author.Id} unbanned {member.DisplayName} with ID: {userId}");
     }
 
     [RequirePermissions(Permissions.KickMembers)]
@@ -271,6 +273,7 @@ public class AdminCommandsModule : Base​Command​Module
         DiscordMember member = await ctx.Guild.GetMemberAsync(userId);
         await member.RemoveAsync(reason);
         await ctx.RespondAsync($"User {mention} has been kicked.");
+        Log.Logger.Information($"[Jack] {ctx.Message.Author.Username} with ID: {ctx.Message.Author.Id} kicked {member.DisplayName} with ID: {userId}");
     }
 
     [RequirePermissions(Permissions.MuteMembers)]
@@ -288,6 +291,7 @@ public class AdminCommandsModule : Base​Command​Module
         }
         await member.SetMuteAsync(true, reason);
         await ctx.RespondAsync($"User {mention} has been muted in voice channels.");
+        Log.Logger.Information($"[Jack] {ctx.Message.Author.Username} with ID: {ctx.Message.Author.Id} muted {member.DisplayName} with ID: {userId}");
     }
 
     [RequirePermissions(Permissions.MuteMembers)]
@@ -305,6 +309,7 @@ public class AdminCommandsModule : Base​Command​Module
         }
         await member.SetMuteAsync(false);
         await ctx.RespondAsync($"User {mention} has been unmuted in voice channels.");
+        Log.Logger.Information($"[Jack] {ctx.Message.Author.Username} with ID: {ctx.Message.Author.Id} unmuted {member.DisplayName} with ID: {userId}");
     }
 
     public async Task RestoreGroups(List<Models.Group> backupList, CommandContext ctx)

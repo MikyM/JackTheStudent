@@ -77,8 +77,8 @@ namespace JackTheStudent
                .CreateLogger();
 
             Log.Logger.Information("[Jack] Starting up..");
-            Log.Logger.Information("[Jack] Loaded config!");
-            Log.Logger.Information("[Jack] Creating discord client..");
+            Log.Logger.Debug("[Jack] Loaded config!");
+            Log.Logger.Debug("[Jack] Creating discord client..");
             
             _discord = new DiscordClient(new DiscordConfiguration {
                 Token = Environment.GetEnvironmentVariable("BOT_TOKEN"),
@@ -99,11 +99,11 @@ namespace JackTheStudent
                 DmHelp = false
             });
 
-            Log.Logger.Information("[Jack] Loading command modules..");
+            Log.Logger.Debug("[Jack] Loading command modules..");
 
             _commands.RegisterCommands(Assembly.GetExecutingAssembly());
 
-            Log.Logger.Information("[Jack] Command modules loaded.");
+            Log.Logger.Debug("[Jack] Command modules loaded.");
 
             _discord.Ready += OnClientReady;
             _discord.ClientErrored += ClientError;
@@ -111,9 +111,9 @@ namespace JackTheStudent
             _commands.CommandExecuted += CommandExecuted;
 
             await LoadFromDb();
-            Log.Logger.Information("[Jack] All lists have been successfully loaded from database!");
+            Log.Logger.Debug("[Jack] All lists have been successfully loaded from database!");
             await LoadFromFiles();
-            Log.Logger.Information("[Jack] All files have been loaded!");
+            Log.Logger.Debug("[Jack] All files have been loaded!");
 
             RunAsync(args).Wait();
             await Task.Delay(-1);
@@ -125,9 +125,9 @@ namespace JackTheStudent
 
     async Task RunAsync(string[] args)
     {   
-        Log.Logger.Information("[Jack] Connecting..");
+        Log.Logger.Debug("[Jack] Connecting..");
         await _discord.ConnectAsync();
-        Log.Logger.Information("[Jack] Connected!");     
+        Log.Logger.Debug("[Jack] Connected!");     
         
         while (!_cts.IsCancellationRequested)
             await Task.Delay(TimeSpan.FromMinutes(1));
@@ -138,11 +138,11 @@ namespace JackTheStudent
         Log.Logger.Information(BotEventId.ToString() + " Client is ready to process events.");
         DiscordActivity status = new DiscordActivity("you fail exams :')", ActivityType.Watching);
         await _discord.UpdateStatusAsync(status);
-        Log.Logger.Information($"[Jack] Updated status to \"{status.Name}\"!");
+        Log.Logger.Debug($"[Jack] Updated status to \"{status.Name}\"!");
         await StartReminders();
-        Log.Logger.Information("[Jack] Personal reminders are up!");
+        Log.Logger.Debug("[Jack] Personal reminders are up!");
         await StartTimeCheck();  
-        Log.Logger.Information("[Jack] Database timezone has been updated!");
+        Log.Logger.Debug("[Jack] Database timezone has been updated!");
         Log.Logger.Information("[Jack] I'm now fully functional!");
     }
 
@@ -256,7 +256,7 @@ namespace JackTheStudent
 
     private async Task TimeCheck()
     {
-        string baseUrl = "http://worldtimeapi.org/api/timezone/Europe/Warsaw";
+        string baseUrl = "http://worldclockapi.com/api/json/cet/now";
         try {
             using (HttpClient client = new HttpClient()) {
                 using (HttpResponseMessage res = await client.GetAsync(baseUrl)) {
@@ -265,8 +265,8 @@ namespace JackTheStudent
                         await Task.Delay(1000);
                         string[] splitResponse = data.Split(new char[] {'"'});
                         string dateTime = splitResponse[11];
-                        string[] splitDatetime = dateTime.Split(new char[] {'+'});
-                        string timezone = splitDatetime[1];
+                        string[] splitDatetime = dateTime.Split(new char[] {':'});
+                        string timezone = splitDatetime[0] + ":" + splitDatetime[1];                   
 
                         using (var db = new JackTheStudentContext()){
                             await db.Database.ExecuteSqlRawAsync($"SET time_zone = '+{timezone}';");
@@ -308,7 +308,6 @@ namespace JackTheStudent
             Log.Logger.Error("[Jack] Load from db - " + ex.ToString());
         }
     }
-    
     private async Task LoadFromFiles()
     {
         try {
@@ -322,7 +321,7 @@ namespace JackTheStudent
                 fileStream.Close();
             } 
         } catch(Exception ex) {
-            Log.Logger.Error("[Jack] Load form files - " + ex.ToString());
+            Log.Logger.Error("[Jack] Load quotes - " + ex.ToString());
         }
 
         try {
@@ -336,7 +335,7 @@ namespace JackTheStudent
                 fileStream.Close();
             } 
         } catch(Exception ex) {
-            Log.Logger.Error("[Jack] Load form files - " + ex.ToString());
+            Log.Logger.Error("[Jack] Load cities - " + ex.ToString());
         }
     }
     
