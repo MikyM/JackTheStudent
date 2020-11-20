@@ -1,6 +1,6 @@
 {
     "discord": {
-      "CommandPrefix":  "!" ,
+      "CommandPrefix":  "?" ,
       "Serilog": {
         "MinimumLevel": {
           "Default": "Information",

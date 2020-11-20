@@ -29,12 +29,8 @@ namespace JackTheStudent.Models
         public virtual DbSet<GroupProjectMember> GroupProjectMember { get; set; }
         public virtual DbSet<TeamsLink> TeamsLink { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured) {
-                optionsBuilder.UseMySQL(Environment.GetEnvironmentVariable("JACKTHESTUDENT_DB_CON_STRING"));
-            }
-        }
+        
+        
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

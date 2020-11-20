@@ -31,7 +31,6 @@ namespace JackTheStudent
     private static Timer timeCheckTimer;
     
     public static List<string> quotes = new List<string>();
-    public static List<string> weatherCities = new List<string>();
     public static List<PersonalReminder> reminderList = new List<PersonalReminder>();
     public static List<Class> classList = new List<Class>();
     public static List<Group> groupList = new List<Group>();
@@ -324,19 +323,6 @@ namespace JackTheStudent
             Log.Logger.Error("[Jack] Load quotes - " + ex.ToString());
         }
 
-        try {
-            await using (var fileStream = File.OpenRead(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resource", "weatherCities.txt")))
-                using (var reader = new StreamReader(fileStream)) {
-                    String city;
-                    while ((city = reader.ReadLine()) != null) {
-                        weatherCities.Add(city);
-                    }
-                reader.Close();
-                fileStream.Close();
-            } 
-        } catch(Exception ex) {
-            Log.Logger.Error("[Jack] Load cities - " + ex.ToString());
-        }
     }
     
 }
