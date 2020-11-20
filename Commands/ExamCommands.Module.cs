@@ -97,6 +97,10 @@ public class ExamCommandsModule : Base​Command​Module
         }    
 
         var exams = JackTheStudent.Program.examList;
+        string chosenClass = JackTheStudent.Program.classList
+            .Where(c => c.ShortName == classType)
+            .Select(c => c.Name)
+            .FirstOrDefault();
         var result = String.Empty;
         try {
             if (classType == "." && span == "planned") {
@@ -126,13 +130,10 @@ public class ExamCommandsModule : Base​Command​Module
                 exams = exams
                     .Where(e => 
                         e.Date > DateTime.Now && 
-                        e.Class == JackTheStudent.Program.classList
-                            .Where(c => c.ShortName == classType)
-                            .Select(c => c.Name)
-                            .FirstOrDefault())
+                        e.Class == chosenClass)
                     .ToList();                     
                 if (exams.Count == 0) {
-                    await ctx.RespondAsync($"There are no {exams.Select(e => e.Class).FirstOrDefault()} exams planned!");
+                    await ctx.RespondAsync($"There are no {chosenClass} exams planned!");
                     return;
                 } else {
                     foreach (Exam exam in exams) {
@@ -142,10 +143,7 @@ public class ExamCommandsModule : Base​Command​Module
             } else {
                 exams = exams
                     .Where (e => 
-                        e.Class == JackTheStudent.Program.classList
-                            .Where(c => c.ShortName == classType)
-                            .Select(c => c.Name)
-                            .FirstOrDefault())
+                        e.Class == chosenClass)
                     .ToList();                  
                 if (exams.Count == 0) {
                     await ctx.RespondAsync($"There are no logged exams for {exams.Select(e => e.Class).FirstOrDefault()} class!");

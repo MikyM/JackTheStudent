@@ -108,6 +108,10 @@ public class LabReportCommandsModule : Base​Command​Module
         }
 
         var labReports = JackTheStudent.Program.labReportList;
+        string chosenClass = JackTheStudent.Program.classList
+            .Where(c => c.ShortName == classType)
+            .Select(c => c.Name)
+            .FirstOrDefault();
         string result = String.Empty;
         try {
             if (group == "." && classType == "." && span == "planned") {
@@ -155,10 +159,7 @@ public class LabReportCommandsModule : Base​Command​Module
                 labReports = labReports
                     .Where(l => 
                         l.Date > DateTime.Now && 
-                        l.Class == JackTheStudent.Program.classList
-                            .Where(c => c.ShortName == classType)
-                            .Select(c => c.Name)
-                            .FirstOrDefault() && 
+                        l.Class == chosenClass && 
                         l.GroupId == group)
                     .ToList();                     
                 if (labReports.Count == 0) {
@@ -172,10 +173,7 @@ public class LabReportCommandsModule : Base​Command​Module
             } else if (classType != "." && span == "." && group != ".") {
                 labReports = labReports
                     .Where(l => 
-                        l.Class == JackTheStudent.Program.classList
-                            .Where(c => c.ShortName == classType)
-                            .Select(c => c.Name)
-                            .FirstOrDefault() && 
+                        l.Class == chosenClass && 
                         l.GroupId == group)
                     .ToList();                     
                 if (labReports.Count == 0) {
@@ -185,7 +183,21 @@ public class LabReportCommandsModule : Base​Command​Module
                     foreach (LabReport labReport in labReports) {
                     result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(labReport.Class)} lab report for group {labReport.GroupId}, deadline is/was {labReport.Date.ToString().Trim()}.{(labReport.AdditionalInfo.Equals("") ? "" : $"Additional info: {labReport.AdditionalInfo}")}";
                     }
-                }                                          
+                } 
+            } else if (classType != "." && span == "planned" && group == ".") {
+                labReports = labReports
+                    .Where(l => 
+                        l.Class == chosenClass && 
+                        l.Date > DateTime.Now)
+                    .ToList();                     
+                if (labReports.Count == 0) {
+                    await ctx.RespondAsync($"There are no lab reports logged for {chosenClass} class for any of the groups!");
+                    return;
+                } else {
+                    foreach (LabReport labReport in labReports) {
+                    result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(labReport.Class)} lab report for group {labReport.GroupId}, deadline is/was {labReport.Date.ToString().Trim()}.{(labReport.AdditionalInfo.Equals("") ? "" : $"Additional info: {labReport.AdditionalInfo}")}";
+                    }
+                }                                                          
             } else {
                 labReports = labReports.ToList();                     
                 if (labReports.Count == 0) {

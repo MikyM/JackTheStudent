@@ -109,6 +109,10 @@ public class ShortTestCommandsModule : Base​Command​Module
         }
 
         var shortTests = JackTheStudent.Program.shortTestList;
+        string chosenClass = JackTheStudent.Program.classList
+            .Where(c => c.ShortName == classType)
+            .Select(c => c.Name)
+            .FirstOrDefault();
         string result = String.Empty;
         try {
             if (group == "." && classType == "." && span == "planned") {        
@@ -155,14 +159,11 @@ public class ShortTestCommandsModule : Base​Command​Module
                 shortTests = shortTests
                     .Where(s => 
                         s.Date > DateTime.Now && 
-                        s.Class == JackTheStudent.Program.classList
-                            .Where(c => c.ShortName == classType)
-                            .Select(c => c.Name)
-                            .FirstOrDefault() && 
+                        s.Class == chosenClass && 
                         s.GroupId == group)
                     .ToList();                     
                 if (shortTests.Count == 0) {
-                    await ctx.RespondAsync($"There are no {shortTests.Select(s => s.Class).FirstOrDefault()} short tests planned for group {group}!");
+                    await ctx.RespondAsync($"There are no {chosenClass} short tests planned for group {group}!");
                     return;
                 } else {
                     foreach (ShortTest shortTest in shortTests) {
@@ -172,20 +173,31 @@ public class ShortTestCommandsModule : Base​Command​Module
             } else if (classType != "." && span == "." && group != ".") {
                 shortTests = shortTests
                     .Where(s => 
-                        s.Class == JackTheStudent.Program.classList
-                            .Where(c => c.ShortName == classType)
-                            .Select(c => c.Name)
-                            .FirstOrDefault() && 
+                        s.Class == chosenClass && 
                         s.GroupId == group)
                     .ToList();                     
                 if (shortTests.Count == 0) {
-                    await ctx.RespondAsync($"There are no short tests logged for {shortTests.Select( c => c.Class).FirstOrDefault()} class for group {group}!");
+                    await ctx.RespondAsync($"There are no short tests logged for {chosenClass} class for group {group}!");
                     return;
                 } else {
                     foreach (ShortTest shortTest in shortTests) {
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(shortTest.Class)} short test for group {shortTest.GroupId}, will happen/happened on {shortTest.Date.ToString().Trim()}.{(shortTest.AdditionalInfo.Equals("") ? "" : $"Additional info: {shortTest.AdditionalInfo}")}";
                     }
-                }                                          
+                }  
+            } else if (classType != "." && span == "planned" && group == ".") {
+                shortTests = shortTests
+                    .Where(s => 
+                        s.Class == chosenClass && 
+                        s.Date > DateTime.Now)
+                    .ToList();                     
+                if (shortTests.Count == 0) {
+                    await ctx.RespondAsync($"There are no short tests logged for {chosenClass} class for any of the groups!");
+                    return;
+                } else {
+                    foreach (ShortTest shortTest in shortTests) {
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(shortTest.Class)} short test for group {shortTest.GroupId}, will happen/happened on {shortTest.Date.ToString().Trim()}.{(shortTest.AdditionalInfo.Equals("") ? "" : $"Additional info: {shortTest.AdditionalInfo}")}";
+                    }
+                }                                        
             } else {
                 shortTests = shortTests.ToList();                     
                 if (shortTests.Count == 0) {

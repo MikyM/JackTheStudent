@@ -108,6 +108,10 @@ public class HomeworkCommandsModule : Base​Command​Module
         }
 
         var homeworks = JackTheStudent.Program.homeworkList;
+        string chosenClass = JackTheStudent.Program.classList
+            .Where(c => c.ShortName == classType)
+            .Select(c => c.Name)
+            .FirstOrDefault();
         string result = String.Empty;   
         try {
             if (group == "." && classType == "." && span == "planned") {
@@ -155,14 +159,11 @@ public class HomeworkCommandsModule : Base​Command​Module
                 homeworks = homeworks
                     .Where(h => 
                         h.Date > DateTime.Now && 
-                        h.Class == JackTheStudent.Program.classList
-                            .Where(c => c.ShortName == classType)
-                            .Select(c => c.Name)
-                            .FirstOrDefault() && 
+                        h.Class == chosenClass && 
                         h.GroupId == group)
                     .ToList();                  
                 if (homeworks.Count == 0) {
-                    await ctx.RespondAsync($"There is no {homeworks.Select(h => h.Class).FirstOrDefault()} homework planned for group {group} at all!");
+                    await ctx.RespondAsync($"There is no {chosenClass} homework planned for group {group} at all!");
                     return;
                 } else {
                     foreach (Homework homework in homeworks) {
@@ -172,20 +173,31 @@ public class HomeworkCommandsModule : Base​Command​Module
             } else if (classType != "." && span == "." && group !=".") {
                 homeworks = homeworks
                     .Where(h => 
-                        h.Class == JackTheStudent.Program.classList
-                            .Where(c => c.ShortName == classType)
-                            .Select(c => c.Name)
-                            .FirstOrDefault() &&
+                        h.Class == chosenClass &&
                         h.GroupId == group)
                     .ToList();                     
                 if (homeworks.Count == 0) {
-                    await ctx.RespondAsync($"There is no homework logged for {homeworks.Select(h => h.Class).FirstOrDefault()} class for group {group}!");
+                    await ctx.RespondAsync($"There is no homework logged for {chosenClass} class for group {group}!");
                     return;
                 } else {
                     foreach (Homework homework in homeworks) {
                     result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId}, deadline is/was {homework.Date.ToString().Trim()}.{(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
                     }
-                }                                         
+                } 
+            } else if (classType != "." && span == "planned" && group ==".") {
+                homeworks = homeworks
+                    .Where(h => 
+                        h.Class == chosenClass &&
+                        h.Date > DateTime.Now)
+                    .ToList();                     
+                if (homeworks.Count == 0) {
+                    await ctx.RespondAsync($"There is no homework logged for {chosenClass} class for any of the groups!");
+                    return;
+                } else {
+                    foreach (Homework homework in homeworks) {
+                    result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId}, deadline is/was {homework.Date.ToString().Trim()}.{(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
+                    }
+                }                                                          
             } else {
                 homeworks = homeworks.ToList();                     
                 if (homeworks.Count == 0) {
