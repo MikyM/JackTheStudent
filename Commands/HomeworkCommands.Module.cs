@@ -77,10 +77,10 @@ public class HomeworkCommandsModule : Base​Command​Module
                 JackTheStudent.Program.homeworkList.Add(homeWork);
                 db.Homework.Add(homeWork);
                 await db.SaveChangesAsync();
-                Log.Logger.Information($"[Jack] Logged new homework with ID: {homeWork.Id} {DateTime.Now}");
+                Log.Logger.Information($"[Jack] User {ctx.Message.Author.Username}#{ctx.Message.Author.Discriminator} ID:{ctx.Message.Author.Id} created a new log with '{ctx.Command.QualifiedName}' command and created ID: {homeWork.Id}");
                 }
             } catch(Exception ex) {
-                Log.Logger.Error($"[Jack] New homework log, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
+                Log.Logger.Error($"[Jack] Command {ctx.Command.QualifiedName} was called by user {ctx.Message.Author.Username}#{ctx.Message.Author.Discriminator} ID:{ctx.Message.Author.Id}, but it errored: " + ex.ToString());
                 await ctx.RespondAsync("Log failed");
                 return;
             }
@@ -210,7 +210,7 @@ public class HomeworkCommandsModule : Base​Command​Module
                 }   
             }                    
         } catch(Exception ex) {
-            Log.Logger.Error($"[Jack] Homework logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
+            Log.Logger.Error($"[Jack] Command {ctx.Command.QualifiedName} was called by user {ctx.Message.Author.Username}#{ctx.Message.Author.Discriminator} ID:{ctx.Message.Author.Id}, but it errored: " + ex.ToString());
             await ctx.RespondAsync("Show logs failed");
             return;
         }

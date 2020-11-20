@@ -77,10 +77,10 @@ public class LabReportCommandsModule : Base​Command​Module
                 JackTheStudent.Program.labReportList.Add(labReport);
                 db.LabReport.Add(labReport);
                 await db.SaveChangesAsync();
-                Log.Logger.Information($"[Jack] Logged new lab report with ID: {labReport.Id} {DateTime.Now}");
+                Log.Logger.Information($"[Jack] User {ctx.Message.Author.Username}#{ctx.Message.Author.Discriminator} ID:{ctx.Message.Author.Id} created a new log with '{ctx.Command.QualifiedName}' command and created ID: {labReport.Id}");
                 }
             } catch(Exception ex) {
-                Log.Logger.Error($"[Jack] New lab report log, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
+                Log.Logger.Error($"[Jack] Command {ctx.Command.QualifiedName} was called by user {ctx.Message.Author.Username}#{ctx.Message.Author.Discriminator} ID:{ctx.Message.Author.Id}, but it errored: " + ex.ToString());
                 await ctx.RespondAsync("Log failed");
                 return;
             }
@@ -210,7 +210,7 @@ public class LabReportCommandsModule : Base​Command​Module
                 }                        
             }
         } catch(Exception ex) {
-            Log.Logger.Error($"[Jack] Lab reports logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
+            Log.Logger.Error($"[Jack] Command {ctx.Command.QualifiedName} was called by user {ctx.Message.Author.Username}#{ctx.Message.Author.Discriminator} ID:{ctx.Message.Author.Id}, but it errored: " + ex.ToString());
             await ctx.RespondAsync("Show logs failed");
             return;
         }

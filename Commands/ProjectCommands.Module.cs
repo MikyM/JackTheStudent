@@ -86,10 +86,10 @@ public class ProjectCommandsModule : Base​Command​Module
                 JackTheStudent.Program.projectList.Add(project);
                 db.Project.Add(project);
                 await db.SaveChangesAsync();
-                Log.Logger.Information($"Logged new project with ID: {project.Id} {DateTime.Now}");  
+                Log.Logger.Information($"[Jack] User {ctx.Message.Author.Username}#{ctx.Message.Author.Discriminator} ID:{ctx.Message.Author.Id} created a new log with '{ctx.Command.QualifiedName}' command and created ID: {project.Id}");
                 }
             } catch(Exception ex) {
-                Log.Logger.Error($"[Jack] New project log, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
+                Log.Logger.Error($"[Jack] Command {ctx.Command.QualifiedName} was called by user {ctx.Message.Author.Username}#{ctx.Message.Author.Discriminator} ID:{ctx.Message.Author.Id}, but it errored: " + ex.ToString());
                 await ctx.RespondAsync("Log failed");
                 return;
             }
@@ -136,10 +136,10 @@ public class ProjectCommandsModule : Base​Command​Module
                 JackTheStudent.Program.projectList.Add(project);
                 db.Project.Add(project);
                 await db.SaveChangesAsync();
-                Log.Logger.Information($"Logged new group project with ID: {project.Id} {DateTime.Now}");  
+                Log.Logger.Information($"[Jack] User {ctx.Message.Author.Username}#{ctx.Message.Author.Discriminator} ID:{ctx.Message.Author.Id} created a new log with '{ctx.Command.QualifiedName}' command and created ID: {project.Id}");  
             }
             } catch(Exception ex) {
-                Log.Logger.Error($"[Jack] New group project log, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
+                Log.Logger.Error($"[Jack] Command {ctx.Command.QualifiedName} was called by user {ctx.Message.Author.Username}#{ctx.Message.Author.Discriminator} ID:{ctx.Message.Author.Id}, but it errored: " + ex.ToString());
                 await ctx.RespondAsync("Log failed");
                 return;
             }
@@ -316,7 +316,7 @@ public class ProjectCommandsModule : Base​Command​Module
                 }                       
             }
         } catch(Exception ex) {
-            Log.Logger.Error($"[Jack] Project logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
+            Log.Logger.Error($"[Jack] Command {ctx.Command.QualifiedName} was called by user {ctx.Message.Author.Username}#{ctx.Message.Author.Discriminator} ID:{ctx.Message.Author.Id}, but it errored: " + ex.ToString());
             await ctx.RespondAsync("Show logs failed");
             return;
         }

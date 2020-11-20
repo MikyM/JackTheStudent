@@ -31,7 +31,6 @@ namespace JackTheStudent
     private static Timer timeCheckTimer;
     
     public static List<string> quotes = new List<string>();
-    public static List<string> weatherCities = new List<string>();
     public static List<PersonalReminder> reminderList = new List<PersonalReminder>();
     public static List<Class> classList = new List<Class>();
     public static List<Group> groupList = new List<Group>();
@@ -154,13 +153,13 @@ namespace JackTheStudent
 
     private Task CommandExecuted(CommandsNextExtension sender, CommandExecutionEventArgs e)
     {
-        Log.Logger.Information(BotEventId.ToString() + $" {e.Context.User.Username}, with ID: {e.Context.User.Id} successfully executed '{e.Command.QualifiedName}' {DateTime.Now}");
+        Log.Logger.Debug(BotEventId.ToString() + $" {e.Context.User.Username}, with ID: {e.Context.User.Id} successfully executed '{e.Command.QualifiedName}'");
         return Task.CompletedTask;
     }
 
     private async Task CommandErrored(CommandsNextExtension sender, CommandErrorEventArgs e)
     {
-        Log.Logger.Error(BotEventId.ToString() + $" {e.Context.User.Username}, with ID: {e.Context.User.Id} tried executing '{e.Command?.QualifiedName ?? "<unknown command>"}' but it errored: {e.Exception.GetType()}: {e.Exception.Message ?? "<no message>"}", DateTime.Now);
+        Log.Logger.Error(BotEventId.ToString() + $" {e.Context.User.Username}, with ID: {e.Context.User.Id} tried executing '{e.Command?.QualifiedName ?? "<unknown command>"}' but it errored: {e.Exception.GetType()}: {e.Exception.Message ?? "<no message>"}");
         if (e.Exception is ChecksFailedException ex) {
             var emoji = DiscordEmoji.FromName(e.Context.Client, ":no_entry:");
             var embed = new DiscordEmbedBuilder {
@@ -226,7 +225,7 @@ namespace JackTheStudent
         }
         TimeSpan interval = new TimeSpan(7, 00, 00, 00);
         TimeSpan timeLeft = new TimeSpan();
-        TimeSpan checkTimeStart = _config.GetValue<TimeSpan>("discord:AutoRemind:StartTime");
+        TimeSpan checkTimeStart = _config.GetValue<TimeSpan>("discord:AutoRemind:Time");
         TimeSpan checkTimeEnd = checkTimeStart + new TimeSpan(00, 01, 00);
         bool isTime = DateTime.Now.TimeOfDay >= checkTimeStart && DateTime.Now.TimeOfDay <= checkTimeEnd;
         bool isLessThanAWeek = false;
@@ -245,7 +244,7 @@ namespace JackTheStudent
                         var exam = db.Exam.Where(e => e.Id == examList[i-1].Id).FirstOrDefault();
                         exam.WasReminded = true;
                         await db.SaveChangesAsync();
-                        Log.Logger.Information($"Automatically reminded about {exam.Class} exam that happens on {exam.Date}.");
+                        Log.Logger.Information($"Automatically reminded about {exam.Class} exam that happens on {exam.Date}");
                     } catch(Exception ex) {
                         Log.Logger.Error("[Jack] Auto reminder - " + ex.ToString());
                     }
@@ -322,20 +321,6 @@ namespace JackTheStudent
             } 
         } catch(Exception ex) {
             Log.Logger.Error("[Jack] Load quotes - " + ex.ToString());
-        }
-
-        try {
-            await using (var fileStream = File.OpenRead(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resource", "weatherCities.txt")))
-                using (var reader = new StreamReader(fileStream)) {
-                    String city;
-                    while ((city = reader.ReadLine()) != null) {
-                        weatherCities.Add(city);
-                    }
-                reader.Close();
-                fileStream.Close();
-            } 
-        } catch(Exception ex) {
-            Log.Logger.Error("[Jack] Load cities - " + ex.ToString());
         }
     }
     

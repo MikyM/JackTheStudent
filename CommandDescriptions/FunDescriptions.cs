@@ -14,10 +14,11 @@ namespace JackTheStudent.CommandDescriptions
     "\n!inspire to get a random quote.";
 
     public const string pollDescription = "Command making poll with specified topic and voting based on discord reactions." + 
-    "\n!poll <TimeSpan> <Topic> <DiscordEmojis>\n" + 
+    "\n!poll <Topic> <Options> <TimeSpan> <DiscordEmojis>\n" + 
     "\nExample:\n" +
-    "\n!poll 00:02:30 \"exam today or tomorrow?\" :watermelon: :bread: :cheese: - will create a poll with 2 minutes 30 seconds duration about exam today or tomorrow with watermelon, bread and cheese emotes.\n" +
-    "\nMultiple words in topic must be wrapped with \"\".\n";
+    "\n!poll \"math exam\" \"today,tomorrow\" 00:02:30 :watermelon: :bread: - will create a poll with 2 minutes 30 seconds duration, topic: exam, options: today and tomorrow with watermelon and bread emotes.\n" +
+    "\nMultiple words in topic must be wrapped with \"\".\n" +
+    "\nOptions must be separated with \",\".\n";
 
     public const string weatherDescription = "Command showing weather for today." + 
     "\n!weather <city>\n" + 

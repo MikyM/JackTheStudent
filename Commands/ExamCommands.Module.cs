@@ -70,7 +70,7 @@ public class ExamCommandsModule : Base​Command​Module
                 JackTheStudent.Program.examList.Add(exam);
                 db.Exam.Add(exam);
                 await db.SaveChangesAsync();
-                Log.Logger.Information($"[Jack] Logged new exam with ID: {exam.Id} {DateTime.Now}");
+                Log.Logger.Information($"[Jack] User {ctx.Message.Author.Username}#{ctx.Message.Author.Discriminator} ID:{ctx.Message.Author.Id} created a new log with '{ctx.Command.QualifiedName}' command and created ID: {exam.Id}");
                 }
             } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] New exam log, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());

@@ -84,24 +84,50 @@ public class UtilityCommandsModule : Base​Command​Module
     [Description(FunDescriptions.weatherDescription)]
     public async Task Weather(CommandContext ctx, string city = "")
         {
-            var url = "https://pogoda.wprost.pl/prognoza-pogody/" + city;
+            byte[] tempBytes;
+            tempBytes = System.Text.Encoding.GetEncoding(28591).GetBytes(city);
+            string asciiStr = System.Text.Encoding.UTF8.GetString(tempBytes).Replace(" ", "-").ToLower();
 
-            if (!JackTheStudent.Program.weatherCities.Contains(city)){
-                await ctx.RespondAsync("This city is not supported, sorry!");
+            if (asciiStr == null){
+                await ctx.RespondAsync("This city is not supported sorry!");
                 return;
             }
 
-            var tableTempTodayXpath = "/html/body/div[2]/div/section[1]/section/div/div[1]/dl/dd[1]";
-            var tablePressureTodayXpath = "/html/body/div[2]/div/section[1]/section/div/div[1]/dl/dd[2]";
-            var tableWindTodayXpath = "/html/body/div[2]/div/section[1]/section/div/div[1]/dl/dd[3]";
-            var tableHumidityTodayXpath = "/html/body/div[2]/div/section[1]/section/div/div[1]/dl/dd[4]";
-            var tableCloudinessTodayXpath = "/html/body/div[2]/div/section[1]/section/div/div[1]/dl/dd[5]";
+            var url = "https://pogoda.net/" + asciiStr;
 
-            var tempTodayXpath = "/html/body/div[2]/div/section[1]/section/div/div[1]/dl/dd[1]/span";
-            var pressureTodayXpath = "/html/body/div[2]/div/section[1]/section/div/div[1]/dl/dd[2]/span";
-            var WindTodayXpath = "/html/body/div[2]/div/section[1]/section/div/div[1]/dl/dd[3]/span";
-            var humidityTodayXpath = "/html/body/div[2]/div/section[1]/section/div/div[1]/dl/dd[4]/span";
-            var cloudinessTodayXpath = "/html/body/div[2]/div/section[1]/section/div/div[1]/dl/dd[5]/span";
+            var tableTempTodayXpath = "/html/body/div[2]/div[2]/div[1]/div/em";
+            var tablePressureTodayXpath = "/html/body/div[2]/div[2]/div[1]/p[2]";
+            var tableWindTodayXpath = "/html/body/div[2]/div[2]/div[1]/p[5]";
+            var tableHumidityTodayXpath = "/html/body/div[2]/div[2]/div[1]/p[4]";
+            var tableTempFeelingTodayXpath = "/html/body/div[2]/div[2]/div[1]/p[3]";
+            var tableDateTodayXpath = "/html/body/div[2]/div[2]/div[1]/p[1]";
+
+            var tempTodayXpath = "/html/body/div[2]/div[2]/div[1]/div/em/text()";
+            var pressureTodayXpath = "/html/body/div[2]/div[2]/div[1]/p[2]/strong"; 
+            var windTodayXpath = "/html/body/div[2]/div[2]/div[1]/p[5]/strong";
+            var humidityTodayXpath = "/html/body/div[2]/div[2]/div[1]/p[4]/strong";
+            var tempFeelingTodayXpath = "/html/body/div[2]/div[2]/div[1]/p[3]/strong";
+            var dateTodayXpath = "/html/body/div[2]/div[2]/div[1]/p[1]/span";
+            var timeTodayXpath = "/html/body/div[2]/div[2]/div[1]/p[1]/strong";
+
+            if (asciiStr == "lodz" || asciiStr == "zielona-gora" || asciiStr == "wroclaw" || asciiStr == "warszawa" || asciiStr == "szczytno" || 
+            asciiStr == "szczecin" || asciiStr == "poznan" || asciiStr == "rzeszow" || asciiStr == "katowice" || asciiStr == "krakow" || 
+            asciiStr == "bydgoszcz"){
+                tableTempTodayXpath = "/html/body/div[2]/div[2]/div[1]/div/em";
+                tablePressureTodayXpath = "/html/body/div[2]/div[2]/div[1]/p[3]";
+                tableWindTodayXpath = "/html/body/div[2]/div[2]/div[1]/p[6]";
+                tableHumidityTodayXpath = "/html/body/div[2]/div[2]/div[1]/p[5]";
+                tableTempFeelingTodayXpath = "/html/body/div[2]/div[2]/div[1]/p[4]";
+                tableDateTodayXpath = "/html/body/div[2]/div[2]/div[1]/p[2]";
+
+                tempTodayXpath = "/html/body/div[2]/div[2]/div[1]/div/em/text()";
+                pressureTodayXpath = "/html/body/div[2]/div[2]/div[1]/p[3]/strong"; 
+                windTodayXpath = "/html/body/div[2]/div[2]/div[1]/p[6]/strong";
+                humidityTodayXpath = "/html/body/div[2]/div[2]/div[1]/p[5]/strong";
+                tempFeelingTodayXpath = "/html/body/div[2]/div[2]/div[1]/p[4]/strong";
+                dateTodayXpath = "/html/body/div[2]/div[2]/div[1]/p[2]/span";
+                timeTodayXpath = "/html/body/div[2]/div[2]/div[1]/p[2]/strong";
+            }
 
             var htmlDoc = new HtmlWeb().Load(url);
 
@@ -112,18 +138,23 @@ public class UtilityCommandsModule : Base​Command​Module
             var pressure = tablePressureToday.SelectNodes(pressureTodayXpath).Select(n => n.GetDirectInnerText().Trim()).SingleOrDefault();
 
             var tableWindToday = htmlDoc.DocumentNode.SelectNodes(tableWindTodayXpath).First();
-            var wind = tableWindToday.SelectNodes(WindTodayXpath).Select(n => n.GetDirectInnerText().Trim()).SingleOrDefault();
+            var wind = tableWindToday.SelectNodes(windTodayXpath).Select(n => n.GetDirectInnerText().Trim()).SingleOrDefault();
 
             var tableHumidityToday = htmlDoc.DocumentNode.SelectNodes(tableHumidityTodayXpath).First();
             var humidity = tableHumidityToday.SelectNodes(humidityTodayXpath).Select(n => n.GetDirectInnerText().Trim()).SingleOrDefault();
 
-            var tableCloudinessToday = htmlDoc.DocumentNode.SelectNodes(tableCloudinessTodayXpath).First();
-            var cloudiness = tableCloudinessToday.SelectNodes(cloudinessTodayXpath).Select(n => n.GetDirectInnerText().Trim()).SingleOrDefault();
+            var tableTempFeelingToday = htmlDoc.DocumentNode.SelectNodes(tableTempFeelingTodayXpath).First();
+            var tempFeeling = tableTempFeelingToday.SelectNodes(tempFeelingTodayXpath).Select(n => n.GetDirectInnerText().Trim()).SingleOrDefault();
+
+            var tableDateToday = htmlDoc.DocumentNode.SelectNodes(tableDateTodayXpath).First();
+            var date = tableDateToday.SelectNodes(dateTodayXpath).Select(n => n.GetDirectInnerText().Trim()).SingleOrDefault();
+            var time = tableDateToday.SelectNodes(timeTodayXpath).Select(n => n.GetDirectInnerText().Trim()).SingleOrDefault();
             
             var weatherEmbed = new DiscordEmbedBuilder
             {
                 Title = ":sun_with_face: Weather for today :cloud_lightning:",
-                Description = "Temperature: "+temp+"°C"+"\nPressure: "+pressure+" hPa"+"\nWind: "+wind+" m/s"+"\nHumidity: "+humidity+"%"+"\nCloudiness: "+cloudiness+"%"+"\n\nHave a nice day!"
+                 Description = "Temperature: "+temp+"°C"+"\nFeeling temp: "+tempFeeling.Replace("&deg;","°C")+
+                    "\nPressure: "+pressure+"\nWind: "+wind+"\nHumidity: "+humidity+"\n\nLast updated: "+date+" "+time+"\n\nHave a nice day! :hugging:"
             };
             
             await ctx.RespondAsync(embed: weatherEmbed);

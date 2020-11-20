@@ -95,8 +95,13 @@ namespace JackTheStudent.Models
 
                 entity.Property(e => e.GroupId)
                     .IsRequired()
-                    .HasColumnName("group")
-                    .HasMaxLength(20); 
+                    .HasColumnName("group_id")
+                    .HasMaxLength(3);
+
+                entity.Property(e => e.FullGroupId)
+                    .IsRequired()
+                    .HasColumnName("full_group_id")
+                    .HasMaxLength(30);  
             });
 
             modelBuilder.Entity<TeamsLink>(entity =>

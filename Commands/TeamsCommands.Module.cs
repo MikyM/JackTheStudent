@@ -96,10 +96,10 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                 JackTheStudent.Program.teamsLinkList.Add(teamsLink);
                 db.TeamsLink.Add(teamsLink);
                 await db.SaveChangesAsync();
-                Log.Logger.Information($"[Jack] Logged new teams link with ID: {teamsLink.Id} {DateTime.Now}");
+                Log.Logger.Information($"[Jack] User {ctx.Message.Author.Username}#{ctx.Message.Author.Discriminator} ID:{ctx.Message.Author.Id} created a new log with '{ctx.Command.QualifiedName}' command and created ID: {teamsLink.Id}");
                 }
             } catch(Exception ex) {
-                Log.Logger.Error($"[Jack] New teams link log, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
+                Log.Logger.Error($"[Jack] Command {ctx.Command.QualifiedName} was called by user {ctx.Message.Author.Username}#{ctx.Message.Author.Discriminator} ID:{ctx.Message.Author.Id}, but it errored: " + ex.ToString());
                 await ctx.RespondAsync("Log failed");
                 return;
             }
@@ -257,7 +257,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                 }                          
             }
         } catch(Exception ex) {
-            Log.Logger.Error($"[Jack] Teams link logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
+            Log.Logger.Error($"[Jack] Command {ctx.Command.QualifiedName} was called by user {ctx.Message.Author.Username}#{ctx.Message.Author.Discriminator} ID:{ctx.Message.Author.Id}, but it errored: " + ex.ToString());
             await ctx.RespondAsync("Show logs failed");
             return;
         }

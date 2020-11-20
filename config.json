@@ -1,19 +1,19 @@
 {
-    "discord": {
-      "CommandPrefix":  "!" ,
-      "Serilog": {
-        "MinimumLevel": {
-          "Default": "Information",
-          "Override": {
-            "Microsoft": "Information",
-            "System": "Warning"
-          }
-        }
-      },
-      "LogChannelId": 778328563589185586,
-      "AutoRemind": {
-        "RoleId": 778345753617760266,
-        "StartTime": "18:00"
+  "discord": {
+    "CommandPrefix":  "!" ,
+    "LogChannelId": 778328563589185586,
+    "AutoRemind": {
+      "RoleId": 778345753617760266,
+      "Time": "18:00"
+    }
+  },
+  "Serilog": {
+    "MinimumLevel": {
+      "Default": "Information",
+      "Override": {
+        "Microsoft": "Information",
+        "System": "Warning"
       }
     }
   }
+}

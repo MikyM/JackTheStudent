@@ -128,11 +128,11 @@ public class AdminCommandsModule : Base​Command​Module
             try {
                 await db.SaveChangesAsync();      
             } catch (Exception ex) {
-                Log.Logger.Error($"[Jack] New semester classes, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
+                Log.Logger.Error($"[Jack] Command {ctx.Command.QualifiedName} was called by user {ctx.Message.Author.Username}#{ctx.Message.Author.Discriminator} ID:{ctx.Message.Author.Id}, but it errored: " + ex.ToString());
                 await RestoreClasses(backupClasses, ctx);
                 return;
             } 
-            Log.Logger.Information("[Jack} Class table repopulated successfully " + DateTime.Now);             
+            Log.Logger.Information("[Jack} Class table repopulated successfully");             
             await ctx.RespondAsync("Class table repopulated successfully");          
         }
     }
@@ -201,20 +201,41 @@ public class AdminCommandsModule : Base​Command​Module
                 }
 
             }
+            
 
             for (int i = 1; i <= groupsCount; i++) {
-                await ctx.RespondAsync($"What's the ID of the {i} group? Answer with ID");
-                var groupId = await intr.WaitForMessageAsync(
+                await ctx.RespondAsync($"What's the ID of the {i} group? Answer with shortID fullID");
+                var newGroupIds = await intr.WaitForMessageAsync(
                     c => c.Author.Id == ctx.Message.Author.Id, 
                     TimeSpan.FromSeconds(30) 
                 );
 
-                if (groupId.TimedOut) {                  
+                if (newGroupIds.TimedOut) {                  
                     await RestoreGroups(backupGroups, ctx);
                     return;
                 }
 
-                var newGroup = new Models.Group {GroupId = groupId.Result.Content};
+                string[] groupArray = newGroupIds.Result.Content.Split(new Char[]{' '});
+
+                while (groupArray.Count() != 2) {
+                    await ctx.RespondAsync("Try again -.-");
+                    newGroupIds = await intr.WaitForMessageAsync(
+                        c => c.Author.Id == ctx.Message.Author.Id, 
+                        TimeSpan.FromSeconds(30) 
+                    );
+
+                    groupArray = newGroupIds.Result.Content.Split(new Char[]{' '});
+
+                    if (newGroupIds.TimedOut) {
+                        await RestoreGroups(backupGroups, ctx);
+                        return;
+                    }
+                }
+
+                var newGroup = new Models.Group {
+                    GroupId = groupArray[0],
+                    FullGroupId = groupArray[1]
+                };
                 JackTheStudent.Program.groupList.Add(newGroup);
                 db.Group.Add(newGroup);
                 await ctx.RespondAsync($"Added group with ID: {newGroup.GroupId}.");
@@ -224,17 +245,17 @@ public class AdminCommandsModule : Base​Command​Module
             try {
                 await db.SaveChangesAsync();      
             } catch (Exception ex) {
-                Log.Logger.Error($"[Jack] New semester groups, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
+                Log.Logger.Error($"[Jack] Command {ctx.Command.QualifiedName} was called by user {ctx.Message.Author.Username}#{ctx.Message.Author.Discriminator} ID:{ctx.Message.Author.Id}, but it errored: " + ex.ToString());
                 await RestoreGroups(backupGroups, ctx);
                 return;
             }
-            Log.Logger.Information("[Jack} Group table repopulated successfully " + DateTime.Now);  
+            Log.Logger.Information("[Jack} Group table repopulated successfully");  
             await ctx.RespondAsync("Group table repopulated successfully");   
         }
         return;
     }
 
-    [RequirePermissions(Permissions.BanMembers)]
+    [RequireOwner]
     [Hidden]
     [Command("ban")]
     [Description("Bans a member from the server")]
@@ -248,7 +269,7 @@ public class AdminCommandsModule : Base​Command​Module
         Log.Logger.Information($"[Jack] {ctx.Message.Author.Username} with ID: {ctx.Message.Author.Id} banned {member.DisplayName} with ID: {userId}");
     }
 
-    [RequirePermissions(Permissions.BanMembers)]
+    [RequireOwner]
     [Hidden]
     [Command("unban")]
     [Description("Unbans a member")]
@@ -262,7 +283,7 @@ public class AdminCommandsModule : Base​Command​Module
         Log.Logger.Information($"[Jack] {ctx.Message.Author.Username} with ID: {ctx.Message.Author.Id} unbanned {member.DisplayName} with ID: {userId}");
     }
 
-    [RequirePermissions(Permissions.KickMembers)]
+    [RequireOwner]
     [Hidden]
     [Command("kick")]
     [Description("Kicks a member from the server")]
@@ -276,7 +297,7 @@ public class AdminCommandsModule : Base​Command​Module
         Log.Logger.Information($"[Jack] {ctx.Message.Author.Username} with ID: {ctx.Message.Author.Id} kicked {member.DisplayName} with ID: {userId}");
     }
 
-    [RequirePermissions(Permissions.MuteMembers)]
+    [RequireOwner]
     [Hidden]
     [Command("mutevoice")]
     [Description("Mutes a member for specified time")]
@@ -294,7 +315,7 @@ public class AdminCommandsModule : Base​Command​Module
         Log.Logger.Information($"[Jack] {ctx.Message.Author.Username} with ID: {ctx.Message.Author.Id} muted {member.DisplayName} with ID: {userId}");
     }
 
-    [RequirePermissions(Permissions.MuteMembers)]
+    [RequireOwner]
     [Hidden]
     [Command("unmutevoice")]
     [Description("Unmutes a member")]

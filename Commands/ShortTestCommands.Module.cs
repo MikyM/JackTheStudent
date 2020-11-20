@@ -78,10 +78,10 @@ public class ShortTestCommandsModule : Base​Command​Module
                 JackTheStudent.Program.shortTestList.Add(shortTest);
                 db.ShortTest.Add(shortTest);
                 await db.SaveChangesAsync();
-                Log.Logger.Information($"[Jack] Logged new short test with ID: {shortTest.Id} {DateTime.Now}");
+                Log.Logger.Information($"[Jack] User {ctx.Message.Author.Username}#{ctx.Message.Author.Discriminator} ID:{ctx.Message.Author.Id} created a new log with '{ctx.Command.QualifiedName}' command and created ID: {shortTest.Id}");
                 }
             } catch(Exception ex) {
-                Log.Logger.Error($"[Jack] New short test log, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
+                Log.Logger.Error($"[Jack] Command {ctx.Command.QualifiedName} was called by user {ctx.Message.Author.Username}#{ctx.Message.Author.Discriminator} ID:{ctx.Message.Author.Id}, but it errored: " + ex.ToString());
                 await ctx.RespondAsync("Log failed");
                 return;
             }
@@ -210,7 +210,7 @@ public class ShortTestCommandsModule : Base​Command​Module
                 }                          
             }
         } catch(Exception ex) {
-            Log.Logger.Error($"[Jack] Short test logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
+            Log.Logger.Error($"[Jack] Command {ctx.Command.QualifiedName} was called by user {ctx.Message.Author.Username}#{ctx.Message.Author.Discriminator} ID:{ctx.Message.Author.Id}, but it errored: " + ex.ToString());
             await ctx.RespondAsync("Show logs failed");
             return;
         }
