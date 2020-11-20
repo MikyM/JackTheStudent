@@ -76,7 +76,7 @@ namespace JackTheStudent
                //.WriteTo.Async(a => a.File("log-.txt", rollingInterval: RollingInterval.Day))
                .CreateLogger();
 
-            Log.Logger.Debug("[Jack] Starting up..");
+            Log.Logger.Information("[Jack] Starting up..");
             Log.Logger.Debug("[Jack] Loaded config!");
             Log.Logger.Debug("[Jack] Creating discord client..");
             
@@ -135,7 +135,7 @@ namespace JackTheStudent
 
     private async Task OnClientReady(DiscordClient _discord, ReadyEventArgs e)
     {
-        Log.Logger.Debug(BotEventId.ToString() + " Client is ready to process events.");
+        Log.Logger.Information(BotEventId.ToString() + " Client is ready to process events.");
         DiscordActivity status = new DiscordActivity("you fail exams :')", ActivityType.Watching);
         await _discord.UpdateStatusAsync(status);
         Log.Logger.Debug($"[Jack] Updated status to \"{status.Name}\"!");
@@ -143,7 +143,7 @@ namespace JackTheStudent
         Log.Logger.Debug("[Jack] Personal reminders are up!");
         await StartTimeCheck();  
         Log.Logger.Debug("[Jack] Database timezone has been updated!");
-        Log.Logger.Debug("[Jack] I'm now fully functional!");
+        Log.Logger.Information("[Jack] I'm now fully functional!");
     }
 
     private Task ClientError(DiscordClient sender, ClientErrorEventArgs e)
