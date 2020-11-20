@@ -113,11 +113,6 @@ namespace JackTheStudent.Models
                 entity.Property(e => e.ClassType)
                     .HasColumnName("class_type")
                     .IsRequired()
-                    .HasMaxLength(5);
-
-                entity.Property(e => e.ClassTypeFull)
-                    .HasColumnName("class_type_full")
-                    .IsRequired()
                     .HasMaxLength(45);
 
                 entity.Property(e => e.AdditionalInfo)
@@ -128,11 +123,6 @@ namespace JackTheStudent.Models
                     .IsRequired()
                     .HasColumnName("class")
                     .HasMaxLength(45);
-
-                entity.Property(e => e.ClassShortName)
-                    .IsRequired()
-                    .HasColumnName("class_short_name")
-                    .HasMaxLength(4);
 
                 entity.Property(e => e.Date)
                     .IsRequired()
@@ -184,11 +174,6 @@ namespace JackTheStudent.Models
                     .IsRequired()
                     .HasColumnName("class")
                     .HasMaxLength(45);
-
-                entity.Property(e => e.ClassShortName)
-                    .IsRequired()
-                    .HasColumnName("class_short_name")
-                    .HasMaxLength(4);
 
                 entity.Property(e => e.Date)
                     .IsRequired()
@@ -259,11 +244,6 @@ namespace JackTheStudent.Models
                     .HasColumnName("log_by_username")
                     .HasColumnType("longtext");
 
-                entity.Property(e => e.ClassShortName)
-                    .IsRequired()
-                    .HasColumnName("class_short_name")
-                    .HasMaxLength(4);
-
                 entity.Property(e => e.Link)
                     .IsRequired()
                     .HasColumnName("link")
@@ -289,11 +269,6 @@ namespace JackTheStudent.Models
                     .IsRequired()
                     .HasColumnName("class")
                     .HasMaxLength(45);
-
-                entity.Property(e => e.ClassShortName)
-                    .IsRequired()
-                    .HasColumnName("class_short_name")
-                    .HasMaxLength(4);
                 
                 entity.Property(e => e.Date)
                     .IsRequired()
@@ -333,11 +308,6 @@ namespace JackTheStudent.Models
                     .IsRequired()
                     .HasColumnName("class")
                     .HasMaxLength(45);
-
-                 entity.Property(e => e.ClassShortName)
-                    .IsRequired()
-                    .HasColumnName("class_short_name")
-                    .HasMaxLength(4);
                 
                 entity.Property(e => e.Date)
                     .IsRequired()
@@ -377,11 +347,6 @@ namespace JackTheStudent.Models
                     .IsRequired()
                     .HasColumnName("class")
                     .HasMaxLength(45);
-
-                entity.Property(e => e.ClassShortName)
-                    .IsRequired()
-                    .HasColumnName("class_short_name")
-                    .HasMaxLength(4);
 
                 entity.Property(e => e.Date)
                     .IsRequired()
@@ -463,11 +428,6 @@ namespace JackTheStudent.Models
                     .HasColumnName("class")
                     .HasMaxLength(45);
 
-                entity.Property(e => e.ClassShortName)
-                    .IsRequired()
-                    .HasColumnName("class_short_name")
-                    .HasMaxLength(4);
-
                 entity.Property(e => e.Date)
                     .IsRequired()
                     .HasColumnName("date");
@@ -506,11 +466,6 @@ namespace JackTheStudent.Models
                     .IsRequired()
                     .HasColumnName("class")
                     .HasMaxLength(45);
-
-                entity.Property(e => e.ClassShortName)
-                    .IsRequired()
-                    .HasColumnName("class_short_name")
-                    .HasMaxLength(4);
 
                 entity.Property(e => e.Date)
                     .IsRequired()

@@ -39,7 +39,6 @@ public class MaterialCommandsModule : Base​Command​Module
             try {
                 using (var db = new JackTheStudentContext()){
                 var material = new ClassMaterial {
-                    ClassShortName = className,
                     Class = JackTheStudent.Program.classList.Where(c => c.ShortName == className).Select(c => c.Name).FirstOrDefault(),
                     Link = link,
                     LogById = ctx.Message.Author.Id.ToString(),
@@ -98,7 +97,13 @@ public class MaterialCommandsModule : Base​Command​Module
                     }
                 }      
             } else {
-                materials = materials.Where(m => m.ClassShortName == className).ToList();                     
+                materials = materials
+                .Where(m => 
+                    m.Class == JackTheStudent.Program.classList
+                        .Where(c => c.ShortName == className)
+                        .Select(c => c.Name)
+                        .FirstOrDefault())
+                .ToList();                     
                 if (materials.Count == 0) {
                     await ctx.RespondAsync($"There are no materials logged for {materials.Select(m => m.Class)} class!");
                     return;

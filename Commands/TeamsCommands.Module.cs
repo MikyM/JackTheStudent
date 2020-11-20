@@ -62,7 +62,19 @@ public class TeamsLinksCommandsModule : Base​Command​Module
         } else if (!JackTheStudent.Program.groupList.Any(g => g.GroupId == groupId) && groupId != "."){
             await ctx.RespondAsync("There's no such group dumbass. Try again!");
             return;
-        } else if(JackTheStudent.Program.teamsLinkList.Any(t => t.Date == $"{parsedEventDayOfWeek} {eventTime}" && t.ClassShortName == uniClass && t.GroupId == groupId && t.ClassType == classType && t.Link == link)) {
+        } else if(JackTheStudent.Program.teamsLinkList
+            .Any(t => 
+                t.Date == $"{parsedEventDayOfWeek} {eventTime}" && 
+                t.Class == JackTheStudent.Program.classList
+                    .Where(c => c.ShortName == uniClass)
+                    .Select(c => c.Name)
+                    .FirstOrDefault() &&
+                t.GroupId == groupId && 
+                t.ClassType == JackTheStudent.Program.classList
+                    .Where(c => c.ShortName == classType)
+                    .Select(c => c.Name)
+                    .FirstOrDefault() && 
+                t.Link == link)) {
             await ctx.RespondAsync("Someone has already logged this link.");
             return;   
         } else if(JackTheStudent.Program.teamsLinkList.Any(t => t.Date == $"{parsedEventDayOfWeek} {eventTime}" && t.GroupId == groupId)) {
@@ -73,9 +85,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                 using (var db = new JackTheStudentContext()){
                 var teamsLink = new TeamsLink { 
                     Class = JackTheStudent.Program.classList.Where(c => c.ShortName == uniClass).Select(c => c.Name).FirstOrDefault(),
-                    ClassShortName = uniClass,
-                    ClassType = classType,
-                    ClassTypeFull = JackTheStudent.Program.classTypeList.Where(c => c.ShortName == classType).Select(c => c.Name).FirstOrDefault(),
+                    ClassType = JackTheStudent.Program.classTypeList.Where(c => c.ShortName == classType).Select(c => c.Name).FirstOrDefault(),
                     Date = $"{parsedEventDayOfWeek} {eventTime}",
                     GroupId = groupId,
                     Link = link,
@@ -135,12 +145,18 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                         } else {
                             chosenGroupString = $"group {teamsLink.GroupId}";
                         }
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(teamsLink.Class)} {teamsLink.ClassTypeFull} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.Link}";                         
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(teamsLink.Class)} {teamsLink.ClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.Link}";                         
                     }
                 }
             } else if(uniClass != "." && classType == "." && group == ".") {
-                chosenUniClass = JackTheStudent.Program.classList.Where(c => c.ShortName == uniClass).Select(c => c.Name).FirstOrDefault();
-                teamsLinks = teamsLinks.Where(t => t.Class == uniClass).ToList();
+                chosenUniClass = JackTheStudent.Program.classList
+                    .Where(c => c.ShortName == uniClass)
+                    .Select(c => c.Name)
+                    .FirstOrDefault();
+                teamsLinks = teamsLinks
+                    .Where(t => 
+                        t.Class == chosenUniClass)
+                    .ToList();
                 if (teamsLinks.Count == 0) {
                     await ctx.RespondAsync($"There are no {chosenUniClass} teams links logged.");
                     return;
@@ -151,13 +167,23 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                         } else {
                             chosenGroupString = $"group {teamsLink.GroupId}";
                         }
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(teamsLink.Class)} {teamsLink.ClassTypeFull} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.Link}";                                     
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(teamsLink.Class)} {teamsLink.ClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.Link}";                                     
                     }
                 }
             } else if (uniClass != "." && classType != "." && group == ".") {
-                chosenUniClass = JackTheStudent.Program.classList.Where(c => c.ShortName == uniClass).Select(c => c.Name).FirstOrDefault();
-                chosenClassType = JackTheStudent.Program.classTypeList.Where(c => c.ShortName == classType).Select(c => c.Name).FirstOrDefault();
-                teamsLinks = teamsLinks.Where(t => t.Class == uniClass && t.ClassType == classType).ToList();
+                chosenUniClass = JackTheStudent.Program.classList
+                    .Where(c => c.ShortName == uniClass)
+                    .Select(c => c.Name)
+                .FirstOrDefault();
+                chosenClassType = JackTheStudent.Program.classTypeList
+                    .Where(c => c.ShortName == classType)
+                    .Select(c => c.Name)
+                .FirstOrDefault();
+                teamsLinks = teamsLinks
+                    .Where(t => 
+                        t.Class == chosenUniClass &&
+                        t.ClassType == chosenClassType)
+                    .ToList();
                 if (teamsLinks.Count == 0) {
                     await ctx.RespondAsync($"There are no {chosenUniClass} {chosenClassType} teams links logged.");
                     return;
@@ -168,14 +194,19 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                         } else {
                             chosenGroupString = $"group {teamsLink.GroupId}";
                         }
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(teamsLink.Class)} {teamsLink.ClassTypeFull} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.Link}";                          
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(teamsLink.Class)} {teamsLink.ClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.Link}";                          
                     }
                 }
             } else if (uniClass == "." && classType != "." && group == ".") {
-                chosenClassType = JackTheStudent.Program.classTypeList.Where(c => c.ShortName == classType).Select(c => c.Name).FirstOrDefault();
-                teamsLinks = teamsLinks.Where(t => t.ClassType == classType).ToList();                     
+                chosenClassType = JackTheStudent.Program.classTypeList
+                    .Where(c => c.ShortName == classType)
+                    .Select(c => c.Name)
+                    .FirstOrDefault();
+                teamsLinks = teamsLinks
+                    .Where(t => t.ClassType == chosenClassType)
+                    .ToList();                     
                 if (teamsLinks.Count == 0) {
-                    await ctx.RespondAsync($"There are no {chosenClassType}s teams links logged!");
+                    await ctx.RespondAsync($"There are no {chosenClassType} teams links logged!");
                     return;
                 } else {
                     foreach (TeamsLink teamsLink in teamsLinks) {
@@ -184,45 +215,70 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                         } else {
                             chosenGroupString = $"group {teamsLink.GroupId}";
                         }
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(teamsLink.Class)} {teamsLink.ClassTypeFull} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.Link}";          
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(teamsLink.Class)} {teamsLink.ClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.Link}";          
                     }
                 }                                            
             } else if (uniClass == "." && classType != "." && group != ".") {
-                chosenClassType = JackTheStudent.Program.classTypeList.Where(c => c.ShortName == classType).Select(c => c.Name).FirstOrDefault();
+                chosenClassType = JackTheStudent.Program.classTypeList
+                    .Where(c => c.ShortName == classType)
+                    .Select(c => c.Name)
+                    .FirstOrDefault();
                 chosenGroupString = $"group {group}";
-                teamsLinks = teamsLinks.Where(t => t.ClassType == classType && t.GroupId == group).ToList();                     
+                teamsLinks = teamsLinks
+                    .Where(t => 
+                        t.ClassType == chosenClassType && 
+                        t.GroupId == group)
+                    .ToList();                     
                 if (teamsLinks.Count == 0) {
-                    await ctx.RespondAsync($"There are no {chosenClassType}s teams links logged for group {group}!");
+                    await ctx.RespondAsync($"There are no {chosenClassType} teams links logged for group {group}!");
                     return;
                 } else {
                     result = String.Empty;
                     foreach (TeamsLink teamsLink in teamsLinks) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(teamsLink.Class)} {teamsLink.ClassTypeFull} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.Link}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(teamsLink.Class)} {teamsLink.ClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.Link}";
                     }
                 }                           
             } else if (uniClass != "." && classType == "." && group != ".") {
-                chosenUniClass = JackTheStudent.Program.classList.Where(c => c.ShortName == uniClass).Select(c => c.Name).FirstOrDefault();
+                chosenUniClass = JackTheStudent.Program.classList
+                    .Where(c => c.ShortName == uniClass)
+                    .Select(c => c.Name)
+                    .FirstOrDefault();
                 chosenGroupString = $"group {group}";
-                teamsLinks = teamsLinks.Where(t => t.Class == uniClass && t.GroupId == group).ToList();                     
+                teamsLinks = teamsLinks
+                    .Where(t => 
+                        t.Class == chosenUniClass &&
+                        t.GroupId == group)
+                    .ToList();                     
                 if (teamsLinks.Count == 0) {
                     await ctx.RespondAsync($"There are no {chosenUniClass} teams links logged for group {group} logged!");
                     return;
                 } else {
                     foreach (TeamsLink teamsLink in teamsLinks) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(teamsLink.Class)} {teamsLink.ClassTypeFull} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.Link}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(teamsLink.Class)} {teamsLink.ClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.Link}";
                     }
                 }                                      
             } else {
-                chosenUniClass = JackTheStudent.Program.classList.Where(c => c.ShortName == uniClass).Select(c => c.Name).FirstOrDefault();
-                chosenClassType = JackTheStudent.Program.classTypeList.Where(c => c.ShortName == classType).Select(c => c.Name).FirstOrDefault();
+                chosenUniClass = JackTheStudent.Program.classList
+                    .Where(c => c.ShortName == uniClass)
+                    .Select(c => c.Name)
+                    .FirstOrDefault();
+                chosenClassType = JackTheStudent.Program.classTypeList
+                    .Where(c => c.ShortName == classType)
+                    .Select(c => c.Name)
+                    .FirstOrDefault();
                 chosenGroupString = $"group {group}";
-                teamsLinks = teamsLinks.Where(t => t.Class == uniClass && t.ClassType == classType && t.GroupId == group).ToList();                     
+                teamsLinks = teamsLinks
+                    .Where(t => 
+                        t.Class == chosenUniClass && 
+                        t.ClassType == chosenClassType && 
+                        t.GroupId == group)
+                    .ToList();                     
                 if (teamsLinks.Count == 0) {
                     await ctx.RespondAsync($"There are no {chosenUniClass} {chosenClassType}s for group {group} logged!");
                     return;
                 } else {
                     foreach (TeamsLink teamsLink in teamsLinks) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(teamsLink.Class)} {teamsLink.ClassTypeFull} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.Link}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(teamsLink.Class)} {teamsLink.ClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.Link}";
                     }
                 }                          
             }
