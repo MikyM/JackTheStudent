@@ -100,8 +100,13 @@ public class ProjectCommandsModule : Base​Command​Module
             var intr = ctx.Client.GetInteractivity(); 
             var response = await intr.WaitForMessageAsync(
                 c => c.Author.Id == ctx.Message.Author.Id, 
-                TimeSpan.FromSeconds(5) 
+                TimeSpan.FromSeconds(10) 
             );
+
+            if(response.TimedOut) {
+                await ctx.RespondAsync("How long you think I'm gonna wait for you to answer? I'm out.");
+                return;
+            }
 
             short membersCount = 1;    
             while (!Int16.TryParse(response.Result.Content, out membersCount) && membersCount <= 2) {
@@ -110,6 +115,11 @@ public class ProjectCommandsModule : Base​Command​Module
                     c => c.Author.Id == ctx.Message.Author.Id, 
                     TimeSpan.FromSeconds(5) 
                 );
+            }
+
+            if(response.TimedOut) {
+                await ctx.RespondAsync("How long you think I'm gonna wait for you to answer? I'm out.");
+                return;
             }
 
             try {
@@ -128,8 +138,13 @@ public class ProjectCommandsModule : Base​Command​Module
                     await ctx.RespondAsync("What's the name of the " + i + " participant?");
                     var participant = await intr.WaitForMessageAsync(
                         c => c.Author.Id == ctx.Message.Author.Id, 
-                        TimeSpan.FromSeconds(5) 
+                        TimeSpan.FromSeconds(15) 
                     );
+
+                    if(participant.TimedOut) {
+                        await ctx.RespondAsync("How long you think I'm gonna wait for you to answer? I'm out.");
+                        return;
+                    }
                     var groupProjectMember = new GroupProjectMember { Member = participant.Result.Content};
                     project.GroupProjectMembers.Add(groupProjectMember);
                 }
@@ -166,7 +181,7 @@ public class ProjectCommandsModule : Base​Command​Module
             await ctx.RespondAsync("... IsGroup only takes . , 0 i 1");
             return;
         } else if (span != "." && span != "planned") {
-            await ctx.RespondAsync("Span only accepts . and planned values");
+            await ctx.RespondAsync("Span only accepts '.' and 'planned' values");
             return;
         }
 
@@ -334,13 +349,23 @@ public class ProjectCommandsModule : Base​Command​Module
         var interactivity = ctx.Client.GetInteractivity();
         var response = await interactivity.WaitForMessageAsync(
             c => c.Author.Id == ctx.Message.Author.Id, 
-            TimeSpan.FromSeconds(5));
+            TimeSpan.FromSeconds(7));
+
+        if(response.TimedOut) {
+            await ctx.RespondAsync("I ain't gonna wait this long. Not listing participants.");
+            return false;
+        }
 
         while (response.Result.Content.ToLower() != "yes" && response.Result.Content.ToLower() != "no"){
             await ctx.RespondAsync("Answer with either yes or no you moron...");
             response = await interactivity.WaitForMessageAsync(
                 c => c.Author.Id == ctx.Message.Author.Id, 
-                TimeSpan.FromSeconds(5));
+                TimeSpan.FromSeconds(7));
+            
+            if(response.TimedOut) {
+                await ctx.RespondAsync("I ain't gonna wait this long. Not listing participants.");
+                return false;
+            }
         }
         
         return ("yes".Equals(response.Result.Content.ToLower()) ? true : false);

@@ -103,7 +103,7 @@ public class TestCommandsModule : Base​Command​Module
             await ctx.RespondAsync("There's no such class, you high bruh?");
             return;
         } else if (span != "." && span != "planned") {
-            await ctx.RespondAsync("Span only accepts . and planned values");
+            await ctx.RespondAsync("Span only accepts '.' and 'planned' values");
             return;
         }
 
@@ -200,7 +200,7 @@ public class TestCommandsModule : Base​Command​Module
             } else {
                 tests = tests.ToList();                     
                 if (tests.Count == 0) {
-                    await ctx.RespondAsync("There aren no tests logged!");
+                    await ctx.RespondAsync("There are no tests logged!");
                     return;
                 } else {
                     foreach (Test test in tests) {

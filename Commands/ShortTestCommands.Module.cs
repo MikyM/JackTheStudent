@@ -104,7 +104,7 @@ public class ShortTestCommandsModule : Base​Command​Module
             await ctx.RespondAsync("There's no such class, you high bruh?");
             return;
         } else if (span != "." && span != "planned") {
-            await ctx.RespondAsync("Span only accepts . and planned values");
+            await ctx.RespondAsync("Span only accepts ''. and 'planned' values");
             return;
         }
 

@@ -92,7 +92,7 @@ public class ExamCommandsModule : Base​Command​Module
             await ctx.RespondAsync("There's no such class, you high bruh?");
             return;
         } else if (span != "." && span != "planned") {
-            await ctx.RespondAsync("Span only accepts . and planned values");
+            await ctx.RespondAsync("Span only accepts '.' and 'planned' values");
             return;
         }    
 
@@ -146,7 +146,7 @@ public class ExamCommandsModule : Base​Command​Module
                         e.Class == chosenClass)
                     .ToList();                  
                 if (exams.Count == 0) {
-                    await ctx.RespondAsync($"There are no logged exams for {exams.Select(e => e.Class).FirstOrDefault()} class!");
+                    await ctx.RespondAsync($"There are no logged exams for {chosenClass} class!");
                     return;
                 } else {
                     foreach (Exam exam in exams) {

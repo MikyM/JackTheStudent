@@ -103,7 +103,7 @@ public class LabReportCommandsModule : Base​Command​Module
             await ctx.RespondAsync("There's no such class, you high bruh?");
             return;
         } else if (span != "." && span != "planned") {
-            await ctx.RespondAsync("Span only accepts . and planned values");
+            await ctx.RespondAsync("Span only accepts '.' and 'planned' values");
             return;
         }
 
@@ -201,7 +201,7 @@ public class LabReportCommandsModule : Base​Command​Module
             } else {
                 labReports = labReports.ToList();                     
                 if (labReports.Count == 0) {
-                    await ctx.RespondAsync("There aren no lab reports logged!");
+                    await ctx.RespondAsync("There are no lab reports logged!");
                     return;
                 } else {
                     foreach (LabReport labReport in labReports) {

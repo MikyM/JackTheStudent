@@ -103,7 +103,7 @@ public class HomeworkCommandsModule : Base​Command​Module
             await ctx.RespondAsync("There's no such class, you high bruh?");
             return;
         } else if (span != "." && span != "planned") {
-            await ctx.RespondAsync("Span only accepts . and planned values");
+            await ctx.RespondAsync("Span only accepts '.' and 'planned' values");
             return;
         }
 
@@ -201,7 +201,7 @@ public class HomeworkCommandsModule : Base​Command​Module
             } else {
                 homeworks = homeworks.ToList();                     
                 if (homeworks.Count == 0) {
-                    await ctx.RespondAsync("There is no logged homework!");
+                    await ctx.RespondAsync("There is no homework logged!");
                     return;
                 } else {
                     foreach (Homework homework in homeworks) {
