@@ -84,6 +84,10 @@ public class MaterialCommandsModule : Base​Command​Module
         } 
 
         var materials = JackTheStudent.Program.classMaterialList;
+        string chosenClass = JackTheStudent.Program.classList
+            .Where(c => c.ShortName == className)
+            .Select(c => c.Name)
+            .FirstOrDefault();
         string result = String.Empty;
         try{
             if (className == ".") {
@@ -99,13 +103,10 @@ public class MaterialCommandsModule : Base​Command​Module
             } else {
                 materials = materials
                 .Where(m => 
-                    m.Class == JackTheStudent.Program.classList
-                        .Where(c => c.ShortName == className)
-                        .Select(c => c.Name)
-                        .FirstOrDefault())
+                    m.Class == chosenClass)
                 .ToList();                     
                 if (materials.Count == 0) {
-                    await ctx.RespondAsync($"There are no materials logged for {materials.Select(m => m.Class)} class!");
+                    await ctx.RespondAsync($"There are no materials logged for {chosenClass} class!");
                     return;
                 } else {
                     foreach (ClassMaterial material in materials) {

@@ -126,9 +126,15 @@ public class TeamsLinksCommandsModule : Base​Command​Module
             return;
         }
 
-        string chosenUniClass = String.Empty;
+        string chosenUniClass = JackTheStudent.Program.classList
+                    .Where(c => c.ShortName == uniClass)
+                    .Select(c => c.Name)
+                .FirstOrDefault();
+        string chosenClassType = JackTheStudent.Program.classTypeList
+                    .Where(c => c.ShortName == classType)
+                    .Select(c => c.Name)
+                .FirstOrDefault();
         string chosenGroupString = String.Empty;
-        string chosenClassType = String.Empty;
         string result = String.Empty;
         var teamsLinks = JackTheStudent.Program.teamsLinkList;
 
@@ -149,10 +155,6 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                     }
                 }
             } else if(uniClass != "." && classType == "." && group == ".") {
-                chosenUniClass = JackTheStudent.Program.classList
-                    .Where(c => c.ShortName == uniClass)
-                    .Select(c => c.Name)
-                    .FirstOrDefault();
                 teamsLinks = teamsLinks
                     .Where(t => 
                         t.Class == chosenUniClass)
@@ -171,14 +173,6 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                     }
                 }
             } else if (uniClass != "." && classType != "." && group == ".") {
-                chosenUniClass = JackTheStudent.Program.classList
-                    .Where(c => c.ShortName == uniClass)
-                    .Select(c => c.Name)
-                .FirstOrDefault();
-                chosenClassType = JackTheStudent.Program.classTypeList
-                    .Where(c => c.ShortName == classType)
-                    .Select(c => c.Name)
-                .FirstOrDefault();
                 teamsLinks = teamsLinks
                     .Where(t => 
                         t.Class == chosenUniClass &&
@@ -198,10 +192,6 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                     }
                 }
             } else if (uniClass == "." && classType != "." && group == ".") {
-                chosenClassType = JackTheStudent.Program.classTypeList
-                    .Where(c => c.ShortName == classType)
-                    .Select(c => c.Name)
-                    .FirstOrDefault();
                 teamsLinks = teamsLinks
                     .Where(t => t.ClassType == chosenClassType)
                     .ToList();                     
@@ -219,10 +209,6 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                     }
                 }                                            
             } else if (uniClass == "." && classType != "." && group != ".") {
-                chosenClassType = JackTheStudent.Program.classTypeList
-                    .Where(c => c.ShortName == classType)
-                    .Select(c => c.Name)
-                    .FirstOrDefault();
                 chosenGroupString = $"group {group}";
                 teamsLinks = teamsLinks
                     .Where(t => 
@@ -239,10 +225,6 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                     }
                 }                           
             } else if (uniClass != "." && classType == "." && group != ".") {
-                chosenUniClass = JackTheStudent.Program.classList
-                    .Where(c => c.ShortName == uniClass)
-                    .Select(c => c.Name)
-                    .FirstOrDefault();
                 chosenGroupString = $"group {group}";
                 teamsLinks = teamsLinks
                     .Where(t => 
@@ -258,14 +240,6 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                     }
                 }                                      
             } else {
-                chosenUniClass = JackTheStudent.Program.classList
-                    .Where(c => c.ShortName == uniClass)
-                    .Select(c => c.Name)
-                    .FirstOrDefault();
-                chosenClassType = JackTheStudent.Program.classTypeList
-                    .Where(c => c.ShortName == classType)
-                    .Select(c => c.Name)
-                    .FirstOrDefault();
                 chosenGroupString = $"group {group}";
                 teamsLinks = teamsLinks
                     .Where(t => 

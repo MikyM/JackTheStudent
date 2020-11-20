@@ -171,6 +171,10 @@ public class ProjectCommandsModule : Base​Command​Module
         }
 
         var projects = JackTheStudent.Program.projectList;
+        string chosenClass = JackTheStudent.Program.classList
+            .Where(c => c.ShortName == classType)
+            .Select(c => c.Name)
+            .FirstOrDefault();
         bool isParticipants = false;
         string result = String.Empty;
         string participantsString = String.Empty;
@@ -238,14 +242,11 @@ public class ProjectCommandsModule : Base​Command​Module
                 projects = projects
                     .Where(p => 
                         p.Date > DateTime.Now && 
-                        p.Class == JackTheStudent.Program.classList
-                            .Where(c => c.ShortName == classType)
-                            .Select(c => c.Name)
-                            .FirstOrDefault() && 
+                        p.Class == chosenClass && 
                         p.GroupId == group)
                     .ToList();                     
                 if (projects.Count == 0) {
-                    await ctx.RespondAsync($"There are no {projects.Select(p => p.Class).FirstOrDefault()} projects planned for group {group}!");
+                    await ctx.RespondAsync($"There are no {chosenClass} projects planned for group {group}!");
                     return;
                 } else {
                     if (isGroup == "1" || isGroup == ".") {
@@ -261,14 +262,31 @@ public class ProjectCommandsModule : Base​Command​Module
             } else if (classType != "." && span == "." && group != ".") {
                 projects = projects
                     .Where(p => 
-                        p.Class == JackTheStudent.Program.classList
-                            .Where(c => c.ShortName == classType)
-                            .Select(c => c.Name)
-                            .FirstOrDefault() && 
+                        p.Class == chosenClass && 
                         p.GroupId == group)
                     .ToList();                     
                 if (projects.Count == 0) {
-                    await ctx.RespondAsync($"There are no projects logged for {projects.Select(p => p.Class).FirstOrDefault()} class for group {group}!");
+                    await ctx.RespondAsync($"There are no projects logged for {chosenClass} class for group {group}!");
+                    return;
+                } else {
+                    if (isGroup == "1" || isGroup == ".") {
+                        isParticipants = await ParticipantsQuestion(ctx);
+                    }
+                    foreach (Project project in projects) {
+                        if (project.IsGroup && isParticipants) {
+                            participantsString = await GetParticipantsString(await project.GetParticipants());
+                        }
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} {(project.IsGroup ? "group project" : "project")} for group {project.GroupId}, will happen / happened on {project.Date.ToString().Trim()}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}.")}{participantsString}";
+                    }
+                } 
+            } else if (classType != "." && span == "planned" && group == ".") {
+                projects = projects
+                    .Where(p => 
+                        p.Class == chosenClass && 
+                        p.Date > DateTime.Now)
+                    .ToList();                     
+                if (projects.Count == 0) {
+                    await ctx.RespondAsync($"There are no projects logged for {chosenClass} class for group {group}!");
                     return;
                 } else {
                     if (isGroup == "1" || isGroup == ".") {

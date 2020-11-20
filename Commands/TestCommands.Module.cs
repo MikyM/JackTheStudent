@@ -108,6 +108,10 @@ public class TestCommandsModule : Base​Command​Module
         }
 
         var tests = JackTheStudent.Program.testList;
+        string chosenClass = JackTheStudent.Program.classList
+                .Where(c => c.ShortName == classType)
+                .Select(c => c.Name)
+                .FirstOrDefault();
         string result = String.Empty;
         try {
             if (group == "." && classType == "." && span == "planned") {
@@ -154,14 +158,11 @@ public class TestCommandsModule : Base​Command​Module
                 tests = tests
                     .Where(t => 
                         t.Date > DateTime.Now && 
-                        t.Class == JackTheStudent.Program.classList
-                            .Where(c => c.ShortName == classType)
-                            .Select(c => c.Name)
-                            .FirstOrDefault() && 
+                        t.Class == chosenClass && 
                         t.GroupId == group)
                     .ToList();                     
                 if (tests.Count == 0) {
-                    await ctx.RespondAsync($"There are no {tests.Select(c => c.Class).FirstOrDefault()} tests planned for group {group}!");
+                    await ctx.RespondAsync($"There are no {chosenClass} tests planned for group {group}!");
                     return;
                 } else {                  
                     foreach (Test test in tests) {
@@ -171,20 +172,31 @@ public class TestCommandsModule : Base​Command​Module
             } else if (classType != "." && span == "." && group != ".") {
                 tests = tests
                     .Where(t => 
-                        t.Class == JackTheStudent.Program.classList
-                            .Where(c => c.ShortName == classType)
-                            .Select(c => c.Name)
-                            .FirstOrDefault() && 
+                        t.Class == chosenClass && 
                         t.GroupId == group)
                     .ToList();                     
                 if (tests.Count == 0) {
-                    await ctx.RespondAsync($"There are no {tests.Select(c => c.Class).FirstOrDefault()} tests planned for group {group}!");
+                    await ctx.RespondAsync($"There are no {chosenClass} tests planned for group {group}!");
                     return;
                 } else {                   
                     foreach (Test test in tests) {
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(test.Class)} test for group {test.GroupId}, will happen/happened on {test.Date.ToString().Trim()}.{(test.AdditionalInfo.Equals("") ? "" : $"Additional info: {test.AdditionalInfo}")}";
                     }
-                }                                       
+                }
+            } else if (classType != "." && span == "planned" && group == ".") {
+                tests = tests
+                    .Where(t => 
+                        t.Class == chosenClass && 
+                        t.Date > DateTime.Now)
+                    .ToList();                     
+                if (tests.Count == 0) {
+                    await ctx.RespondAsync($"There are no {chosenClass} tests planned for any of the groups!");
+                    return;
+                } else {                   
+                    foreach (Test test in tests) {
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(test.Class)} test for group {test.GroupId}, will happen/happened on {test.Date.ToString().Trim()}.{(test.AdditionalInfo.Equals("") ? "" : $"Additional info: {test.AdditionalInfo}")}";
+                    }
+                }                                                                              
             } else {
                 tests = tests.ToList();                     
                 if (tests.Count == 0) {
