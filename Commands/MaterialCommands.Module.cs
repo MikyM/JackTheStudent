@@ -86,9 +86,8 @@ public class MaterialCommandsModule : Base​Command​Module
 
         var materials = JackTheStudent.Program.classMaterialList;
         string result = String.Empty;
-
-        if (className == ".") {
-            try {
+        try{
+            if (className == ".") {
                 materials = materials.ToList();
                 if (materials.Count == 0) {
                         await ctx.RespondAsync("There are no materials logged!");
@@ -97,14 +96,8 @@ public class MaterialCommandsModule : Base​Command​Module
                     foreach (ClassMaterial material in materials) {
                         result = $"{result} \nMaterial link for {material.Class} class - {material.Link}. {(material.AdditionalInfo.Equals("") ? "" : $"Additional info: {material.AdditionalInfo}")}";
                     }
-                }
-            } catch(Exception ex) {
-                Log.Logger.Error($"[Jack] Material logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
-                await ctx.RespondAsync("Show logs failed");
-                return;
-            }         
-        } else {
-            try {
+                }      
+            } else {
                 materials = materials.Where(m => m.ClassShortName == className).ToList();                     
                 if (materials.Count == 0) {
                     await ctx.RespondAsync($"There are no materials logged for {materials.Select(m => m.Class)} class!");
@@ -114,13 +107,12 @@ public class MaterialCommandsModule : Base​Command​Module
                         result = $"{result} \nMaterial link for {material.Class} class - {material.Link}. {(material.AdditionalInfo.Equals("") ? "" : $"Additional info: {material.AdditionalInfo}")}";
                     }
                 }                          
-            } catch(Exception ex) {
-                Log.Logger.Error($"[Jack] Material logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
-                await ctx.RespondAsync("Show logs failed");
-                return;
             }
+        } catch(Exception ex) {
+            Log.Logger.Error($"[Jack] Material logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
+            await ctx.RespondAsync("Show logs failed");
+            return;
         }
-
         var emoji = DiscordEmoji.FromName(ctx.Client, ":books:");
         var embed = new DiscordEmbedBuilder {
             Title = $"{emoji} Found materials:",

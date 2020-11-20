@@ -103,58 +103,39 @@ public class HomeworkCommandsModule : Base​Command​Module
 
         var homeworks = JackTheStudent.Program.homeworkList;
         string result = String.Empty;   
-
-        if (group == "." && classType == "." && span == "planned") {
-            try {
+        try {
+            if (group == "." && classType == "." && span == "planned") {
                 homeworks = homeworks.Where(h => h.Date > DateTime.Now).ToList();
-                    if (homeworks.Count == 0) {
-                            await ctx.RespondAsync("Wait what!? There is literally no homework planned at all!");
-                            return;
-                    } else {
-                        foreach (Homework homework in homeworks) {
-                            result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId} deadline is {homework.Date.ToString().Trim()}.{(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
-                        }
+                if (homeworks.Count == 0) {
+                        await ctx.RespondAsync("Wait what!? There is literally no homework planned at all!");
+                        return;
+                } else {
+                    foreach (Homework homework in homeworks) {
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId} deadline is {homework.Date.ToString().Trim()}.{(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
                     }
-            } catch(Exception ex) {
-                Log.Logger.Error($"[Jack] Homework logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
-                await ctx.RespondAsync("Show logs failed");
-                return;
-            }
-        } else if(classType == "." && span == "." && group != "." ) {
-            try {
+                }
+            } else if(classType == "." && span == "." && group != "." ) {
                 homeworks = homeworks.Where(h => h.GroupId == group).ToList();
-                    if (homeworks.Count == 0) {
-                            await ctx.RespondAsync($"Wait what!? There is no homework logged for group {group}!");
-                            return;
-                    } else {
-                        foreach (Homework homework in homeworks) {
-                            result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId} deadline is/was {homework.Date.ToString().Trim()}.{(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
-                        }
+                if (homeworks.Count == 0) {
+                        await ctx.RespondAsync($"Wait what!? There is no homework logged for group {group}!");
+                        return;
+                } else {
+                    foreach (Homework homework in homeworks) {
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId} deadline is/was {homework.Date.ToString().Trim()}.{(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
                     }
-            } catch(Exception ex) {
-                Log.Logger.Error($"[Jack] Homework logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
-                await ctx.RespondAsync("Show logs failed");
-                return;
-            }
-        } else if (classType == "." && span == "planned" && group != ".") {
-            try {
+                }
+            } else if (classType == "." && span == "planned" && group != ".") {
                 homeworks = homeworks.Where(h => h.Date > DateTime.Now && h.GroupId == group).ToList();
-                    if (homeworks.Count == 0) {
-                            await ctx.RespondAsync($"Wait what!? There is no planned homework for group {group}, hmm... league?");
-                            return;
-                    } else {
-                        foreach (Homework homework in homeworks) {
-                            result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId} deadline is {homework.Date.ToString().Trim()}.{(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
-                        }
-                        await ctx.RespondAsync(result);
+                if (homeworks.Count == 0) {
+                        await ctx.RespondAsync($"Wait what!? There is no planned homework for group {group}, hmm... league?");
+                        return;
+                } else {
+                    foreach (Homework homework in homeworks) {
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId} deadline is {homework.Date.ToString().Trim()}.{(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
                     }
-            } catch(Exception ex) {
-                Log.Logger.Error($"[Jack] Homework logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
-                await ctx.RespondAsync("Show logs failed");
-                return;
-            }
-        } else if (classType != "." && span == "planned" && group !=".") {
-            try {
+                    await ctx.RespondAsync(result);
+                }
+            } else if (classType != "." && span == "planned" && group !=".") {
                 homeworks = homeworks.Where(h => h.Date > DateTime.Now && h.Class == classType && h.GroupId == group).ToList();                  
                 if (homeworks.Count == 0) {
                     await ctx.RespondAsync($"There is no {homeworks.Select(h => h.Class).FirstOrDefault()} homework planned for group {group} at all!");
@@ -163,14 +144,8 @@ public class HomeworkCommandsModule : Base​Command​Module
                     foreach (Homework homework in homeworks) {
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId}, deadline is {homework.Date.ToString().Trim()}.{(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
                     }
-                }                           
-            } catch(Exception ex) {
-                Log.Logger.Error($"[Jack] Homework logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
-                await ctx.RespondAsync("Show logs failed");
-                return;
-            }                
-        } else if (classType != "." && span == "." && group !=".") {
-            try {
+                }                                           
+            } else if (classType != "." && span == "." && group !=".") {
                 homeworks = homeworks.Where(h => h.Class == classType && h.GroupId == group).ToList();                     
                 if (homeworks.Count == 0) {
                     await ctx.RespondAsync($"There is no homework logged for {homeworks.Select(h => h.Class).FirstOrDefault()} class for group {group}!");
@@ -179,14 +154,8 @@ public class HomeworkCommandsModule : Base​Command​Module
                     foreach (Homework homework in homeworks) {
                     result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId}, deadline is/was {homework.Date.ToString().Trim()}.{(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
                     }
-                }                           
-            } catch(Exception ex) {
-                Log.Logger.Error($"[Jack] Homework logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
-                await ctx.RespondAsync("Show logs failed");
-                return;
-            }               
-        } else {
-            try {
+                }                                         
+            } else {
                 homeworks = homeworks.ToList();                     
                 if (homeworks.Count == 0) {
                     await ctx.RespondAsync("There is no logged homework!");
@@ -195,12 +164,12 @@ public class HomeworkCommandsModule : Base​Command​Module
                     foreach (Homework homework in homeworks) {
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId}, deadline is/was {homework.Date.ToString().Trim()}.{(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
                     }
-                }                       
-            } catch(Exception ex) {
-                Log.Logger.Error($"[Jack] Homework logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
-                await ctx.RespondAsync("Show logs failed");
-                return;
-            }
+                }   
+            }                    
+        } catch(Exception ex) {
+            Log.Logger.Error($"[Jack] Homework logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
+            await ctx.RespondAsync("Show logs failed");
+            return;
         }
         var emoji = DiscordEmoji.FromName(ctx.Client, ":pencil2:");
         var embed = new DiscordEmbedBuilder {

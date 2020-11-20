@@ -93,56 +93,37 @@ public class ExamCommandsModule : Base​Command​Module
 
         var exams = JackTheStudent.Program.examList;
         var result = String.Empty;
-
-        if (classType == "." && span == "planned") {
-            try {
+        try {
+            if (classType == "." && span == "planned") {
                 exams = exams.Where(e => e.Date > DateTime.Now).ToList();
-                    if (exams.Count == 0) {
-                            await ctx.RespondAsync("Wait what!? There are no exams planned, PAAAARTTTIEEEHH TIIIIIIIIMEEEEEEE!");
-                            return;
-                    } else {
-                        foreach (Exam exam in exams) {
-                                result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class)} exam will happen on {exam.Date.ToString().Trim()}.{(exam.AdditionalInfo.Equals("") ? "" : $"Additional info: {exam.AdditionalInfo}")}";
-                        }
-                    }     
-            } catch(Exception ex) {
-                Log.Logger.Error($"[Jack] Exam logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
-                await ctx.RespondAsync("Show logs failed");
-                return;
-            }
-        } else if (classType == "." && span == ".") {
-            try {
-                    if (exams.Count == 0) {
-                            await ctx.RespondAsync("There are no exams logged!");
-                            return;
-                    } else {
-                        foreach (Exam exam in exams) {
-                            result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class)} exam will happen / happened on {exam.Date.ToString().Trim()}.{(exam.AdditionalInfo.Equals("") ? "" : $"Additional info: {exam.AdditionalInfo}")}";
-                        }
-                    }
-            } catch(Exception ex) {
-                Log.Logger.Error($"[Jack] Exam logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
-                await ctx.RespondAsync("Show logs failed");
-                return;
-            }
-        } else if (classType != "." && span == "planned") {
-                try {
-                    exams = exams.Where(e => e.Date > DateTime.Now && e.ClassShortName == classType).ToList();                     
-                    if (exams.Count == 0) {
-                        await ctx.RespondAsync($"There are no {exams.Select(e => e.Class).FirstOrDefault()} exams planned!");
+                if (exams.Count == 0) {
+                        await ctx.RespondAsync("Wait what!? There are no exams planned, PAAAARTTTIEEEHH TIIIIIIIIMEEEEEEE!");
                         return;
-                    } else {
-                        foreach (Exam exam in exams) {
+                } else {
+                    foreach (Exam exam in exams) {
                             result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class)} exam will happen on {exam.Date.ToString().Trim()}.{(exam.AdditionalInfo.Equals("") ? "" : $"Additional info: {exam.AdditionalInfo}")}";
-                        }
-                    }                           
-            } catch(Exception ex) {
-                Log.Logger.Error($"[Jack] Exam logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
-                await ctx.RespondAsync("Show logs failed");
-                return;
-            }                                       
-        } else {
-            try {
+                    }
+                }     
+            } else if (classType == "." && span == ".") {
+                if (exams.Count == 0) {
+                        await ctx.RespondAsync("There are no exams logged!");
+                        return;
+                } else {
+                    foreach (Exam exam in exams) {
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class)} exam will happen / happened on {exam.Date.ToString().Trim()}.{(exam.AdditionalInfo.Equals("") ? "" : $"Additional info: {exam.AdditionalInfo}")}";
+                    }
+                }
+            } else if (classType != "." && span == "planned") {
+                exams = exams.Where(e => e.Date > DateTime.Now && e.ClassShortName == classType).ToList();                     
+                if (exams.Count == 0) {
+                    await ctx.RespondAsync($"There are no {exams.Select(e => e.Class).FirstOrDefault()} exams planned!");
+                    return;
+                } else {
+                    foreach (Exam exam in exams) {
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class)} exam will happen on {exam.Date.ToString().Trim()}.{(exam.AdditionalInfo.Equals("") ? "" : $"Additional info: {exam.AdditionalInfo}")}";
+                    }
+                }                                                                
+            } else {
                 exams = exams.Where (e => e.ClassShortName == classType).ToList();                  
                 if (exams.Count == 0) {
                     await ctx.RespondAsync($"There are no logged exams for {exams.Select(e => e.Class).FirstOrDefault()} class!");
@@ -152,11 +133,11 @@ public class ExamCommandsModule : Base​Command​Module
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(exam.Class)} exam will happen / happened on {exam.Date.ToString().Trim()}.{(exam.AdditionalInfo.Equals("") ? "" : $"Additional info: {exam.AdditionalInfo}")}";
                     }
                 }                       
-            } catch(Exception ex) {
+            }
+        } catch(Exception ex) {
                 Log.Logger.Error($"[Jack] Exam logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
                 await ctx.RespondAsync("Show logs failed");
                 return;
-            }
         }
         var emoji = DiscordEmoji.FromName(ctx.Client, ":heart_exclamation:");
         var embed = new DiscordEmbedBuilder {

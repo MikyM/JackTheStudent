@@ -103,9 +103,8 @@ public class TestCommandsModule : Base​Command​Module
 
         var tests = JackTheStudent.Program.testList;
         string result = String.Empty;
-
-        if (group == "." && classType == "." && span == "planned") {
-            try {
+        try {
+            if (group == "." && classType == "." && span == "planned") {
                 tests = tests.Where(t => t.Date > DateTime.Now).ToList();
                 if (tests.Count == 0) {
                         await ctx.RespondAsync("Wait what!? There are literally no tests planned at all!");
@@ -115,13 +114,7 @@ public class TestCommandsModule : Base​Command​Module
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(test.Class)} test for group {test.GroupId}, will happen on {test.Date.ToString().Trim()}.{(test.AdditionalInfo.Equals("") ? "" : $"Additional info: {test.AdditionalInfo}")}";
                     }
                 }
-            } catch(Exception ex) {
-                Log.Logger.Error($"[Jack] Test logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
-                await ctx.RespondAsync("Show logs failed");
-                return;
-            }
-        } else if(classType == "." && span == "." && group != "." ) {
-            try {
+            } else if(classType == "." && span == "." && group != "." ) {
                 tests = tests.Where(t => t.GroupId == group).ToList();
                 if (tests.Count == 0) {
                         await ctx.RespondAsync($"There are no tests logged for group {group}!");
@@ -131,13 +124,7 @@ public class TestCommandsModule : Base​Command​Module
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(test.Class)} test for group {test.GroupId}, will happen/happened on {test.Date.ToString().Trim()}.{(test.AdditionalInfo.Equals("") ? "" : $"Additional info: {test.AdditionalInfo}")}";
                     }
                 }
-            } catch(Exception ex) {
-                Log.Logger.Error($"[Jack] Test logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
-                await ctx.RespondAsync("Show logs failed");
-                return;
-            }
-        } else if (classType == "." && span == "planned" && group != ".") {
-            try {
+            } else if (classType == "." && span == "planned" && group != ".") {
                 tests = tests.Where(t => t.Date > DateTime.Now && t.GroupId == group).ToList();
                 if (tests.Count == 0) {
                         await ctx.RespondAsync($"Wait what!? There are no tests planned for any class for group {group}!");
@@ -147,13 +134,7 @@ public class TestCommandsModule : Base​Command​Module
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(test.Class)} test for group {test.GroupId}, will happen on {test.Date.ToString().Trim()}.{(test.AdditionalInfo.Equals("") ? "" : $"Additional info: {test.AdditionalInfo}")}";
                     }
                 }
-            } catch(Exception ex) {
-                Log.Logger.Error($"[Jack] Test logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
-                await ctx.RespondAsync("Show logs failed");
-                return;
-            }
-        } else if (classType != "." && span == "planned" && group != ".") {
-            try {
+            } else if (classType != "." && span == "planned" && group != ".") {
                 tests = tests.Where(t => t.Date > DateTime.Now && t.Class == classType && t.GroupId == group).ToList();                     
                 if (tests.Count == 0) {
                     await ctx.RespondAsync($"There are no {tests.Select(c => c.Class).FirstOrDefault()} tests planned for group {group}!");
@@ -162,14 +143,8 @@ public class TestCommandsModule : Base​Command​Module
                     foreach (Test test in tests) {
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(test.Class)} test for group {test.GroupId}, will happen on {test.Date.ToString().Trim()}.{(test.AdditionalInfo.Equals("") ? "" : $"Additional info: {test.AdditionalInfo}")}";
                     }
-                }                           
-            } catch(Exception ex) {
-                Log.Logger.Error($"[Jack] Test logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
-                await ctx.RespondAsync("Show logs failed");
-                return;
-            }                 
-        } else if (classType != "." && span == "." && group != ".") {
-            try {
+                }                                          
+            } else if (classType != "." && span == "." && group != ".") {
                 tests = tests.Where(t => t.Class == classType && t.GroupId == group).ToList();                     
                 if (tests.Count == 0) {
                     await ctx.RespondAsync($"There are no {tests.Select(c => c.Class).FirstOrDefault()} tests planned for group {group}!");
@@ -178,14 +153,8 @@ public class TestCommandsModule : Base​Command​Module
                     foreach (Test test in tests) {
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(test.Class)} test for group {test.GroupId}, will happen/happened on {test.Date.ToString().Trim()}.{(test.AdditionalInfo.Equals("") ? "" : $"Additional info: {test.AdditionalInfo}")}";
                     }
-                }                           
-            } catch(Exception ex) {
-                Log.Logger.Error($"[Jack] Test logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
-                await ctx.RespondAsync("Show logs failed");
-                return;
-            }              
-        } else {
-            try {
+                }                                       
+            } else {
                 tests = tests.ToList();                     
                 if (tests.Count == 0) {
                     await ctx.RespondAsync("There aren no tests logged!");
@@ -195,13 +164,12 @@ public class TestCommandsModule : Base​Command​Module
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(test.Class)} test for group {test.GroupId}, will happen/happened on {test.Date.ToString().Trim()}.{(test.AdditionalInfo.Equals("") ? "" : $"Additional info: {test.AdditionalInfo}")}";
                     }
                 }                          
-            } catch(Exception ex) {
-                Log.Logger.Error($"[Jack] Test logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
-                await ctx.RespondAsync("Show logs failed");
-                return;
             }
+        } catch(Exception ex) {
+            Log.Logger.Error($"[Jack] Test logs, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
+            await ctx.RespondAsync("Show logs failed");
+            return;
         }
-
         var emoji = DiscordEmoji.FromName(ctx.Client, ":writing_hand:");
         var embed = new DiscordEmbedBuilder {
             Title = $"{emoji} Found tests:",
