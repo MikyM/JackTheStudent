@@ -257,6 +257,50 @@ public class AdminCommandsModule : Base​Command​Module
 
     [RequireOwner]
     [Hidden]
+    [Command("remindrole")]
+    [Description("Creates remind role")]
+    public async Task CreateRole(CommandContext ctx, string roleName = "Auto Remind", string color = "5142f5")
+    {
+        DiscordRole remindRole = ctx.Guild.GetRole(JackTheStudent.Program.remindRoleId);
+        if (remindRole == null) {
+            remindRole = await ctx.Guild.CreateRoleAsync(roleName, null, new DiscordColor(color));
+        }
+
+        var emoji = DiscordEmoji.FromName(ctx.Client, ":books:");
+        var embed = new DiscordEmbedBuilder {
+            Title = $"Auto remind role assignment:",
+            Description = $"React with {emoji} to get the exam auto remind role, \nI shall ping it 1 week before any exam.",
+            Color = new DiscordColor("5142f5") 
+        };
+        var response = await ctx.RespondAsync("", embed: embed);
+        using (var db = new JackTheStudentContext()){
+            var truncateText = "truncate table remind_assignment";
+            try {
+                await db.Database.ExecuteSqlRawAsync(truncateText);
+            } catch(Exception ex) {
+                Log.Logger.Error($"[Jack] New role assignment, caller - {ctx.Message.Author.Id}, error: " + ex.ToString());
+                await ctx.RespondAsync("Truncate failed");
+                return;
+            }
+            var roleAssignment = new RoleAssignment {
+                MessageId = response.Id,
+                RoleId = remindRole.Id
+            };
+            JackTheStudent.Program.roleMessageId = response.Id;
+            JackTheStudent.Program.remindRoleId = remindRole.Id;
+            db.RoleAssignment.Add(roleAssignment);
+            await db.SaveChangesAsync();
+            Log.Logger.Information($"[Jack] User {ctx.Message.Author.Username}#{ctx.Message.Author.Discriminator} ID:{ctx.Message.Author.Id} created a new log with '{ctx.Command.QualifiedName}' command and created ID: {roleAssignment.Id}");
+        }
+
+        await response.CreateReactionAsync(emoji);
+        await Task.Delay(2000);
+        DiscordMember bot = await ctx.Guild.GetMemberAsync(ctx.Client.CurrentUser.Id);
+        await bot.RevokeRoleAsync(remindRole);
+    }
+
+    [RequireOwner]
+    [Hidden]
     [Command("ban")]
     [Description("Bans a member from the server")]
     public async Task Ban(CommandContext ctx, string mention, string reason = "")

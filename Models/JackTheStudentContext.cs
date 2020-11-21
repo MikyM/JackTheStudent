@@ -28,6 +28,7 @@ namespace JackTheStudent.Models
         public virtual DbSet<Project> Project { get; set; }
         public virtual DbSet<GroupProjectMember> GroupProjectMember { get; set; }
         public virtual DbSet<TeamsLink> TeamsLink { get; set; }
+        public virtual DbSet<RoleAssignment> RoleAssignment { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -102,6 +103,28 @@ namespace JackTheStudent.Models
                     .IsRequired()
                     .HasColumnName("full_group_id")
                     .HasMaxLength(30);  
+            });
+
+            modelBuilder.Entity<RoleAssignment>(entity =>
+            {
+                entity.HasKey(e => e.Id)
+                    .HasName("PRIMARY");
+
+                entity.ToTable("remind_assignment");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e._MessageId)
+                    .IsRequired()
+                    .HasColumnName("message_id")
+                    .HasColumnType("bigint(30)");
+
+                entity.Property(e => e._RoleId)
+                    .IsRequired()
+                    .HasColumnName("role_id")
+                    .HasColumnType("bigint(30");
             });
 
             modelBuilder.Entity<TeamsLink>(entity =>

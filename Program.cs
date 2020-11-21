@@ -30,6 +30,8 @@ namespace JackTheStudent
     private static Timer reminderTimer;
     private static Timer timeCheckTimer;
     
+    public static ulong roleMessageId;
+    public static ulong remindRoleId;
     public static List<string> quotes = new List<string>();
     public static List<PersonalReminder> reminderList = new List<PersonalReminder>();
     public static List<Class> classList = new List<Class>();
@@ -106,6 +108,8 @@ namespace JackTheStudent
 
             _discord.Ready += OnClientReady;
             _discord.ClientErrored += ClientError;
+            _discord.MessageReactionAdded += OnMessageReaction;
+            _discord.MessageReactionRemoved += OnMessageReactionRemoval;
             _commands.CommandErrored += CommandErrored;
             _commands.CommandExecuted += CommandExecuted;
 
@@ -175,6 +179,28 @@ namespace JackTheStudent
         }
     }
 
+    private async Task OnMessageReaction(DiscordClient sender, MessageReactionAddEventArgs e) 
+    {
+        if (e.Message.Id == roleMessageId) {
+            if (e.Emoji == DiscordEmoji.FromName(sender, ":books:")) {
+                DiscordMember member = await e.Guild.GetMemberAsync(e.User.Id);
+                DiscordRole remindRole = e.Guild.GetRole(remindRoleId);
+                await member.GrantRoleAsync(remindRole);
+            }
+        }
+    }
+
+    private async Task OnMessageReactionRemoval(DiscordClient sender, MessageReactionRemoveEventArgs e) 
+    {
+        if (e.Message.Id == roleMessageId) {
+            if (e.Emoji == DiscordEmoji.FromName(sender, ":books:")) {
+                DiscordMember member = await e.Guild.GetMemberAsync(e.User.Id);
+                DiscordRole remindRole = e.Guild.GetRole(remindRoleId);
+                await member.RevokeRoleAsync(remindRole);
+            }
+        }
+    }
+
     private async Task StartReminders()
     {   
         var startTimeSpan = TimeSpan.Zero;
@@ -237,7 +263,7 @@ namespace JackTheStudent
             timeLeft = examList[i-1].Date.Date - DateTime.Now.Date;
             isLessThanAWeek = timeLeft <= interval;
             if (isLessThanAWeek && !examList[i-1].WasReminded) {
-                await examList[i-1].Ping(_discord, _config.GetValue<ulong>("discord:LogChannelId"), _config.GetValue<ulong>("discord:AutoRemind:RoleId"));
+                await examList[i-1].Ping(_discord, _config.GetValue<ulong>("discord:LogChannelId"), remindRoleId);
                 examList[i-1].WasReminded = true;
                 using (var db = new JackTheStudentContext()) {
                     try {
@@ -296,6 +322,8 @@ namespace JackTheStudent
                 testList = db.Test.ToList();
                 projectMembersList = db.GroupProjectMember.ToList();
                 teamsLinkList = db.TeamsLink.ToList();
+                remindRoleId = db.RoleAssignment.Select(c => c.RoleId).FirstOrDefault();
+                roleMessageId = db.RoleAssignment.Select(c => c.MessageId).FirstOrDefault();
 
                 foreach (Project project in projectList) {
                     if (project.IsGroup) {
