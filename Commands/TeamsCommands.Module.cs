@@ -5,16 +5,23 @@ using System.Threading.Tasks;
 using JackTheStudent.Models;
 using System.Linq;
 using Serilog;
+using System.Text;
 using System.Globalization;
 using JackTheStudent.CommandDescriptions;
 using DSharpPlus.Entities;
+using Newtonsoft.Json;
+using System.Net.Http;
+using Newtonsoft.Json.Linq;
+using System.Net.Http.Headers;
 
 namespace JackTheStudent.Commands
 {
 
 public class TeamsLinksCommandsModule : Base​Command​Module
 {
-    
+    private string groupGuid = Environment.GetEnvironmentVariable("BITLY_GROUPGUID");
+    private string bitlyToken = Environment.GetEnvironmentVariable("BITLY_TOKEN");
+
     [Command("teamslink")]
     [Description(TeamsDescriptions.teamslinkLogDescription)]
     public async Task TeamsLinkLog(CommandContext ctx,
@@ -82,12 +89,31 @@ public class TeamsLinksCommandsModule : Base​Command​Module
             return;         
         } else {
             try {
+                string baseUrl = "https://api-ssl.bitly.com/v4/shorten";
+                string shortenedUrl = "";
+                var content = new BitlyCall{
+                    long_url = link,
+                    group_guid = groupGuid
+                };
+                var jsonContent = new StringContent(JsonConvert.SerializeObject(content), Encoding.UTF8, "application/json");
+                using (HttpClient client = new HttpClient()) {
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bitlyToken);
+
+                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, baseUrl);
+                    request.Content = jsonContent;
+                    var response = await client.SendAsync(request);
+                    JObject rss = JObject.Parse(await response.Content.ReadAsStringAsync());                           
+                    shortenedUrl = (string)rss["link"];
+                }
+                
                 using (var db = new JackTheStudentContext()){
                 var teamsLink = new TeamsLink { 
                     Class = JackTheStudent.Program.classList.Where(c => c.ShortName == uniClass).Select(c => c.Name).FirstOrDefault(),
                     ClassType = JackTheStudent.Program.classTypeList.Where(c => c.ShortName == classType).Select(c => c.Name).FirstOrDefault(),
                     Date = $"{parsedEventDayOfWeek} {eventTime}",
                     GroupId = groupId,
+                    ShortenedLink = shortenedUrl,
                     Link = link,
                     LogById = ctx.Message.Author.Id.ToString(),
                     LogByUsername = ctx.Message.Author.Username + "#" + ctx.Message.Author.Discriminator,
@@ -151,7 +177,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                         } else {
                             chosenGroupString = $"group {teamsLink.GroupId}";
                         }
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(teamsLink.Class)} {teamsLink.ClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.Link}\nAdditional info: {(teamsLink.AdditionalInfo.Equals("") ? "" : $"Additional info: {teamsLink.AdditionalInfo}.")}";                       
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(teamsLink.Class)} {teamsLink.ClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.ShortenedLink}\nAdditional info: {(teamsLink.AdditionalInfo.Equals("") ? "" : $"Additional info: {teamsLink.AdditionalInfo}.")}";                       
                     }
                 }
             } else if(uniClass != "." && classType == "." && group == ".") {
@@ -169,7 +195,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                         } else {
                             chosenGroupString = $"group {teamsLink.GroupId}";
                         }
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(teamsLink.Class)} {teamsLink.ClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.Link}\nAdditional info: {(teamsLink.AdditionalInfo.Equals("") ? "" : $"Additional info: {teamsLink.AdditionalInfo}.")}";                                   
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(teamsLink.Class)} {teamsLink.ClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.ShortenedLink}\nAdditional info: {(teamsLink.AdditionalInfo.Equals("") ? "" : $"Additional info: {teamsLink.AdditionalInfo}.")}";                                   
                     }
                 }
             } else if (uniClass != "." && classType != "." && group == ".") {
@@ -188,7 +214,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                         } else {
                             chosenGroupString = $"group {teamsLink.GroupId}";
                         }
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(teamsLink.Class)} {teamsLink.ClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.Link}\nAdditional info: {(teamsLink.AdditionalInfo.Equals("") ? "" : $"Additional info: {teamsLink.AdditionalInfo}.")}";                         
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(teamsLink.Class)} {teamsLink.ClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.ShortenedLink}\nAdditional info: {(teamsLink.AdditionalInfo.Equals("") ? "" : $"Additional info: {teamsLink.AdditionalInfo}.")}";                         
                     }
                 }
             } else if (uniClass == "." && classType != "." && group == ".") {
@@ -205,7 +231,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                         } else {
                             chosenGroupString = $"group {teamsLink.GroupId}";
                         }
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(teamsLink.Class)} {teamsLink.ClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.Link}\nAdditional info: {(teamsLink.AdditionalInfo.Equals("") ? "" : $"Additional info: {teamsLink.AdditionalInfo}.")}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(teamsLink.Class)} {teamsLink.ClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.ShortenedLink}\nAdditional info: {(teamsLink.AdditionalInfo.Equals("") ? "" : $"Additional info: {teamsLink.AdditionalInfo}.")}";
                     }
                 }                                            
             } else if (uniClass == "." && classType != "." && group != ".") {
@@ -221,7 +247,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                 } else {
                     result = String.Empty;
                     foreach (TeamsLink teamsLink in teamsLinks) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(teamsLink.Class)} {teamsLink.ClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.Link}\nAdditional info: {(teamsLink.AdditionalInfo.Equals("") ? "" : $"Additional info: {teamsLink.AdditionalInfo}.")}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(teamsLink.Class)} {teamsLink.ClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.ShortenedLink}\nAdditional info: {(teamsLink.AdditionalInfo.Equals("") ? "" : $"Additional info: {teamsLink.AdditionalInfo}.")}";
                     }
                 }                           
             } else if (uniClass != "." && classType == "." && group != ".") {
@@ -236,7 +262,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                     return;
                 } else {
                     foreach (TeamsLink teamsLink in teamsLinks) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(teamsLink.Class)} {teamsLink.ClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.Link}\nAdditional info: {(teamsLink.AdditionalInfo.Equals("") ? "" : $"Additional info: {teamsLink.AdditionalInfo}.")}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(teamsLink.Class)} {teamsLink.ClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.ShortenedLink}\nAdditional info: {(teamsLink.AdditionalInfo.Equals("") ? "" : $"Additional info: {teamsLink.AdditionalInfo}.")}";
                     }
                 }
             } else if (uniClass == "." && classType == "." && group != ".") {
@@ -249,7 +275,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                     return;
                 } else {
                     foreach (TeamsLink teamsLink in teamsLinks) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(teamsLink.Class)} {teamsLink.ClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.Link}\nAdditional info: {(teamsLink.AdditionalInfo.Equals("") ? "" : $"Additional info: {teamsLink.AdditionalInfo}.")}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(teamsLink.Class)} {teamsLink.ClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.ShortenedLink}\nAdditional info: {(teamsLink.AdditionalInfo.Equals("") ? "" : $"Additional info: {teamsLink.AdditionalInfo}.")}";
                     }
                 }                                     
             } else {
@@ -265,7 +291,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                     return;
                 } else {
                     foreach (TeamsLink teamsLink in teamsLinks) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(teamsLink.Class)} {teamsLink.ClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.Link}\nAdditional info: {(teamsLink.AdditionalInfo.Equals("") ? "" : $"Additional info: {teamsLink.AdditionalInfo}.")}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(teamsLink.Class)} {teamsLink.ClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.ShortenedLink}\nAdditional info: {(teamsLink.AdditionalInfo.Equals("") ? "" : $"Additional info: {teamsLink.AdditionalInfo}.")}";
                     }
                 }                          
             }

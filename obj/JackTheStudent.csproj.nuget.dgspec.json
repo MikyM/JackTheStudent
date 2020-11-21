@@ -91,6 +91,10 @@
               "target": "Package",
               "version": "[8.0.22, )"
             },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[12.0.3, )"
+            },
             "Serilog.Extensions.Hosting": {
               "target": "Package",
               "version": "[3.1.0, )"

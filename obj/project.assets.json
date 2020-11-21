@@ -8201,6 +8201,7 @@
       "Microsoft.Extensions.Configuration.EnvironmentVariables >= 3.1.9",
       "Microsoft.Extensions.Hosting >= 3.1.6",
       "MySql.Data.EntityFrameworkCore >= 8.0.22",
+      "Newtonsoft.Json >= 12.0.3",
       "Serilog.Extensions.Hosting >= 3.1.0",
       "Serilog.Settings.Configuration >= 3.1.0",
       "Serilog.Sinks.Async >= 1.4.0",
@@ -8299,6 +8300,10 @@
           "MySql.Data.EntityFrameworkCore": {
             "target": "Package",
             "version": "[8.0.22, )"
+          },
+          "Newtonsoft.Json": {
+            "target": "Package",
+            "version": "[12.0.3, )"
           },
           "Serilog.Extensions.Hosting": {
             "target": "Package",

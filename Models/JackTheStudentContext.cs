@@ -152,6 +152,16 @@ namespace JackTheStudent.Models
                     .HasColumnName("class")
                     .HasMaxLength(45);
 
+                entity.Property(e => e.Link)
+                    .IsRequired()
+                    .HasColumnName("link")
+                    .HasColumnType("longtext");
+
+                entity.Property(e => e.ShortenedLink)
+                    .IsRequired()
+                    .HasColumnName("shortened_link")
+                    .HasColumnType("longtext");
+
                 entity.Property(e => e.Date)
                     .IsRequired()
                     .HasColumnName("date")
