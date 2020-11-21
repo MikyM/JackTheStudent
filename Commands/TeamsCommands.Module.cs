@@ -232,13 +232,26 @@ public class TeamsLinksCommandsModule : Base​Command​Module
                         t.GroupId == group)
                     .ToList();                     
                 if (teamsLinks.Count == 0) {
-                    await ctx.RespondAsync($"There are no {chosenUniClass} teams links logged for group {group} logged!");
+                    await ctx.RespondAsync($"There are no {chosenUniClass} teams links logged for group {group}!");
                     return;
                 } else {
                     foreach (TeamsLink teamsLink in teamsLinks) {
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(teamsLink.Class)} {teamsLink.ClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.Link}\nAdditional info: {teamsLink.AdditionalInfo}";
                     }
-                }                                      
+                }
+            } else if (uniClass == "." && classType == "." && group != ".") {
+                chosenGroupString = $"group {group}";
+                teamsLinks = teamsLinks
+                    .Where(t => t.GroupId == group)
+                    .ToList();                     
+                if (teamsLinks.Count == 0) {
+                    await ctx.RespondAsync($"There are no teams links logged for group {group}!");
+                    return;
+                } else {
+                    foreach (TeamsLink teamsLink in teamsLinks) {
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(teamsLink.Class)} {teamsLink.ClassType} teams link for {chosenGroupString}, takes place on {teamsLink.Date.ToString().Trim()}. Link: {teamsLink.Link}\nAdditional info: {teamsLink.AdditionalInfo}";
+                    }
+                }                                     
             } else {
                 chosenGroupString = $"group {group}";
                 teamsLinks = teamsLinks
