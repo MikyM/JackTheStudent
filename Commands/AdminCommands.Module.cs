@@ -255,7 +255,7 @@ public class AdminCommandsModule : Base​Command​Module
         return;
     }
 
-    [RequireOwner]
+    [RequirePermissions(Permissions.Administrator)]
     [Hidden]
     [Command("remindrole")]
     [Description("Creates remind role")]
