@@ -209,7 +209,9 @@ public class ProjectCommandsModule : Base​Command​Module
                     foreach (Project project in projects) {
                         if (isGroup == "0" && project.IsGroup) {
                             continue;
-                        }                        
+                        } else if (isGroup == "1" && !project.IsGroup) {
+                            continue;
+                        }                      
                         if (project.IsGroup && isParticipants) {
                             participantsString = await GetParticipantsString(await project.GetParticipants());
                         } 
@@ -232,7 +234,9 @@ public class ProjectCommandsModule : Base​Command​Module
                     foreach (Project project in projects) {
                         if (isGroup == "0" && project.IsGroup) {
                             continue;
-                        }  
+                        } else if (isGroup == "1" && !project.IsGroup) {
+                            continue;
+                        }
                         if (project.IsGroup && isParticipants) {
                             participantsString = await GetParticipantsString(await project.GetParticipants());
                         }
@@ -255,7 +259,9 @@ public class ProjectCommandsModule : Base​Command​Module
                     foreach (Project project in projects) {
                         if (isGroup == "0" && project.IsGroup) {
                             continue;
-                        }  
+                        } else if (isGroup == "1" && !project.IsGroup) {
+                            continue;
+                        } 
                         if (project.IsGroup && isParticipants) {
                             participantsString = await GetParticipantsString(await project.GetParticipants());
                         }
@@ -280,6 +286,8 @@ public class ProjectCommandsModule : Base​Command​Module
                     foreach (Project project in projects) {
                         if (isGroup == "0" && project.IsGroup) {
                             continue;
+                        } else if (isGroup == "1" && !project.IsGroup) {
+                            continue;
                         }  
                         if (project.IsGroup && isParticipants) {
                             participantsString = await GetParticipantsString(await project.GetParticipants());
@@ -303,7 +311,9 @@ public class ProjectCommandsModule : Base​Command​Module
                     foreach (Project project in projects) {
                         if (isGroup == "0" && project.IsGroup) {
                             continue;
-                        }  
+                        } else if (isGroup == "1" && !project.IsGroup) {
+                            continue;
+                        } 
                         if (project.IsGroup && isParticipants) {
                             participantsString = await GetParticipantsString(await project.GetParticipants());
                         }
@@ -326,7 +336,9 @@ public class ProjectCommandsModule : Base​Command​Module
                     foreach (Project project in projects) {
                         if (isGroup == "0" && project.IsGroup) {
                             continue;
-                        }  
+                        } else if (isGroup == "1" && !project.IsGroup) {
+                            continue;
+                        }
                         if (project.IsGroup && isParticipants) {
                             participantsString = await GetParticipantsString(await project.GetParticipants());
                         }
@@ -344,7 +356,9 @@ public class ProjectCommandsModule : Base​Command​Module
                     foreach (Project project in projects) {
                         if (isGroup == "0" && project.IsGroup) {
                             continue;
-                        }  
+                        } else if (isGroup == "1" && !project.IsGroup) {
+                            continue;
+                        }
                         if (project.IsGroup && isParticipants) {
                             participantsString = await GetParticipantsString(await project.GetParticipants());
                         }
