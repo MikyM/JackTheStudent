@@ -37,7 +37,7 @@ public class TeamsLinksCommandsModule : Base​Command​Module
         DateTime parsedEventTime = new DateTime();
 
         if (uniClass == "") {
-            await ctx.RespondAsync("Learn to read you dumbass. The command looks like: !teamsLink <group> <class> <teamsLinkDate> <teamsLinkTime> Try again!");
+            await ctx.RespondAsync("Learn to read you dumbass. The command looks like: !teamsLink <classShortName> <classType> <dayOfWeek> <time> <group> <link> <addInfo> Try again!");
             return;      
         } else if (!JackTheStudent.Program.classList.Any(c => c.ShortName == uniClass)) {
             await ctx.RespondAsync("There's no such class, you high bruh?");
