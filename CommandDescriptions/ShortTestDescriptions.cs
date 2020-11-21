@@ -4,15 +4,12 @@ namespace JackTheStudent.CommandDescriptions
 {
     public class ShortTestDescriptions
     {
-    public const string shorttestLogDescription = "Command logging a short test, last two arguments are optional." +
-        "\nTo pass without addInfo but with materials use \".\" where addInfo should be.\n" +
+    public const string shorttestLogDescription = "Command logging a short test, last argument is optional.\n" +
         "Words seperated with spaces must be wrapped with \"\"\n" +
-        "\n!shorttest <groupId> <classShortName> <shortTestDate> <shortTestTime> <additionalInfo> <materials>\n" + 
+        "\n!shorttest <groupId> <classShortName> <shortTestDate> <shortTestTime> <additionalInfo>\n" + 
         "\nExamples:\n" +
         "\n!shorttest 3 mat 05-05-2021 13:30" + 
-        "\n!shorttest 1 ele 05-05-2021 12:30 \"Calculator required\"" +
-        "\n!shorttest 3 mat 05-05-2021 13:30 \"Calculator required\" \"https://yourmaterials.com\"" +
-        "\n!shorttest 1 eng 05-05-2021 13:30 . \"https://yourmaterials.com\"";
+        "\n!shorttest 1 ele 05-05-2021 12:30 \"Calculator required\"";
     
 
     public const string shorttestLogsDescription = "Command retrieving logged short test based on passed arguments, ALL arguments are optional and the command has default settings.\n" +

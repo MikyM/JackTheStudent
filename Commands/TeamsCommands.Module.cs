@@ -18,11 +18,11 @@ public class TeamsLinksCommandsModule : Base​Command​Module
     [Command("teamslink")]
     [Description(TeamsDescriptions.teamslinkLogDescription)]
     public async Task TeamsLinkLog(CommandContext ctx,
-        [Description ("\nTakes class' short names, type !class to retrive all classes.\n")] string uniClass = "",
-        [Description ("\nTakes class' short names, type !class to retrive all classes.\n")] string classType = "",   
+        [Description ("\nTakes class' short names, type !classes to retrive all classes.\n")] string uniClass = "",
+        [Description ("\nTakes class' type short names, type !classtypes to retrive all classes.\n")] string classType = "",   
         [Description ("\nTakes dates in dd/mm/yyyy format, accepts different separators.\n")] string eventDayOfWeek = "", 
         [Description ("\nTakes time in hh:mm format.\n")] string eventTime = "",
-        [Description ("\nTakes group IDs, type !group to retrieve all groups.\n")] string groupId = ".", 
+        [Description ("\nTakes group IDs OR \".\" which says that the link is for everyone, type !groups to retrieve all groups.\n")] string groupId = ".", 
         [Description ("\nTakes time in hh:mm format.\n")] string link = "",
         [Description ("\nTakes additional information, multiple words must be wrapped with \"\".\n")] string additionalInfo = "")
     {
@@ -111,9 +111,9 @@ public class TeamsLinksCommandsModule : Base​Command​Module
     [Command("teamslinks")]
     [Description(TeamsDescriptions.teamslinkLogsDescription)]
     public async Task TeamsLinkLogs(CommandContext ctx,
-        [Description("\nTakes class' short names or \".\", type !class to retrieve all classes, usage of \".\" will tell Jack to retrieve teamsLink for ALL classes.\n")] string uniClass = ".",
-        [Description("\nTakes class' short names or \".\", type !class to retrieve all classes, usage of \".\" will tell Jack to retrieve teamsLink for ALL classes.\n")] string classType = ".",
-        [Description("\nTakes group IDs or \".\", type !group to retrieve all groups, usage of \".\" will tell Jack to retrieve teamsLink for ALL groups.\n")] string group = ".")
+        [Description("\nTakes class' short names or \".\", type !classes to retrieve all classes, usage of \".\" will tell Jack to retrieve teams links for ALL classes.\n")] string uniClass = ".",
+        [Description("\nTakes class' short names or \".\", type !classtypes to retrieve all class types, usage of \".\" will tell Jack to retrieve teams links for ALL class types.\n")] string classType = ".",
+        [Description("\nTakes group IDs or \".\", type !groups to retrieve all groups, usage of \".\" will tell Jack to retrieve teams links for ALL groups.\n")] string group = ".")
     {  
         if (!JackTheStudent.Program.classList.Any(c => c.ShortName == uniClass) && uniClass != ".") {
             await ctx.RespondAsync("There's no such class, you high bruh?");

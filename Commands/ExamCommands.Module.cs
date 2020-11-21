@@ -18,11 +18,10 @@ public class ExamCommandsModule : Base​Command​Module
     [Command("exam")]
     [Description(ExamDescriptions.examLogDescription)]
     public async Task ExamLog(CommandContext ctx,
-        [Description ("\nTakes class' short names, type !class to retrive all classes.\n")] string classType = "", 
+        [Description ("\nTakes class' short names, type !classes to retrive all classes.\n")] string classType = "", 
         [Description ("\nTakes dates in dd/mm/yyyy format, accepts different separators.\n")] string examDate = "", 
         [Description ("\nTakes time in hh:mm format.\n")] string examTime = "", 
-        [Description ("\nTakes additional information, multiple words must be wrapped with \"\".\n")] string additionalInfo = "", 
-        [Description ("\nTakes material links, multiple links must be wrapped with \"\".\n")] string materials = "")
+        [Description ("\nTakes additional information, multiple words must be wrapped with \"\".\n")] string additionalInfo = "")
     {
         DateTime parsedEventDate = new DateTime();
         DateTime parsedEventTime = new DateTime();
@@ -85,7 +84,7 @@ public class ExamCommandsModule : Base​Command​Module
     [Command("exams")]
     [Description(ExamDescriptions.examLogsDescription)]
     public async Task ExamLogs(CommandContext ctx, 
-        [Description("\nTakes class' short names or \".\", type !class to retrieve all classes, usage of \".\" will tell Jack to retrieve exam for ALL classes.\n")] string classType = ".",
+        [Description("\nTakes class' short names or \".\", type !classes to retrieve all classes, usage of \".\" will tell Jack to retrieve exams for ALL classes.\n")] string classType = ".",
         [Description("\nTakes \".\" or \"planned\", usage of \".\" will tell Jack to retrieve ALL logged exams, \"planned\" retrieves only future events.\n")] string span = "planned")
     {   
         if (!JackTheStudent.Program.classList.Any(c => c.ShortName == classType) && classType != ".") {

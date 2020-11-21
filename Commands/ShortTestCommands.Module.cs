@@ -18,8 +18,8 @@ public class ShortTestCommandsModule : Base​Command​Module
     [Command("shorttest")]
     [Description(ShortTestDescriptions.shorttestLogDescription)]
     public async Task ShortTestLog(CommandContext ctx,
-        [Description ("\nTakes group IDs, type !group to retrieve all groups.\n")] string groupId = "", 
-        [Description ("\nTakes class' short names, type !class to retrive all classes.\n")] string classType = "", 
+        [Description ("\nTakes group IDs, type !groups to retrieve all groups.\n")] string groupId = "", 
+        [Description ("\nTakes class' short names, type !classes to retrive all classes.\n")] string classType = "", 
         [Description ("\nTakes dates in dd/mm/yyyy format, accepts different separators.\n")] string eventDate = "", 
         [Description ("\nTakes time in hh:mm format.\n")] string eventTime = "", 
         [Description ("\nTakes additional information, multiple words must be wrapped with \"\".\n")] string additionalInfo = "")
@@ -93,8 +93,8 @@ public class ShortTestCommandsModule : Base​Command​Module
     [Command("shorttests")]
     [Description(ShortTestDescriptions.shorttestLogsDescription)]
     public async Task ShortTestLogs(CommandContext ctx, 
-        [Description("\nTakes group IDs or \".\", type !group to retrieve all groups, usage of \".\" will tell Jack to retrieve short test for ALL groups.\n")] string group = ".",
-        [Description("\nTakes class' short names or \".\", type !class to retrieve all classes, usage of \".\" will tell Jack to retrieve short test for ALL classes.\n")] string classType = ".",
+        [Description("\nTakes group IDs or \".\", type !groups to retrieve all groups, usage of \".\" will tell Jack to retrieve short test for ALL groups.\n")] string group = ".",
+        [Description("\nTakes class' short names or \".\", type !classes to retrieve all classes, usage of \".\" will tell Jack to retrieve short test for ALL classes.\n")] string classType = ".",
         [Description("\nTakes \".\" or \"planned\", usage of \".\" will tell Jack to retrieve all LOGGED short test, \"planned\" retrieves only future events.\n")] string span = "planned")
     {       
         if (!JackTheStudent.Program.groupList.Any(g => g.GroupId == group) && group != ".") {

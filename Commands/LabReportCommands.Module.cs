@@ -17,8 +17,8 @@ public class LabReportCommandsModule : Base​Command​Module
     [Command("labreport")]
     [Description(LabReportDescriptions.labreportLogDescription)]
     public async Task LabReportLog(CommandContext ctx,
-        [Description ("\nTakes group IDs, type !group to retrieve all groups.\n")] string groupId = "", 
-        [Description ("\nTakes class' short names, type !class to retrive all classes.\n")] string classType = "", 
+        [Description ("\nTakes group IDs, type !groups to retrieve all groups.\n")] string groupId = "", 
+        [Description ("\nTakes class' short names, type !classes to retrive all classes.\n")] string classType = "", 
         [Description ("\nTakes dates in dd/mm/yyyy format, accepts different separators.\n")] string eventDate = "", 
         [Description ("\nTakes time in hh:mm format.\n")] string eventTime = "", 
         [Description ("\nTakes additional information, multiple words must be wrapped with \"\".\n")] string additionalInfo = "")
@@ -92,8 +92,8 @@ public class LabReportCommandsModule : Base​Command​Module
     [Command("labreports")]
     [Description(LabReportDescriptions.labreportLogsDescription)]
     public async Task LabReportLogs(CommandContext ctx, 
-        [Description("\nTakes group IDs or \".\", type !group to retrieve all groups, usage of \".\" will tell Jack to retrieve lab report for ALL groups.\n")] string group = ".",
-        [Description("\nTakes class' short names or \".\", type !class to retrieve all classes, usage of \".\" will tell Jack to retrieve lab report for ALL classes.\n")] string classType = ".",
+        [Description("\nTakes group IDs or \".\", type !groups to retrieve all groups, usage of \".\" will tell Jack to retrieve lab report for ALL groups.\n")] string group = ".",
+        [Description("\nTakes class' short names or \".\", type !class to retrieve all classes, usage of \".\" will tell Jack to retrieve lab reports for ALL classes.\n")] string classType = ".",
         [Description("\nTakes \".\" or \"planned\", usage of \".\" will tell Jack to retrieve all LOGGED lab report, \"planned\" retrieves only future events.\n")] string span = "planned")
     {      
         if (!JackTheStudent.Program.groupList.Any(g => g.GroupId == group) && group != ".") {

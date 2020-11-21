@@ -6,6 +6,7 @@ using JackTheStudent.Models;
 using System.Linq;
 using Serilog;
 using DSharpPlus.Entities;
+using JackTheStudent.CommandDescriptions;
 
 namespace JackTheStudent.Commands
 {
@@ -13,17 +14,10 @@ public class MaterialCommandsModule : Base​Command​Module
 {
     
     [Command("material")]
-    [Description("Command logging a test, last two arguments are optional." +
-        "\nTo pass without addInfo but with materials use \".\" where addInfo should be.\n" +
-        "Words seperated with spaces must be wrapped with \"\"\n" +
-        "\n!test <groupId> <classShortName> <testDate> <testTime> <additionalInfo> <materials>\n" + 
-        "\nExamples:\n" +
-        "\n!test 3 mat 05-05-2021 13:30" + 
-        "\n!test 1 ele 05-05-2021 12:30 \"Calculator required\"" +
-        "\n!test 3 mat 05-05-2021 13:30 \"Calculator required\"")]
-    public async Task TestLog(CommandContext ctx,
-        [Description ("\nTakes class' short names, type !class to retrive all classes.\n")] string className = "", 
-        [Description ("\nTakes time in hh:mm format.\n")] string link = "", 
+    [Description(MaterialsDescriptions.MaterialLogDescription)]
+    public async Task MaterialLog(CommandContext ctx,
+        [Description ("\nTakes class' short names, type !classes to retrive all classes.\n")] string className = "", 
+        [Description ("\nTakes any links or so. If you don't want to provide a link just type \".\"\n")] string link = "", 
         [Description ("\nTakes additional information, multiple words must be wrapped with \"\".\n")] string additionalInfo = "")
     {
         if (className == "") {
@@ -61,21 +55,8 @@ public class MaterialCommandsModule : Base​Command​Module
     }
 
     [Command("materials")]
-    [Description("Command retrieving logged test based on passed arguments, ALL arguments are optional and the command has default settings.\n" +
-        "\n!tests <groupId> <classShortName> <alreadyTookPlace?>\n" + 
-        "\nType !classes to retrieve short names and !groups to retrieve group IDs" +
-        "\nUse \".\" to retrieve ALL possible entries for each argument, <alreadyTookPlace?> takes \"planned\" or \".\"\n" +
-        "\nExamples:\n" +
-        "\n!tests - will retrieve all PLANNED tests for all the groups and all the classes" + 
-        "\n!tests 1 - will retrieve all PLANNED tests for group 1 for all the classes" +
-        "\n!tests 1 mat - will retrieve all PLANNED tests for group 1 for Maths class" +
-        "\n!tests 1 mat planned - will retrieve all PLANNED tests for group 1 for Maths class" +
-        "\n!tests 1 mat . - will retrieve all LOGGED tests for group 1 for Maths class" +
-        "\n!tests 1 . . - will retrieve all LOGGED tests for group 1 for ALL classes" + 
-        "\n!tests . . . - will retrieve all LOGGED tests for ALL groups for ALL classes" +
-        "\n!tests . mat . - will retrieve all LOGGED tests for ALL groups for MAths class" +
-        "\n!tests . . planned - will retrieve all PLANNED tests for ALL groups for ALL classes")]
-    public async Task TestLogs(CommandContext ctx, 
+    [Description(MaterialsDescriptions.MaterialLogsDescription)]
+    public async Task MaterialLogs(CommandContext ctx, 
         [Description("\nTakes class' short names or \".\", type !class to retrieve all classes, usage of \".\" will tell Jack to retrieve test for ALL classes.\n")] string className = ".")
     {       
         if (!JackTheStudent.Program.classList.Any(c => c.ShortName == className) && className != ".") {

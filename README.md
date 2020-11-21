@@ -11,6 +11,14 @@ A discord bot that offers logging events such as exams, setting automatic remind
 - CI/CD via Github Actions generating Docker container and pushing to Heroku.
 - Uses Serilog for logging.
 
+Available commands (! prefix):
+- Logging: exam, test, shorttest, teamslink, labreport, homework, project, material, reminder
+- Showing logged data from all of the above using the plural version such as "exams".
+- weather, poll, help
+- funny commands such as: roll, chances, dead, alive, interact
+
+Jack automatically pings a certain role (role's ID and channel's ID set in config.json) 1 week before an exam, automatically updates time.
+
 ### Technologies used
 
 - .NET Core v3.1

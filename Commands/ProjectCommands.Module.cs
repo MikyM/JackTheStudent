@@ -19,8 +19,8 @@ public class ProjectCommandsModule : Base​Command​Module
     [Description(ProjectDescriptions.projectLogDescription)]
     public async Task ProjectLog(CommandContext ctx,
         [Description ("\nTakes either 1 (true) or 0 (false)\n")] string IsGroup = "", 
-        [Description ("\nTakes group IDs, type !group to retrieve all groups.\n")] string groupId = "", 
-        [Description ("\nTakes class' short names, type !class to retrive all classes.\n")] string classType = "", 
+        [Description ("\nTakes group IDs, type !groups to retrieve all groups.\n")] string groupId = "", 
+        [Description ("\nTakes class' short names, type !classes to retrive all classes.\n")] string classType = "", 
         [Description ("\nTakes dates in dd/mm/yyyy format, accepts different separators.\n")] string eventDate = "", 
         [Description ("\nTakes time in hh:mm format.\n")] string eventTime = "", 
         [Description ("\nTakes additional information, multiple words must be wrapped with \"\".\n")] string additionalInfo = "") 
@@ -166,8 +166,8 @@ public class ProjectCommandsModule : Base​Command​Module
     [Command("projects")]
     [Description(ProjectDescriptions.projectLogsDescription)]
     public async Task ProjectLogs(CommandContext ctx, 
-        [Description("\nTakes group IDs or \".\", type !group to retrieve all groups, usage of \".\" will tell Jack to retrieve project for ALL groups.\n")] string group = ".",
-        [Description("\nTakes class' short names or \".\", type !class to retrieve all classes, usage of \".\" will tell Jack to retrieve project for ALL classes.\n")] string classType = ".",
+        [Description("\nTakes group IDs or \".\", type !groups to retrieve all groups, usage of \".\" will tell Jack to retrieve project for ALL groups.\n")] string group = ".",
+        [Description("\nTakes class' short names or \".\", type !classes to retrieve all classes, usage of \".\" will tell Jack to retrieve project for ALL classes.\n")] string classType = ".",
         [Description("\nTakes 0 for only individual projects, 1 for group projects or \".\" for all projects\n")] string isGroup = ".",
         [Description("\nTakes \".\" or \"planned\", usage of \".\" will tell Jack to retrieve all LOGGED project, \"planned\" retrieves only future events.\n")] string span = "planned")
     {      
@@ -203,13 +203,17 @@ public class ProjectCommandsModule : Base​Command​Module
                         await ctx.RespondAsync("Wait what!? There are literally no projects planned at all!");
                         return;
                 } else {
-                    isParticipants = await ParticipantsQuestion(ctx);
-                    foreach (Project project in projects) {                        
+                    if (isGroup == "1" || isGroup == ".") {
+                        isParticipants = await ParticipantsQuestion(ctx);
+                    }
+                    foreach (Project project in projects) {
+                        if (isGroup == "0" && project.IsGroup) {
+                            continue;
+                        }                        
                         if (project.IsGroup && isParticipants) {
                             participantsString = await GetParticipantsString(await project.GetParticipants());
-                        } else {
-                            participantsString = String.Empty;
-                        }
+                        } 
+
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} {(project.IsGroup ? "group project" : "project")} for group {project.GroupId}, deadline is {project.Date.ToString().Trim()}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}.")}{participantsString}";
                     }
                 }
@@ -226,6 +230,9 @@ public class ProjectCommandsModule : Base​Command​Module
                         isParticipants = await ParticipantsQuestion(ctx);
                     }
                     foreach (Project project in projects) {
+                        if (isGroup == "0" && project.IsGroup) {
+                            continue;
+                        }  
                         if (project.IsGroup && isParticipants) {
                             participantsString = await GetParticipantsString(await project.GetParticipants());
                         }
@@ -246,6 +253,9 @@ public class ProjectCommandsModule : Base​Command​Module
                         isParticipants = await ParticipantsQuestion(ctx);
                     }     
                     foreach (Project project in projects) {
+                        if (isGroup == "0" && project.IsGroup) {
+                            continue;
+                        }  
                         if (project.IsGroup && isParticipants) {
                             participantsString = await GetParticipantsString(await project.GetParticipants());
                         }
@@ -268,6 +278,9 @@ public class ProjectCommandsModule : Base​Command​Module
                         isParticipants = await ParticipantsQuestion(ctx);
                     }
                     foreach (Project project in projects) {
+                        if (isGroup == "0" && project.IsGroup) {
+                            continue;
+                        }  
                         if (project.IsGroup && isParticipants) {
                             participantsString = await GetParticipantsString(await project.GetParticipants());
                         }
@@ -288,6 +301,9 @@ public class ProjectCommandsModule : Base​Command​Module
                         isParticipants = await ParticipantsQuestion(ctx);
                     }
                     foreach (Project project in projects) {
+                        if (isGroup == "0" && project.IsGroup) {
+                            continue;
+                        }  
                         if (project.IsGroup && isParticipants) {
                             participantsString = await GetParticipantsString(await project.GetParticipants());
                         }
@@ -308,6 +324,9 @@ public class ProjectCommandsModule : Base​Command​Module
                         isParticipants = await ParticipantsQuestion(ctx);
                     }
                     foreach (Project project in projects) {
+                        if (isGroup == "0" && project.IsGroup) {
+                            continue;
+                        }  
                         if (project.IsGroup && isParticipants) {
                             participantsString = await GetParticipantsString(await project.GetParticipants());
                         }
@@ -323,6 +342,9 @@ public class ProjectCommandsModule : Base​Command​Module
                         isParticipants = await ParticipantsQuestion(ctx);
                     }     
                     foreach (Project project in projects) {
+                        if (isGroup == "0" && project.IsGroup) {
+                            continue;
+                        }  
                         if (project.IsGroup && isParticipants) {
                             participantsString = await GetParticipantsString(await project.GetParticipants());
                         }
