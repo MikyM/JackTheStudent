@@ -238,7 +238,7 @@ public class AdminCommandsModule : Base​Command​Module
                 };
                 JackTheStudent.Program.groupList.Add(newGroup);
                 db.Group.Add(newGroup);
-                await ctx.RespondAsync($"Added group with ID: {newGroup.GroupId}.");
+                await ctx.RespondAsync($"Added group with ID: {newGroup.GroupId} and full ID: {newGroup.FullGroupId}.");
                 Task.Delay(1000).Wait();
             }
 
