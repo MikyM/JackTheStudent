@@ -67,7 +67,7 @@ public class ProjectCommandsModule : Base​Command​Module
                 p.GroupId == groupId)) {
             await ctx.RespondAsync("Someone has already logged this project.");
             return;
-        } else if(JackTheStudent.Program.projectList.Any(p => p.Date == parsedEventDate.Date.Add(parsedEventTime.TimeOfDay))) {
+        } else if(JackTheStudent.Program.projectList.Any(p => p.Date == parsedEventDate.Date.Add(parsedEventTime.TimeOfDay) && p.GroupId == groupId)) {
             await ctx.RespondAsync("There's a project logged for this group that takes place same time.");
             return;
         } else if (IsGroup == "0") {
@@ -215,8 +215,8 @@ public class ProjectCommandsModule : Base​Command​Module
                         if (project.IsGroup && isParticipants) {
                             participantsString = await GetParticipantsString(await project.GetParticipants());
                         } 
-
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} {(project.IsGroup ? "group project" : "project")} for group {project.GroupId}, deadline is {project.Date.ToString().Trim()}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}.")}{participantsString}";
+                        participantsString = String.Empty;
                     }
                 }
             } else if(classType == "." && span == "." && group != "." ) {
@@ -241,6 +241,7 @@ public class ProjectCommandsModule : Base​Command​Module
                             participantsString = await GetParticipantsString(await project.GetParticipants());
                         }
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} {(project.IsGroup ? "group project" : "project")} for group {project.GroupId}, deadline is/was {project.Date.ToString().Trim()}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}.")}{participantsString}";
+                        participantsString = String.Empty;                    
                     }
                 }
             } else if (classType == "." && span == "planned" && group != ".") {
@@ -265,8 +266,8 @@ public class ProjectCommandsModule : Base​Command​Module
                         if (project.IsGroup && isParticipants) {
                             participantsString = await GetParticipantsString(await project.GetParticipants());
                         }
-
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} {(project.IsGroup ? "group project" : "project")} for group {project.GroupId}, deadline is {project.Date.ToString().Trim()}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}.")}{participantsString}";
+                        participantsString = String.Empty;
                     }
                 }
             } else if (classType != "." && span == "planned" && group != ".") {
@@ -293,6 +294,7 @@ public class ProjectCommandsModule : Base​Command​Module
                             participantsString = await GetParticipantsString(await project.GetParticipants());
                         }
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} {(project.IsGroup ? "group project" : "project")} for group {project.GroupId}, deadline is {project.Date.ToString().Trim()}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}.")}{participantsString}";
+                        participantsString = String.Empty;
                     }
                 }                                          
             } else if (classType != "." && span == "." && group != ".") {
@@ -318,6 +320,7 @@ public class ProjectCommandsModule : Base​Command​Module
                             participantsString = await GetParticipantsString(await project.GetParticipants());
                         }
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} {(project.IsGroup ? "group project" : "project")} for group {project.GroupId}, will happen / happened on {project.Date.ToString().Trim()}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}.")}{participantsString}";
+                        participantsString = String.Empty;
                     }
                 } 
             } else if (classType != "." && span == "planned" && group == ".") {
@@ -343,6 +346,7 @@ public class ProjectCommandsModule : Base​Command​Module
                             participantsString = await GetParticipantsString(await project.GetParticipants());
                         }
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} {(project.IsGroup ? "group project" : "project")} for group {project.GroupId}, will happen / happened on {project.Date.ToString().Trim()}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}.")}{participantsString}";
+                        participantsString = String.Empty;
                     }
                 }                                          
             } else {                   
@@ -363,6 +367,7 @@ public class ProjectCommandsModule : Base​Command​Module
                             participantsString = await GetParticipantsString(await project.GetParticipants());
                         }
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} {(project.IsGroup ? "group project" : "project")} for group {project.GroupId}, will happen / happened on {project.Date.ToString().Trim()}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}.")}{participantsString}";
+                        participantsString = String.Empty;
                     }
                 }                       
             }

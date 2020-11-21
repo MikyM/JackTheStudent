@@ -1,6 +1,6 @@
 {
   "discord": {
-    "CommandPrefix":  "!" ,
+    "CommandPrefix":  "/" ,
     "LogChannelId": 766965667428827188,
     "AutoRemind": {
       "RoleId": 778345753617760266,
