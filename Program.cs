@@ -208,6 +208,7 @@ namespace JackTheStudent
         reminderTimer = new Timer((e) => {
             Remind().ContinueWith(t => {Log.Logger.Error(t.Exception.ToString());}, TaskContinuationOptions.OnlyOnFaulted);  
             ExamAutoRemind().ContinueWith(t => {Log.Logger.Error(t.Exception.ToString());}, TaskContinuationOptions.OnlyOnFaulted);  
+            TestAutoRemind().ContinueWith(t => {Log.Logger.Error(t.Exception.ToString());}, TaskContinuationOptions.OnlyOnFaulted);  
         }, null, startTimeSpan, periodTimeSpan);
     }
 
