@@ -291,6 +291,8 @@ namespace JackTheStudent
         TimeSpan checkTimeEnd = checkTimeStart + new TimeSpan(00, 01, 00);
         bool isTime = DateTime.Now.TimeOfDay >= checkTimeStart && DateTime.Now.TimeOfDay <= checkTimeEnd;
         bool isLessThanAWeek = false;
+        DateTime dayOfRemind = new DateTime().Date;
+        List<string> remindedClass = new List<string>();
 
         if(!isTime) {
             return;
@@ -299,8 +301,27 @@ namespace JackTheStudent
             timeLeft = testList[i-1].Date.Date - DateTime.Now.Date;
             isLessThanAWeek = timeLeft <= interval;
             if (isLessThanAWeek && !testList[i-1].WasReminded) {
+                if(testList[i-1].Date.Date == dayOfRemind.Date && remindedClass.Contains(testList[i-1].Class)) {
+                    testList[i-1].WasReminded = true;
+                    using (var db = new JackTheStudentContext()) {
+                        try {
+                            var test = db.Test.Where(e => e.Id == testList[i-1].Id).FirstOrDefault();
+                            test.WasReminded = true;
+                            await db.SaveChangesAsync();
+                            Log.Logger.Information($"Auto remind has been already triggered for {test.Class} test that happens on {test.Date}");
+                        } catch(Exception ex) {
+                            Log.Logger.Error("[Jack] Auto reminder - " + ex.ToString());
+                        }
+                    }
+                    continue;
+                }
+                
                 await testList[i-1].Ping(_discord, _config.GetValue<ulong>("discord:LogChannelId"), remindRoleId);
+                dayOfRemind = testList[i-1].Date.Date;
+                remindedClass.Add(testList[i-1].Class);
+                Log.Logger.Information($"{dayOfRemind} {testList[i-1].Date.Date} {testList[i-1].Class}");
                 testList[i-1].WasReminded = true;
+                Log.Logger.Information($"Automatically reminded about {testList[i-1].Class} test that happens on {testList[i-1].Date}");
                 using (var db = new JackTheStudentContext()) {
                     try {
                         var test = db.Test.Where(e => e.Id == testList[i-1].Id).FirstOrDefault();
