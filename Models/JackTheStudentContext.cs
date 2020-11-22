@@ -286,6 +286,11 @@ namespace JackTheStudent.Models
                     .IsRequired()
                     .HasColumnName("link")
                     .HasColumnType("longtext");
+
+                entity.Property(e => e.ShortenedLink)
+                    .IsRequired()
+                    .HasColumnName("shortened_link")
+                    .HasColumnType("longtext");
             });
 
             modelBuilder.Entity<Exam>(entity =>

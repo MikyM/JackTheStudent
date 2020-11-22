@@ -7,12 +7,19 @@ using System.Linq;
 using Serilog;
 using DSharpPlus.Entities;
 using JackTheStudent.CommandDescriptions;
+using Newtonsoft.Json;
+using System.Net.Http;
+using Newtonsoft.Json.Linq;
+using System.Net.Http.Headers;
+using System.Text;
 
 namespace JackTheStudent.Commands
 {
 public class MaterialCommandsModule : Base​Command​Module
 {
-    
+    private string groupGuid = Environment.GetEnvironmentVariable("BITLY_GROUPGUID");
+    private string bitlyToken = Environment.GetEnvironmentVariable("BITLY_TOKEN");
+
     [Command("material")]
     [Description(MaterialsDescriptions.MaterialLogDescription)]
     public async Task MaterialLog(CommandContext ctx,
@@ -31,10 +38,29 @@ public class MaterialCommandsModule : Base​Command​Module
             return;
         } else {
             try {
+                string baseUrl = "https://api-ssl.bitly.com/v4/shorten";
+                string shortenedUrl = "";
+                var content = new BitlyCall{
+                    long_url = link,
+                    group_guid = groupGuid
+                };
+                var jsonContent = new StringContent(JsonConvert.SerializeObject(content), Encoding.UTF8, "application/json");
+                using (HttpClient client = new HttpClient()) {
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bitlyToken);
+
+                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, baseUrl);
+                    request.Content = jsonContent;
+                    var response = await client.SendAsync(request);
+                    JObject rss = JObject.Parse(await response.Content.ReadAsStringAsync());                           
+                    shortenedUrl = (string)rss["link"];
+                }
+
                 using (var db = new JackTheStudentContext()){
                 var material = new ClassMaterial {
                     Class = JackTheStudent.Program.classList.Where(c => c.ShortName == className).Select(c => c.Name).FirstOrDefault(),
                     Link = link,
+                    ShortenedLink = shortenedUrl,
                     LogById = ctx.Message.Author.Id.ToString(),
                     LogByUsername = ctx.Message.Author.Username + "#" + ctx.Message.Author.Discriminator,
                     AdditionalInfo = additionalInfo
@@ -78,7 +104,7 @@ public class MaterialCommandsModule : Base​Command​Module
                         return;
                 } else {                  
                     foreach (ClassMaterial material in materials) {
-                        result = $"{result} \nMaterial link for {material.Class} class - {material.Link}. {(material.AdditionalInfo.Equals("") ? "" : $"Additional info: {material.AdditionalInfo}")}";
+                        result = $"{result} \nMaterial link for {material.Class} class - {material.ShortenedLink}. {(material.AdditionalInfo.Equals("") ? "" : $"Additional info: {material.AdditionalInfo}")}";
                     }
                 }      
             } else {
@@ -91,7 +117,7 @@ public class MaterialCommandsModule : Base​Command​Module
                     return;
                 } else {
                     foreach (ClassMaterial material in materials) {
-                        result = $"{result} \nMaterial link for {material.Class} class - {material.Link}. {(material.AdditionalInfo.Equals("") ? "" : $"Additional info: {material.AdditionalInfo}")}";
+                        result = $"{result} \nMaterial link for {material.Class} class - {material.ShortenedLink}. {(material.AdditionalInfo.Equals("") ? "" : $"Additional info: {material.AdditionalInfo}")}";
                     }
                 }                          
             }
