@@ -21,7 +21,7 @@ namespace JackTheStudent.Models
             var emoji = DiscordEmoji.FromName(client, ":timer:");
             if(!this.WasReminded) {
                 var channel = await client.GetChannelAsync(channelId);
-                await channel.SendMessageAsync($"{emoji} There is a {this.Class} test in a week, exact date is: {this.Date.ToString().Trim()}. <@&{roleId}>");  
+                await channel.SendMessageAsync($"{emoji} There is a {this.Class} test in a week, exact date is: {this.Date.ToString("dd-MM-yyyy").Trim()}. <@&{roleId}>");  
             }     
             
         }

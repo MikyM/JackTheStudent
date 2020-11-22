@@ -292,7 +292,7 @@ namespace JackTheStudent
         bool isTime = DateTime.Now.TimeOfDay >= checkTimeStart && DateTime.Now.TimeOfDay <= checkTimeEnd;
         bool isLessThanAWeek = false;
         DateTime dayOfRemind = new DateTime().Date;
-        List<string> remindedClass = new List<string>();
+        List<string> remindedClassList = new List<string>();
 
         if(!isTime) {
             return;
@@ -301,7 +301,7 @@ namespace JackTheStudent
             timeLeft = testList[i-1].Date.Date - DateTime.Now.Date;
             isLessThanAWeek = timeLeft <= interval;
             if (isLessThanAWeek && !testList[i-1].WasReminded) {
-                if(testList[i-1].Date.Date == dayOfRemind.Date && remindedClass.Contains(testList[i-1].Class)) {
+                if(testList[i-1].Date.Date == dayOfRemind.Date && remindedClassList.Contains(testList[i-1].Class)) {
                     testList[i-1].WasReminded = true;
                     using (var db = new JackTheStudentContext()) {
                         try {
@@ -315,11 +315,11 @@ namespace JackTheStudent
                     }
                     continue;
                 }
-                
                 await testList[i-1].Ping(_discord, _config.GetValue<ulong>("discord:LogChannelId"), remindRoleId);
+
                 dayOfRemind = testList[i-1].Date.Date;
-                remindedClass.Add(testList[i-1].Class);
-                Log.Logger.Information($"{dayOfRemind} {testList[i-1].Date.Date} {testList[i-1].Class}");
+                remindedClassList.Add(testList[i-1].Class);
+
                 testList[i-1].WasReminded = true;
                 Log.Logger.Information($"Automatically reminded about {testList[i-1].Class} test that happens on {testList[i-1].Date}");
                 using (var db = new JackTheStudentContext()) {
