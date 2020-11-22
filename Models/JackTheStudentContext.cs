@@ -527,6 +527,10 @@ namespace JackTheStudent.Models
                     .IsRequired()
                     .HasColumnName("log_by_username")
                     .HasColumnType("longtext");
+
+                entity.Property(e => e.WasReminded)
+                    .HasColumnName("was_reminded")
+                    .IsRequired();
             });
 
             OnModelCreatingPartial(modelBuilder);

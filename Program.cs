@@ -207,7 +207,7 @@ namespace JackTheStudent
         var periodTimeSpan = TimeSpan.FromSeconds(5);
         reminderTimer = new Timer((e) => {
             Remind().ContinueWith(t => {Log.Logger.Error(t.Exception.ToString());}, TaskContinuationOptions.OnlyOnFaulted);  
-            AutoRemind().ContinueWith(t => {Log.Logger.Error(t.Exception.ToString());}, TaskContinuationOptions.OnlyOnFaulted);  
+            ExamAutoRemind().ContinueWith(t => {Log.Logger.Error(t.Exception.ToString());}, TaskContinuationOptions.OnlyOnFaulted);  
         }, null, startTimeSpan, periodTimeSpan);
     }
 
@@ -244,7 +244,7 @@ namespace JackTheStudent
         }
     }
 
-    private async Task AutoRemind()
+    private async Task ExamAutoRemind()
     {   
         if (examList.Count == 0) {
             return;
@@ -278,6 +278,41 @@ namespace JackTheStudent
             }
         }
     }   
+
+    private async Task TestAutoRemind()
+    {   
+        if (testList.Count == 0) {
+            return;
+        }
+        TimeSpan interval = new TimeSpan(7, 00, 00, 00);
+        TimeSpan timeLeft = new TimeSpan();
+        TimeSpan checkTimeStart = _config.GetValue<TimeSpan>("discord:AutoRemind:Time");
+        TimeSpan checkTimeEnd = checkTimeStart + new TimeSpan(00, 01, 00);
+        bool isTime = DateTime.Now.TimeOfDay >= checkTimeStart && DateTime.Now.TimeOfDay <= checkTimeEnd;
+        bool isLessThanAWeek = false;
+
+        if(!isTime) {
+            return;
+        }   
+        for (int i = 1; i <= testList.Count(); i++) {
+            timeLeft = testList[i-1].Date.Date - DateTime.Now.Date;
+            isLessThanAWeek = timeLeft <= interval;
+            if (isLessThanAWeek && !testList[i-1].WasReminded) {
+                await testList[i-1].Ping(_discord, _config.GetValue<ulong>("discord:LogChannelId"), remindRoleId);
+                testList[i-1].WasReminded = true;
+                using (var db = new JackTheStudentContext()) {
+                    try {
+                        var test = db.Test.Where(e => e.Id == testList[i-1].Id).FirstOrDefault();
+                        test.WasReminded = true;
+                        await db.SaveChangesAsync();
+                        Log.Logger.Information($"Automatically reminded about {test.Class} test that happens on {test.Date}");
+                    } catch(Exception ex) {
+                        Log.Logger.Error("[Jack] Auto reminder - " + ex.ToString());
+                    }
+                }
+            }
+        }
+    }
 
     private async Task TimeCheck()
     {
