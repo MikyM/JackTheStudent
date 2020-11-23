@@ -153,7 +153,6 @@ public class HomeworkCommandsModule : Base​Command​Module
                     foreach (Homework homework in homeworks) {
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId} deadline is {homework.Date.ToString().Trim()}.{(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
                     }
-                    await ctx.RespondAsync(result);
                 }
             } else if (classType != "." && span == "planned" && group !=".") {
                 homeworks = homeworks
