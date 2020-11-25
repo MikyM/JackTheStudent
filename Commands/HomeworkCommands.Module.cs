@@ -124,7 +124,7 @@ public class HomeworkCommandsModule : Base​Command​Module
                         return;
                 } else {
                     foreach (Homework homework in homeworks) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId} deadline is {homework.Date.ToString().Trim()}.{(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId} deadline is {homework.Date.ToString().Trim()}. {(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
                     }
                 }
             } else if(classType == "." && span == "." && group != "." ) {
@@ -137,7 +137,7 @@ public class HomeworkCommandsModule : Base​Command​Module
                         return;
                 } else {
                     foreach (Homework homework in homeworks) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId} deadline is/was {homework.Date.ToString().Trim()}.{(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId} deadline is/was {homework.Date.ToString().Trim()}. {(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
                     }
                 }
             } else if (classType == "." && span == "planned" && group != ".") {
@@ -151,7 +151,7 @@ public class HomeworkCommandsModule : Base​Command​Module
                         return;
                 } else {
                     foreach (Homework homework in homeworks) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId} deadline is {homework.Date.ToString().Trim()}.{(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId} deadline is {homework.Date.ToString().Trim()}. {(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
                     }
                 }
             } else if (classType != "." && span == "planned" && group !=".") {
@@ -166,7 +166,7 @@ public class HomeworkCommandsModule : Base​Command​Module
                     return;
                 } else {
                     foreach (Homework homework in homeworks) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId}, deadline is {homework.Date.ToString().Trim()}.{(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId}, deadline is {homework.Date.ToString().Trim()}. {(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
                     }
                 }                                           
             } else if (classType != "." && span == "." && group !=".") {
@@ -180,7 +180,7 @@ public class HomeworkCommandsModule : Base​Command​Module
                     return;
                 } else {
                     foreach (Homework homework in homeworks) {
-                    result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId}, deadline is/was {homework.Date.ToString().Trim()}.{(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
+                    result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId}, deadline is/was {homework.Date.ToString().Trim()}. {(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
                     }
                 } 
             } else if (classType != "." && span == "planned" && group ==".") {
@@ -194,7 +194,7 @@ public class HomeworkCommandsModule : Base​Command​Module
                     return;
                 } else {
                     foreach (Homework homework in homeworks) {
-                    result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId}, deadline is/was {homework.Date.ToString().Trim()}.{(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
+                    result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId}, deadline is/was {homework.Date.ToString().Trim()}. {(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
                     }
                 }                                                          
             } else {
@@ -204,7 +204,7 @@ public class HomeworkCommandsModule : Base​Command​Module
                     return;
                 } else {
                     foreach (Homework homework in homeworks) {
-                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId}, deadline is/was {homework.Date.ToString().Trim()}.{(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
+                        result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(homework.Class)} homework for group {homework.GroupId}, deadline is/was {homework.Date.ToString().Trim()}. {(homework.AdditionalInfo.Equals("") ? "" : $"Additional info: {homework.AdditionalInfo}")}";
                     }
                 }   
             }                    

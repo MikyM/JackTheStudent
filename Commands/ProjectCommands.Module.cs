@@ -146,7 +146,7 @@ public class ProjectCommandsModule : Base​Command​Module
                         return;
                     }
                     var groupProjectMember = new GroupProjectMember { Member = participant.Result.Content};
-                    project.GroupProjectMembers.Add(groupProjectMember);
+                    project.AddParticipant(groupProjectMember);
                 }
                 JackTheStudent.Program.projectList.Add(project);
                 db.Project.Add(project);
@@ -193,7 +193,11 @@ public class ProjectCommandsModule : Base​Command​Module
         bool isParticipants = false;
         string result = String.Empty;
         string participantsString = String.Empty;
+        
         try {
+            if (isGroup == "1" || isGroup == ".") {
+                isParticipants = await ParticipantsQuestion(ctx);
+            }
             if (group == "." && classType == "." && span == "planned") {
                 projects = projects
                     .Where(p => 
@@ -203,9 +207,6 @@ public class ProjectCommandsModule : Base​Command​Module
                         await ctx.RespondAsync("Wait what!? There are literally no projects planned at all!");
                         return;
                 } else {
-                    if (isGroup == "1" || isGroup == ".") {
-                        isParticipants = await ParticipantsQuestion(ctx);
-                    }
                     foreach (Project project in projects) {
                         if (isGroup == "0" && project.IsGroup) {
                             continue;
@@ -213,7 +214,7 @@ public class ProjectCommandsModule : Base​Command​Module
                             continue;
                         }                      
                         if (project.IsGroup && isParticipants) {
-                            participantsString = await GetParticipantsString(await project.GetParticipants());
+                            participantsString = GetParticipantsString(project.GetParticipants());
                         } 
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} {(project.IsGroup ? "group project" : "project")} for group {project.GroupId}, deadline is {project.Date.ToString().Trim()}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}.")}{participantsString}";
                         participantsString = String.Empty;
@@ -228,9 +229,6 @@ public class ProjectCommandsModule : Base​Command​Module
                         await ctx.RespondAsync($"There are no projects logged for group {group}!");
                         return;
                 } else {
-                    if (isGroup == "1" || isGroup == ".") {
-                        isParticipants = await ParticipantsQuestion(ctx);
-                    }
                     foreach (Project project in projects) {
                         if (isGroup == "0" && project.IsGroup) {
                             continue;
@@ -238,7 +236,7 @@ public class ProjectCommandsModule : Base​Command​Module
                             continue;
                         }
                         if (project.IsGroup && isParticipants) {
-                            participantsString = await GetParticipantsString(await project.GetParticipants());
+                            participantsString = GetParticipantsString(project.GetParticipants());
                         }
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} {(project.IsGroup ? "group project" : "project")} for group {project.GroupId}, deadline is/was {project.Date.ToString().Trim()}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}.")}{participantsString}";
                         participantsString = String.Empty;                    
@@ -253,10 +251,7 @@ public class ProjectCommandsModule : Base​Command​Module
                 if (projects.Count == 0) {
                         await ctx.RespondAsync($"Wait what!? There are no projects planned for any class for group {group}!");
                         return;
-                } else {
-                    if (isGroup == "1" || isGroup == ".") {
-                        isParticipants = await ParticipantsQuestion(ctx);
-                    }     
+                } else {    
                     foreach (Project project in projects) {
                         if (isGroup == "0" && project.IsGroup) {
                             continue;
@@ -264,7 +259,7 @@ public class ProjectCommandsModule : Base​Command​Module
                             continue;
                         } 
                         if (project.IsGroup && isParticipants) {
-                            participantsString = await GetParticipantsString(await project.GetParticipants());
+                            participantsString = GetParticipantsString(project.GetParticipants());
                         }
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} {(project.IsGroup ? "group project" : "project")} for group {project.GroupId}, deadline is {project.Date.ToString().Trim()}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}.")}{participantsString}";
                         participantsString = String.Empty;
@@ -281,9 +276,6 @@ public class ProjectCommandsModule : Base​Command​Module
                     await ctx.RespondAsync($"There are no {chosenClass} projects planned for group {group}!");
                     return;
                 } else {
-                    if (isGroup == "1" || isGroup == ".") {
-                        isParticipants = await ParticipantsQuestion(ctx);
-                    }
                     foreach (Project project in projects) {
                         if (isGroup == "0" && project.IsGroup) {
                             continue;
@@ -291,7 +283,7 @@ public class ProjectCommandsModule : Base​Command​Module
                             continue;
                         }  
                         if (project.IsGroup && isParticipants) {
-                            participantsString = await GetParticipantsString(await project.GetParticipants());
+                            participantsString = GetParticipantsString(project.GetParticipants());
                         }
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} {(project.IsGroup ? "group project" : "project")} for group {project.GroupId}, deadline is {project.Date.ToString().Trim()}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}.")}{participantsString}";
                         participantsString = String.Empty;
@@ -307,9 +299,6 @@ public class ProjectCommandsModule : Base​Command​Module
                     await ctx.RespondAsync($"There are no projects logged for {chosenClass} class for group {group}!");
                     return;
                 } else {
-                    if (isGroup == "1" || isGroup == ".") {
-                        isParticipants = await ParticipantsQuestion(ctx);
-                    }
                     foreach (Project project in projects) {
                         if (isGroup == "0" && project.IsGroup) {
                             continue;
@@ -317,7 +306,7 @@ public class ProjectCommandsModule : Base​Command​Module
                             continue;
                         } 
                         if (project.IsGroup && isParticipants) {
-                            participantsString = await GetParticipantsString(await project.GetParticipants());
+                            participantsString = GetParticipantsString(project.GetParticipants());
                         }
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} {(project.IsGroup ? "group project" : "project")} for group {project.GroupId}, will happen / happened on {project.Date.ToString().Trim()}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}.")}{participantsString}";
                         participantsString = String.Empty;
@@ -333,9 +322,6 @@ public class ProjectCommandsModule : Base​Command​Module
                     await ctx.RespondAsync($"There are no projects logged for {chosenClass} class for group {group}!");
                     return;
                 } else {
-                    if (isGroup == "1" || isGroup == ".") {
-                        isParticipants = await ParticipantsQuestion(ctx);
-                    }
                     foreach (Project project in projects) {
                         if (isGroup == "0" && project.IsGroup) {
                             continue;
@@ -343,7 +329,7 @@ public class ProjectCommandsModule : Base​Command​Module
                             continue;
                         }
                         if (project.IsGroup && isParticipants) {
-                            participantsString = await GetParticipantsString(await project.GetParticipants());
+                            participantsString = GetParticipantsString(project.GetParticipants());
                         }
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} {(project.IsGroup ? "group project" : "project")} for group {project.GroupId}, will happen / happened on {project.Date.ToString().Trim()}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}.")}{participantsString}";
                         participantsString = String.Empty;
@@ -353,10 +339,7 @@ public class ProjectCommandsModule : Base​Command​Module
                 if (projects.Count == 0) {
                     await ctx.RespondAsync("There are no projects logged!");
                     return;
-                } else {
-                    if (isGroup == "1" || isGroup == ".") {
-                        isParticipants = await ParticipantsQuestion(ctx);
-                    }     
+                } else {    
                     foreach (Project project in projects) {
                         if (isGroup == "0" && project.IsGroup) {
                             continue;
@@ -364,7 +347,7 @@ public class ProjectCommandsModule : Base​Command​Module
                             continue;
                         }
                         if (project.IsGroup && isParticipants) {
-                            participantsString = await GetParticipantsString(await project.GetParticipants());
+                            participantsString = GetParticipantsString(project.GetParticipants());
                         }
                         result = $"{result} \n{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(project.Class)} {(project.IsGroup ? "group project" : "project")} for group {project.GroupId}, will happen / happened on {project.Date.ToString().Trim()}.{(project.AdditionalInfo.Equals("") ? "" : $"Additional info: {project.AdditionalInfo}.")}{participantsString}";
                         participantsString = String.Empty;
@@ -412,7 +395,7 @@ public class ProjectCommandsModule : Base​Command​Module
         return ("yes".Equals(response.Result.Content.ToLower()) ? true : false);
     }
 
-    public async Task <string> GetParticipantsString(List<GroupProjectMember> participants)
+    public string GetParticipantsString(List<GroupProjectMember> participants)
     {
         string participantsString = String.Empty;
         foreach (GroupProjectMember participant in participants) {

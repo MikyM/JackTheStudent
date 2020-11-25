@@ -22,8 +22,14 @@ namespace JackTheStudent.Models
             if(!this.WasReminded) {
                 var channel = await client.GetChannelAsync(channelId);
                 await channel.SendMessageAsync($"{emoji} There is a {this.Class} test in a week, exact date is: {this.Date.ToString("dd-MM-yyyy").Trim()}. <@&{roleId}>");  
+                this.WasReminded = true;
             }     
             
+        }
+
+        public void Reminded()
+        {
+            this.WasReminded = true;
         }
     }
 }

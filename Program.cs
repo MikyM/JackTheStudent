@@ -17,10 +17,10 @@ using DSharpPlus.Interactivity.Enums;
 using DSharpPlus.Interactivity.Extensions;
 using DSharpPlus.CommandsNext.Exceptions;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
 using System.Net.Http;
 using Serilog;
+using Newtonsoft.Json.Linq;
 
 namespace JackTheStudent
 {
@@ -110,6 +110,7 @@ namespace JackTheStudent
             _discord.ClientErrored += ClientError;
             _discord.MessageReactionAdded += OnMessageReaction;
             _discord.MessageReactionRemoved += OnMessageReactionRemoval;
+            _discord.MessageCreated += OnMessageCreation;
             _commands.CommandErrored += CommandErrored;
             _commands.CommandExecuted += CommandExecuted;
 
@@ -136,6 +137,10 @@ namespace JackTheStudent
             await Task.Delay(TimeSpan.FromMinutes(1));
     }
 
+
+
+    #region  event handling
+
     private async Task OnClientReady(DiscordClient _discord, ReadyEventArgs e)
     {
         Log.Logger.Information(BotEventId.ToString() + " Client is ready to process events.");
@@ -148,7 +153,6 @@ namespace JackTheStudent
         Log.Logger.Debug("[Jack] Database timezone has been updated!");
         Log.Logger.Information("[Jack] I'm now fully functional!");
     }
-
     private Task ClientError(DiscordClient sender, ClientErrorEventArgs e)
     {
         Log.Logger.Error(BotEventId.ToString() + "Exception occured: " + e.Exception);
@@ -179,6 +183,7 @@ namespace JackTheStudent
         }
     }
 
+
     private async Task OnMessageReaction(DiscordClient sender, MessageReactionAddEventArgs e) 
     {
         if (e.Message.Id == roleMessageId) {
@@ -201,6 +206,18 @@ namespace JackTheStudent
         }
     }
 
+    private async Task OnMessageCreation(DiscordClient sender, MessageCreateEventArgs e) 
+    {
+        string message = e.Message.Content.ToLower();
+        var emoji = DiscordEmoji.FromName(sender, ":man_facepalming:");
+        if (message.Contains("link") && message.Contains("do") && message.Contains("dysk")) {       
+            await sender.SendMessageAsync(e.Channel, $"{e.Author.Mention}... https://bit.ly/3m2Jjms here you go dumbass, could look for stuff on your own next time... <#766960454543081566>. {emoji}");
+        } else if (message.Contains("gdzie znajde info") || message.Contains("gdzie znajdę info")) {
+            await sender.SendMessageAsync(e.Channel, $"{e.Author.Mention} https://google.com {emoji}");
+        }
+    }
+
+    #endregion
     private async Task StartReminders()
     {   
         var startTimeSpan = TimeSpan.Zero;
@@ -229,12 +246,11 @@ namespace JackTheStudent
         for (int i = 1; i <= reminderList.Count(); i++) {
             if (DateTime.Now >= reminderList[i-1].SetForDate && !reminderList[i-1].WasReminded) {           
                 await reminderList[i-1].Ping(_discord, _config.GetValue<ulong>("discord:LogChannelId"));
-                reminderList[i-1].WasReminded = true;
                 try {
                     using(var db = new JackTheStudentContext()) {
                         var reminder = db.PersonalReminder.SingleOrDefault(r => r.Id == reminderList[i-1].Id);
                         if (reminder != null) {
-                            reminder.WasReminded = true;
+                            reminder.Reminded();
                         }
                         await db.SaveChangesAsync();
                     }
@@ -265,11 +281,10 @@ namespace JackTheStudent
             isLessThanAWeek = timeLeft <= interval;
             if (isLessThanAWeek && !examList[i-1].WasReminded) {
                 await examList[i-1].Ping(_discord, _config.GetValue<ulong>("discord:LogChannelId"), remindRoleId);
-                examList[i-1].WasReminded = true;
                 using (var db = new JackTheStudentContext()) {
                     try {
                         var exam = db.Exam.Where(e => e.Id == examList[i-1].Id).FirstOrDefault();
-                        exam.WasReminded = true;
+                        exam.Reminded();
                         await db.SaveChangesAsync();
                         Log.Logger.Information($"Automatically reminded about {exam.Class} exam that happens on {exam.Date}");
                     } catch(Exception ex) {
@@ -302,11 +317,11 @@ namespace JackTheStudent
             isLessThanAWeek = timeLeft <= interval;
             if (isLessThanAWeek && !testList[i-1].WasReminded) {
                 if(testList[i-1].Date.Date == dayOfRemind.Date && remindedClassList.Contains(testList[i-1].Class)) {
-                    testList[i-1].WasReminded = true;
+                    testList[i-1].Reminded();
                     using (var db = new JackTheStudentContext()) {
                         try {
                             var test = db.Test.Where(e => e.Id == testList[i-1].Id).FirstOrDefault();
-                            test.WasReminded = true;
+                            test.Reminded();
                             await db.SaveChangesAsync();
                             Log.Logger.Information($"Auto remind has been already triggered for {test.Class} test that happens on {test.Date}");
                         } catch(Exception ex) {
@@ -320,7 +335,6 @@ namespace JackTheStudent
                 dayOfRemind = testList[i-1].Date.Date;
                 remindedClassList.Add(testList[i-1].Class);
 
-                testList[i-1].WasReminded = true;
                 Log.Logger.Information($"Automatically reminded about {testList[i-1].Class} test that happens on {testList[i-1].Date}");
                 using (var db = new JackTheStudentContext()) {
                     try {
@@ -339,21 +353,29 @@ namespace JackTheStudent
     private async Task TimeCheck()
     {
         string baseUrl = "http://worldclockapi.com/api/json/cet/now";
+        string offset = String.Empty;
+        JObject response;
+        bool isDayLightSavingsTime;
+
         try {
             using (HttpClient client = new HttpClient()) {
                 using (HttpResponseMessage res = await client.GetAsync(baseUrl)) {
                     using (HttpContent content = res.Content) {
                         var data = await content.ReadAsStringAsync();
-                        await Task.Delay(1000);
-                        string[] splitResponse = data.Split(new char[] {'"'});
-                        string dateTime = splitResponse[11];
-                        string[] splitDatetime = dateTime.Split(new char[] {':'});
-                        string timezone = splitDatetime[0] + ":" + splitDatetime[1];                   
+
+                        response = JObject.Parse(data);                           
+                        isDayLightSavingsTime = (bool)response["isDayLightSavingsTime"];
+
+                        if(isDayLightSavingsTime) {
+                            offset = "+02:00";
+                        } else {
+                            offset = "+01:00";
+                        }               
 
                         using (var db = new JackTheStudentContext()){
-                            await db.Database.ExecuteSqlRawAsync($"SET time_zone = '+{timezone}';");
+                            await db.Database.ExecuteSqlRawAsync($"SET time_zone = '{offset}';");
                         }
-                        Log.Logger.Information($"[Jack] Database timezone has been set to +{timezone}!");
+                        Log.Logger.Information($"[Jack] Database time offset has been set to {offset}!");
                     }
                 }
             }
@@ -384,7 +406,7 @@ namespace JackTheStudent
 
                 foreach (Project project in projectList) {
                     if (project.IsGroup) {
-                        project.GroupProjectMembers = projectMembersList.Where(m => m.ProjectId == project.Id).ToList();
+                        project.SetParticipants(projectMembersList.Where(m => m.ProjectId == project.Id).ToList());
                     }
                 }              
             }

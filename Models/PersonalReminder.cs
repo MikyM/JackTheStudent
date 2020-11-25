@@ -17,8 +17,14 @@ namespace JackTheStudent.Models
         {
             if(!this.WasReminded) {
                 var channel = await client.GetChannelAsync(channelId);
-                await channel.SendMessageAsync($"Wake up {this.UserMention}, you slack! It's time for/to \"{this.About}\".");   
+                await channel.SendMessageAsync($"Wake up {this.UserMention}, you slack! It's time for/to \"{this.About}\".");
+                this.WasReminded = true;   
             }         
+        }
+
+        public void Reminded()
+        {
+            this.WasReminded = true;
         }
     }
 }
