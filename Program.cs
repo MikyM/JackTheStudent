@@ -50,7 +50,8 @@ namespace JackTheStudent
     private CommandsNextExtension _commands;
     private InteractivityExtension _interactivity;
     public readonly EventId BotEventId = new EventId(1, "[Jack]");
-
+    public static Dictionary<string, int> respects = new Dictionary<string, int>();
+    public static Dictionary<string, int> limiter = new Dictionary<string, int>();
     static async Task Main(string[] args) => await new Program().InitBotAsync(args);
 
     public async Task InitBotAsync(string[] args)
@@ -181,7 +182,8 @@ namespace JackTheStudent
         var periodTimeSpan = TimeSpan.FromSeconds(5);
         reminderTimer = new Timer((e) => {
             Remind().ContinueWith(t => {Log.Logger.Error(t.Exception.ToString());}, TaskContinuationOptions.OnlyOnFaulted);  
-            AutoRemind().ContinueWith(t => {Log.Logger.Error(t.Exception.ToString());}, TaskContinuationOptions.OnlyOnFaulted);  
+            AutoRemind().ContinueWith(t => {Log.Logger.Error(t.Exception.ToString());}, TaskContinuationOptions.OnlyOnFaulted);
+            Limiter().ContinueWith(t => {Log.Logger.Error(t.Exception.ToString());}, TaskContinuationOptions.OnlyOnFaulted);
         }, null, startTimeSpan, periodTimeSpan);
     }
 
@@ -192,6 +194,11 @@ namespace JackTheStudent
         timeCheckTimer = new Timer((e) => {
             TimeCheck().ContinueWith(t => {Log.Logger.Error(t.Exception.ToString());}, TaskContinuationOptions.OnlyOnFaulted); 
         }, null, startTimeSpan, periodTimeSpan);
+    }
+    private async Task Limiter(){
+        if (DateTime.Now.Hour >= 0 && DateTime.Now.Hour < 1 && DateTime.Now.Minute >= 0 && DateTime.Now.Minute < 1){
+            limiter.Clear();
+        }
     }
 
     private async Task Remind()
@@ -322,7 +329,6 @@ namespace JackTheStudent
         } catch(Exception ex) {
             Log.Logger.Error("[Jack] Load quotes - " + ex.ToString());
         }
+    } 
     }
-    
-}
 }
