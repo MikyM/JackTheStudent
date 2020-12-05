@@ -210,7 +210,7 @@ namespace JackTheStudent
     {
         string message = e.Message.Content.ToLower();
         var emoji = DiscordEmoji.FromName(sender, ":man_facepalming:");
-        if (message.Contains("link") && message.Contains("do") && message.Contains("dysk")) {       
+        if (message.Contains(" link") && message.Contains(" do ") && message.Contains(" dysk")) {       
             await sender.SendMessageAsync(e.Channel, $"{e.Author.Mention}... https://bit.ly/3m2Jjms here you go dumbass, could look for stuff on your own next time... <#766960454543081566>. {emoji}");
         } else if (message.Contains("gdzie znajde info") || message.Contains("gdzie znajdę info")) {
             await sender.SendMessageAsync(e.Channel, $"{e.Author.Mention} https://google.com {emoji}");
