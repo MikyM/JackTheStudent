@@ -225,13 +225,8 @@ namespace JackTheStudent
         var periodTimeSpan = TimeSpan.FromSeconds(5);
         reminderTimer = new Timer((e) => {
             Remind().ContinueWith(t => {Log.Logger.Error(t.Exception.ToString());}, TaskContinuationOptions.OnlyOnFaulted);  
-<<<<<<< HEAD
-            AutoRemind().ContinueWith(t => {Log.Logger.Error(t.Exception.ToString());}, TaskContinuationOptions.OnlyOnFaulted);
-            Limiter().ContinueWith(t => {Log.Logger.Error(t.Exception.ToString());}, TaskContinuationOptions.OnlyOnFaulted);
-=======
             ExamAutoRemind().ContinueWith(t => {Log.Logger.Error(t.Exception.ToString());}, TaskContinuationOptions.OnlyOnFaulted);  
             TestAutoRemind().ContinueWith(t => {Log.Logger.Error(t.Exception.ToString());}, TaskContinuationOptions.OnlyOnFaulted);  
->>>>>>> 650e289308d226b6f8010c3ec13e7a2a64af8fcd
         }, null, startTimeSpan, periodTimeSpan);
     }
 
