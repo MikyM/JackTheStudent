@@ -4,17 +4,12 @@ namespace JackTheStudent.CommandDescriptions
 {
     public class HomeworkDescriptions
     {
-    public const string homeworkLogDescription = "Command logging a homework, last two arguments are optional." +
-        "\nTo pass without addInfo but with materials use \".\" where addInfo should be.\n" +
+    public const string homeworkLogDescription = "Command logging a homework, last argument is optional.\n" +
         "Words seperated with spaces must be wrapped with \"\"\n" +
-        "\n!homework <groupId> <classShortName> <deadlineDate> <deadlineTime> <additionalInfo> <materials>\n" + 
+        "\n!homework <groupId> <classShortName> <deadlineDate> <deadlineTime> <additionalInfo>\n" + 
         "\nExamples:\n" +
         "\n!homework 3 mat 05-05-2021 13:30" + 
-        "\n!homework 1 ele 05-05-2021 12:30 \"Calculator required\"" +
-        "\n!homework 3 mat 05-05-2021 13:30 \"Calculator required\" \"https://yourmaterials.com\"" +
-        "\n!homework 1 eng 05-05-2021 13:30 . \"https://yourmaterials.com\"";
-    
-
+        "\n!homework 1 ele 05-05-2021 12:30 \"Calculator required\"";
     public const string homeworkLogsDescription = "Command retrieving logged homework based on passed arguments, ALL arguments are optional and the command has default settings.\n" +
         "\n!homeworks <groupId> <classShortName> <alreadyTookPlace?>\n" + 
         "\nType !classes to retrieve short names and !groups to retrieve group IDs" +

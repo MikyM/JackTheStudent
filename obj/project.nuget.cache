@@ -1,6 +1,10 @@
 {
   "version": 2,
+<<<<<<< HEAD
   "dgSpecHash": "WjfoKWY+jvpv7HQOQgBS9Kcy+NzJNwHnY+mwebiuxyvHx7XsVebB38sq3IXcJ4hQmnI866mri1k0r4f/zst1Vw==",
+=======
+  "dgSpecHash": "oR7S5PQ3r06h9oqOcAbF7oMJZkN1nTRROiGp1kCLIxypWFl3chW38RE9z2GcX17yDq85vAlEV9df3OB9JA1QOw==",
+>>>>>>> 650e289308d226b6f8010c3ec13e7a2a64af8fcd
   "success": true,
   "projectFilePath": "D:\\GitHub\\JackTheStudent\\JackTheStudent.csproj",
   "expectedPackageFiles": [

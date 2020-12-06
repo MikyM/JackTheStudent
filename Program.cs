@@ -17,10 +17,10 @@ using DSharpPlus.Interactivity.Enums;
 using DSharpPlus.Interactivity.Extensions;
 using DSharpPlus.CommandsNext.Exceptions;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
 using System.Net.Http;
 using Serilog;
+using Newtonsoft.Json.Linq;
 
 namespace JackTheStudent
 {
@@ -30,6 +30,8 @@ namespace JackTheStudent
     private static Timer reminderTimer;
     private static Timer timeCheckTimer;
     
+    public static ulong roleMessageId;
+    public static ulong remindRoleId;
     public static List<string> quotes = new List<string>();
     public static List<PersonalReminder> reminderList = new List<PersonalReminder>();
     public static List<Class> classList = new List<Class>();
@@ -107,6 +109,9 @@ namespace JackTheStudent
 
             _discord.Ready += OnClientReady;
             _discord.ClientErrored += ClientError;
+            _discord.MessageReactionAdded += OnMessageReaction;
+            _discord.MessageReactionRemoved += OnMessageReactionRemoval;
+            _discord.MessageCreated += OnMessageCreation;
             _commands.CommandErrored += CommandErrored;
             _commands.CommandExecuted += CommandExecuted;
 
@@ -133,6 +138,10 @@ namespace JackTheStudent
             await Task.Delay(TimeSpan.FromMinutes(1));
     }
 
+
+
+    #region  event handling
+
     private async Task OnClientReady(DiscordClient _discord, ReadyEventArgs e)
     {
         Log.Logger.Information(BotEventId.ToString() + " Client is ready to process events.");
@@ -145,7 +154,6 @@ namespace JackTheStudent
         Log.Logger.Debug("[Jack] Database timezone has been updated!");
         Log.Logger.Information("[Jack] I'm now fully functional!");
     }
-
     private Task ClientError(DiscordClient sender, ClientErrorEventArgs e)
     {
         Log.Logger.Error(BotEventId.ToString() + "Exception occured: " + e.Exception);
@@ -176,14 +184,54 @@ namespace JackTheStudent
         }
     }
 
+
+    private async Task OnMessageReaction(DiscordClient sender, MessageReactionAddEventArgs e) 
+    {
+        if (e.Message.Id == roleMessageId) {
+            if (e.Emoji == DiscordEmoji.FromName(sender, ":books:")) {
+                DiscordMember member = await e.Guild.GetMemberAsync(e.User.Id);
+                DiscordRole remindRole = e.Guild.GetRole(remindRoleId);
+                await member.GrantRoleAsync(remindRole);
+            }
+        }
+    }
+
+    private async Task OnMessageReactionRemoval(DiscordClient sender, MessageReactionRemoveEventArgs e) 
+    {
+        if (e.Message.Id == roleMessageId) {
+            if (e.Emoji == DiscordEmoji.FromName(sender, ":books:")) {
+                DiscordMember member = await e.Guild.GetMemberAsync(e.User.Id);
+                DiscordRole remindRole = e.Guild.GetRole(remindRoleId);
+                await member.RevokeRoleAsync(remindRole);
+            }
+        }
+    }
+
+    private async Task OnMessageCreation(DiscordClient sender, MessageCreateEventArgs e) 
+    {
+        string message = e.Message.Content.ToLower();
+        var emoji = DiscordEmoji.FromName(sender, ":man_facepalming:");
+        if (message.Contains("link") && message.Contains(" do ") && message.Contains("dysk")) {       
+            await sender.SendMessageAsync(e.Channel, $"{e.Author.Mention}... https://bit.ly/3m2Jjms here you go dumbass, could look for stuff on your own next time... <#766960454543081566>. {emoji}");
+        } else if (message.Contains("gdzie znajde info") || message.Contains("gdzie znajdę info")) {
+            await sender.SendMessageAsync(e.Channel, $"{e.Author.Mention} https://google.com {emoji}");
+        }
+    }
+
+    #endregion
     private async Task StartReminders()
     {   
         var startTimeSpan = TimeSpan.Zero;
         var periodTimeSpan = TimeSpan.FromSeconds(5);
         reminderTimer = new Timer((e) => {
             Remind().ContinueWith(t => {Log.Logger.Error(t.Exception.ToString());}, TaskContinuationOptions.OnlyOnFaulted);  
+<<<<<<< HEAD
             AutoRemind().ContinueWith(t => {Log.Logger.Error(t.Exception.ToString());}, TaskContinuationOptions.OnlyOnFaulted);
             Limiter().ContinueWith(t => {Log.Logger.Error(t.Exception.ToString());}, TaskContinuationOptions.OnlyOnFaulted);
+=======
+            ExamAutoRemind().ContinueWith(t => {Log.Logger.Error(t.Exception.ToString());}, TaskContinuationOptions.OnlyOnFaulted);  
+            TestAutoRemind().ContinueWith(t => {Log.Logger.Error(t.Exception.ToString());}, TaskContinuationOptions.OnlyOnFaulted);  
+>>>>>>> 650e289308d226b6f8010c3ec13e7a2a64af8fcd
         }, null, startTimeSpan, periodTimeSpan);
     }
 
@@ -209,12 +257,11 @@ namespace JackTheStudent
         for (int i = 1; i <= reminderList.Count(); i++) {
             if (DateTime.Now >= reminderList[i-1].SetForDate && !reminderList[i-1].WasReminded) {           
                 await reminderList[i-1].Ping(_discord, _config.GetValue<ulong>("discord:LogChannelId"));
-                reminderList[i-1].WasReminded = true;
                 try {
                     using(var db = new JackTheStudentContext()) {
                         var reminder = db.PersonalReminder.SingleOrDefault(r => r.Id == reminderList[i-1].Id);
                         if (reminder != null) {
-                            reminder.WasReminded = true;
+                            reminder.Reminded();
                         }
                         await db.SaveChangesAsync();
                     }
@@ -225,7 +272,7 @@ namespace JackTheStudent
         }
     }
 
-    private async Task AutoRemind()
+    private async Task ExamAutoRemind()
     {   
         if (examList.Count == 0) {
             return;
@@ -244,12 +291,11 @@ namespace JackTheStudent
             timeLeft = examList[i-1].Date.Date - DateTime.Now.Date;
             isLessThanAWeek = timeLeft <= interval;
             if (isLessThanAWeek && !examList[i-1].WasReminded) {
-                await examList[i-1].Ping(_discord, _config.GetValue<ulong>("discord:LogChannelId"), _config.GetValue<ulong>("discord:AutoRemind:RoleId"));
-                examList[i-1].WasReminded = true;
+                await examList[i-1].Ping(_discord, _config.GetValue<ulong>("discord:LogChannelId"), remindRoleId);
                 using (var db = new JackTheStudentContext()) {
                     try {
                         var exam = db.Exam.Where(e => e.Id == examList[i-1].Id).FirstOrDefault();
-                        exam.WasReminded = true;
+                        exam.Reminded();
                         await db.SaveChangesAsync();
                         Log.Logger.Information($"Automatically reminded about {exam.Class} exam that happens on {exam.Date}");
                     } catch(Exception ex) {
@@ -260,24 +306,87 @@ namespace JackTheStudent
         }
     }   
 
+    private async Task TestAutoRemind()
+    {   
+        if (testList.Count == 0) {
+            return;
+        }
+        TimeSpan interval = new TimeSpan(7, 00, 00, 00);
+        TimeSpan timeLeft = new TimeSpan();
+        TimeSpan checkTimeStart = _config.GetValue<TimeSpan>("discord:AutoRemind:Time");
+        TimeSpan checkTimeEnd = checkTimeStart + new TimeSpan(00, 01, 00);
+        bool isTime = DateTime.Now.TimeOfDay >= checkTimeStart && DateTime.Now.TimeOfDay <= checkTimeEnd;
+        bool isLessThanAWeek = false;
+        DateTime dayOfRemind = new DateTime().Date;
+        List<string> remindedClassList = new List<string>();
+
+        if(!isTime) {
+            return;
+        }   
+        for (int i = 1; i <= testList.Count(); i++) {
+            timeLeft = testList[i-1].Date.Date - DateTime.Now.Date;
+            isLessThanAWeek = timeLeft <= interval;
+            if (isLessThanAWeek && !testList[i-1].WasReminded) {
+                if(testList[i-1].Date.Date == dayOfRemind.Date && remindedClassList.Contains(testList[i-1].Class)) {
+                    testList[i-1].Reminded();
+                    using (var db = new JackTheStudentContext()) {
+                        try {
+                            var test = db.Test.Where(e => e.Id == testList[i-1].Id).FirstOrDefault();
+                            test.Reminded();
+                            await db.SaveChangesAsync();
+                            Log.Logger.Information($"Auto remind has been already triggered for {test.Class} test that happens on {test.Date}");
+                        } catch(Exception ex) {
+                            Log.Logger.Error("[Jack] Auto reminder - " + ex.ToString());
+                        }
+                    }
+                    continue;
+                }
+                await testList[i-1].Ping(_discord, _config.GetValue<ulong>("discord:LogChannelId"), remindRoleId);
+
+                dayOfRemind = testList[i-1].Date.Date;
+                remindedClassList.Add(testList[i-1].Class);
+
+                Log.Logger.Information($"Automatically reminded about {testList[i-1].Class} test that happens on {testList[i-1].Date}");
+                using (var db = new JackTheStudentContext()) {
+                    try {
+                        var test = db.Test.Where(e => e.Id == testList[i-1].Id).FirstOrDefault();
+                        test.WasReminded = true;
+                        await db.SaveChangesAsync();
+                        Log.Logger.Information($"Automatically reminded about {test.Class} test that happens on {test.Date}");
+                    } catch(Exception ex) {
+                        Log.Logger.Error("[Jack] Auto reminder - " + ex.ToString());
+                    }
+                }
+            }
+        }
+    }
+
     private async Task TimeCheck()
     {
         string baseUrl = "http://worldclockapi.com/api/json/cet/now";
+        string offset = String.Empty;
+        JObject response;
+        bool isDayLightSavingsTime;
+
         try {
             using (HttpClient client = new HttpClient()) {
                 using (HttpResponseMessage res = await client.GetAsync(baseUrl)) {
                     using (HttpContent content = res.Content) {
                         var data = await content.ReadAsStringAsync();
-                        await Task.Delay(1000);
-                        string[] splitResponse = data.Split(new char[] {'"'});
-                        string dateTime = splitResponse[11];
-                        string[] splitDatetime = dateTime.Split(new char[] {':'});
-                        string timezone = splitDatetime[0] + ":" + splitDatetime[1];                   
+
+                        response = JObject.Parse(data);                           
+                        isDayLightSavingsTime = (bool)response["isDayLightSavingsTime"];
+
+                        if(isDayLightSavingsTime) {
+                            offset = "+02:00";
+                        } else {
+                            offset = "+01:00";
+                        }               
 
                         using (var db = new JackTheStudentContext()){
-                            await db.Database.ExecuteSqlRawAsync($"SET time_zone = '+{timezone}';");
+                            await db.Database.ExecuteSqlRawAsync($"SET time_zone = '{offset}';");
                         }
-                        Log.Logger.Information($"[Jack] Database timezone has been set to +{timezone}!");
+                        Log.Logger.Information($"[Jack] Database time offset has been set to {offset}!");
                     }
                 }
             }
@@ -303,10 +412,12 @@ namespace JackTheStudent
                 testList = db.Test.ToList();
                 projectMembersList = db.GroupProjectMember.ToList();
                 teamsLinkList = db.TeamsLink.ToList();
+                remindRoleId = db.RoleAssignment.Select(c => c.RoleId).FirstOrDefault();
+                roleMessageId = db.RoleAssignment.Select(c => c.MessageId).FirstOrDefault();
 
                 foreach (Project project in projectList) {
                     if (project.IsGroup) {
-                        project.GroupProjectMembers = projectMembersList.Where(m => m.ProjectId == project.Id).ToList();
+                        project.SetParticipants(projectMembersList.Where(m => m.ProjectId == project.Id).ToList());
                     }
                 }              
             }

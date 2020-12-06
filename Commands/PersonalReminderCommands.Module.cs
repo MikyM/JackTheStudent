@@ -12,8 +12,16 @@ namespace JackTheStudent.Commands
 public class PersonalReminderCommandsModule : Base​Command​Module
 {
     [Command("reminder")]
-    [Description("Semester group class table rebuild")]
-    public async Task ReminderLog(CommandContext ctx, string date = "", string time = "", string about = "")
+    [Description("Sets a reminder for a user calling it for the specified time and date. 'About' is optional.\n" +
+    "As always multiple words must be wrapped with \"\"." +
+    "!reminder <date> <time> <about>\n" +
+    "Example:\n" +
+    "!reminder 20/11/2020 19:23" +
+    "!reminder 20/11/2020 19:23 \"finally reach gold in league\"")]
+    public async Task ReminderLog(CommandContext ctx, 
+        [Description("Takes date in dd/mm/yyyy format, accepts different separators.")] string date = "", 
+        [Description("Takes time in hh:mm format.")] string time = "", 
+        [Description("Takes anything you want it to take, it's that awesome, just wrap multiple words within \"\".")] string about = "")
     {
         DateTime parsedEventDate = new DateTime();
         DateTime parsedEventTime = new DateTime();
@@ -64,7 +72,7 @@ public class PersonalReminderCommandsModule : Base​Command​Module
 
 
     [Command("reminders")]
-    [Description("Semester group class table rebuild")]
+    [Description("Shows all set reminders logged by a user calling it.")]
     public async Task ReminderLogs(CommandContext ctx)
     {
         string result = String.Empty;

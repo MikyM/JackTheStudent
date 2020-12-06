@@ -28,6 +28,7 @@ namespace JackTheStudent.Models
         public virtual DbSet<Project> Project { get; set; }
         public virtual DbSet<GroupProjectMember> GroupProjectMember { get; set; }
         public virtual DbSet<TeamsLink> TeamsLink { get; set; }
+        public virtual DbSet<RoleAssignment> RoleAssignment { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -103,6 +104,28 @@ namespace JackTheStudent.Models
                     .HasMaxLength(30);  
             });
 
+            modelBuilder.Entity<RoleAssignment>(entity =>
+            {
+                entity.HasKey(e => e.Id)
+                    .HasName("PRIMARY");
+
+                entity.ToTable("remind_assignment");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e._MessageId)
+                    .IsRequired()
+                    .HasColumnName("message_id")
+                    .HasColumnType("bigint(30)");
+
+                entity.Property(e => e._RoleId)
+                    .IsRequired()
+                    .HasColumnName("role_id")
+                    .HasColumnType("bigint(30");
+            });
+
             modelBuilder.Entity<TeamsLink>(entity =>
             {
                 entity.HasKey(e => e.Id)
@@ -127,6 +150,16 @@ namespace JackTheStudent.Models
                     .IsRequired()
                     .HasColumnName("class")
                     .HasMaxLength(45);
+
+                entity.Property(e => e.Link)
+                    .IsRequired()
+                    .HasColumnName("link")
+                    .HasColumnType("longtext");
+
+                entity.Property(e => e.ShortenedLink)
+                    .IsRequired()
+                    .HasColumnName("shortened_link")
+                    .HasColumnType("longtext");
 
                 entity.Property(e => e.Date)
                     .IsRequired()
@@ -251,6 +284,11 @@ namespace JackTheStudent.Models
                 entity.Property(e => e.Link)
                     .IsRequired()
                     .HasColumnName("link")
+                    .HasColumnType("longtext");
+
+                entity.Property(e => e.ShortenedLink)
+                    .IsRequired()
+                    .HasColumnName("shortened_link")
                     .HasColumnType("longtext");
             });
 
@@ -488,6 +526,10 @@ namespace JackTheStudent.Models
                     .IsRequired()
                     .HasColumnName("log_by_username")
                     .HasColumnType("longtext");
+
+                entity.Property(e => e.WasReminded)
+                    .HasColumnName("was_reminded")
+                    .IsRequired();
             });
 
             OnModelCreatingPartial(modelBuilder);

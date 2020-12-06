@@ -23,7 +23,7 @@ public class StudentCommandsModule : Base​Command​Module
             } else {
                 string result = String.Empty;
                 foreach (Group group in groups) {
-                    result = $"{result} \nID: {group.GroupId}";
+                    result = $"{result} \nID: {group.GroupId}, Full ID: {group.FullGroupId}";
                 }
                 var emoji = DiscordEmoji.FromName(ctx.Client, ":grey_exclamation:");
                 var embed = new DiscordEmbedBuilder {

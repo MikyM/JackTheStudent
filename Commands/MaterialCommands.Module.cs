@@ -6,24 +6,25 @@ using JackTheStudent.Models;
 using System.Linq;
 using Serilog;
 using DSharpPlus.Entities;
+using JackTheStudent.CommandDescriptions;
+using Newtonsoft.Json;
+using System.Net.Http;
+using Newtonsoft.Json.Linq;
+using System.Net.Http.Headers;
+using System.Text;
 
 namespace JackTheStudent.Commands
 {
 public class MaterialCommandsModule : Base​Command​Module
 {
-    
+    private string groupGuid = Environment.GetEnvironmentVariable("BITLY_GROUPGUID");
+    private string bitlyToken = Environment.GetEnvironmentVariable("BITLY_TOKEN");
+
     [Command("material")]
-    [Description("Command logging a test, last two arguments are optional." +
-        "\nTo pass without addInfo but with materials use \".\" where addInfo should be.\n" +
-        "Words seperated with spaces must be wrapped with \"\"\n" +
-        "\n!test <groupId> <classShortName> <testDate> <testTime> <additionalInfo> <materials>\n" + 
-        "\nExamples:\n" +
-        "\n!test 3 mat 05-05-2021 13:30" + 
-        "\n!test 1 ele 05-05-2021 12:30 \"Calculator required\"" +
-        "\n!test 3 mat 05-05-2021 13:30 \"Calculator required\"")]
-    public async Task TestLog(CommandContext ctx,
-        [Description ("\nTakes class' short names, type !class to retrive all classes.\n")] string className = "", 
-        [Description ("\nTakes time in hh:mm format.\n")] string link = "", 
+    [Description(MaterialsDescriptions.MaterialLogDescription)]
+    public async Task MaterialLog(CommandContext ctx,
+        [Description ("\nTakes class' short names, type !classes to retrive all classes.\n")] string className = "", 
+        [Description ("\nTakes any links or so. If you don't want to provide a link just type \".\"\n")] string link = "", 
         [Description ("\nTakes additional information, multiple words must be wrapped with \"\".\n")] string additionalInfo = "")
     {
         if (className == "") {
@@ -37,10 +38,29 @@ public class MaterialCommandsModule : Base​Command​Module
             return;
         } else {
             try {
+                string baseUrl = "https://api-ssl.bitly.com/v4/shorten";
+                string shortenedUrl = "";
+                var content = new BitlyCall{
+                    long_url = link,
+                    group_guid = groupGuid
+                };
+                var jsonContent = new StringContent(JsonConvert.SerializeObject(content), Encoding.UTF8, "application/json");
+                using (HttpClient client = new HttpClient()) {
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bitlyToken);
+
+                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, baseUrl);
+                    request.Content = jsonContent;
+                    var response = await client.SendAsync(request);
+                    JObject rss = JObject.Parse(await response.Content.ReadAsStringAsync());                           
+                    shortenedUrl = (string)rss["link"];
+                }
+
                 using (var db = new JackTheStudentContext()){
                 var material = new ClassMaterial {
                     Class = JackTheStudent.Program.classList.Where(c => c.ShortName == className).Select(c => c.Name).FirstOrDefault(),
                     Link = link,
+                    ShortenedLink = shortenedUrl,
                     LogById = ctx.Message.Author.Id.ToString(),
                     LogByUsername = ctx.Message.Author.Username + "#" + ctx.Message.Author.Discriminator,
                     AdditionalInfo = additionalInfo
@@ -61,21 +81,8 @@ public class MaterialCommandsModule : Base​Command​Module
     }
 
     [Command("materials")]
-    [Description("Command retrieving logged test based on passed arguments, ALL arguments are optional and the command has default settings.\n" +
-        "\n!tests <groupId> <classShortName> <alreadyTookPlace?>\n" + 
-        "\nType !classes to retrieve short names and !groups to retrieve group IDs" +
-        "\nUse \".\" to retrieve ALL possible entries for each argument, <alreadyTookPlace?> takes \"planned\" or \".\"\n" +
-        "\nExamples:\n" +
-        "\n!tests - will retrieve all PLANNED tests for all the groups and all the classes" + 
-        "\n!tests 1 - will retrieve all PLANNED tests for group 1 for all the classes" +
-        "\n!tests 1 mat - will retrieve all PLANNED tests for group 1 for Maths class" +
-        "\n!tests 1 mat planned - will retrieve all PLANNED tests for group 1 for Maths class" +
-        "\n!tests 1 mat . - will retrieve all LOGGED tests for group 1 for Maths class" +
-        "\n!tests 1 . . - will retrieve all LOGGED tests for group 1 for ALL classes" + 
-        "\n!tests . . . - will retrieve all LOGGED tests for ALL groups for ALL classes" +
-        "\n!tests . mat . - will retrieve all LOGGED tests for ALL groups for MAths class" +
-        "\n!tests . . planned - will retrieve all PLANNED tests for ALL groups for ALL classes")]
-    public async Task TestLogs(CommandContext ctx, 
+    [Description(MaterialsDescriptions.MaterialLogsDescription)]
+    public async Task MaterialLogs(CommandContext ctx, 
         [Description("\nTakes class' short names or \".\", type !class to retrieve all classes, usage of \".\" will tell Jack to retrieve test for ALL classes.\n")] string className = ".")
     {       
         if (!JackTheStudent.Program.classList.Any(c => c.ShortName == className) && className != ".") {
@@ -97,7 +104,7 @@ public class MaterialCommandsModule : Base​Command​Module
                         return;
                 } else {                  
                     foreach (ClassMaterial material in materials) {
-                        result = $"{result} \nMaterial link for {material.Class} class - {material.Link}. {(material.AdditionalInfo.Equals("") ? "" : $"Additional info: {material.AdditionalInfo}")}";
+                        result = $"{result} \nMaterial link for {material.Class} class - {material.ShortenedLink}. {(material.AdditionalInfo.Equals("") ? "" : $"Additional info: {material.AdditionalInfo}")}";
                     }
                 }      
             } else {
@@ -110,7 +117,7 @@ public class MaterialCommandsModule : Base​Command​Module
                     return;
                 } else {
                     foreach (ClassMaterial material in materials) {
-                        result = $"{result} \nMaterial link for {material.Class} class - {material.Link}. {(material.AdditionalInfo.Equals("") ? "" : $"Additional info: {material.AdditionalInfo}")}";
+                        result = $"{result} \nMaterial link for {material.Class} class - {material.ShortenedLink}. {(material.AdditionalInfo.Equals("") ? "" : $"Additional info: {material.AdditionalInfo}")}";
                     }
                 }                          
             }

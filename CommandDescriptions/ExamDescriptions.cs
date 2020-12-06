@@ -4,15 +4,13 @@ namespace JackTheStudent.CommandDescriptions
 {
     public class ExamDescriptions
     {
-    public const string examLogDescription = "Command logging an exam, last two arguments are optional." +
-        "\nTo pass without addInfo but with materials use \".\" where addInfo should be.\n" +
+    public const string examLogDescription = "Command logging an exam, last argument is optional.\n" +
         "Words seperated with spaces must be wrapped with \"\"\n" +
-        "\n!exam <classShortName> <examDate> <examTime> <additionalInfo> <materials>\n" + 
+        "\n!exam <classShortName> <examDate> <examTime> <additionalInfo>\n" + 
         "\nExamples:\n" +
         "\n!exam mat 05-05-2021 13:30" + 
         "\n!exam ele 05-05-2021 12:30 \"Calculator required\"" +
-        "\n!exam mat 05-05-2021 13:30 \"Calculator required\" \"https://yourmaterials.com\"" +
-        "\n!exam eng 05-05-2021 13:30 . \"https://yourmaterials.com\"";
+        "\n!exam mat 05-05-2021 13:30";
     
 
     public const string examLogsDescription = "Command retrieving logged exam based on passed arguments, ALL arguments are optional and the command has default settings.\n" +

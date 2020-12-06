@@ -4,15 +4,12 @@ namespace JackTheStudent.CommandDescriptions
 {
     public class LabReportDescriptions
     {
-    public const string labreportLogDescription = "Command logging a lab report, last two arguments are optional." +
-        "\nTo pass without addInfo but with materials use \".\" where addInfo should be.\n" +
+    public const string labreportLogDescription = "Command logging a lab report, last argument is optional.\n" +
         "Words seperated with spaces must be wrapped with \"\"\n" +
-        "\n!labreport <groupId> <classShortName> <labReportDate> <labReportTime> <additionalInfo> <materials>\n" + 
+        "\n!labreport <groupId> <classShortName> <labReportDate> <labReportTime> <additionalInfo>\n" + 
         "\nExamples:\n" +
         "\n!labreport 3 mat 05-05-2021 13:30" + 
-        "\n!labreport 1 ele 05-05-2021 12:30 \"Calculator required\"" +
-        "\n!labreport 3 mat 05-05-2021 13:30 \"Calculator required\" \"https://yourmaterials.com\"" +
-        "\n!labreport 1 eng 05-05-2021 13:30 . \"https://yourmaterials.com\"";
+        "\n!labreport 1 ele 05-05-2021 12:30 \"Calculator required\"";
     
 
     public const string labreportLogsDescription = "Command retrieving logged lab report based on passed arguments, ALL arguments are optional and the command has default settings.\n" +

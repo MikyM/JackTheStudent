@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+
 namespace JackTheStudent.Models
 {
     public partial class Project
@@ -16,12 +17,46 @@ namespace JackTheStudent.Models
         public string AdditionalInfo { get; set; }
         public ICollection<GroupProjectMember> GroupProjectMembers { get; set; }
 
-        public async Task<List<GroupProjectMember>> GetParticipants()
+        public List<GroupProjectMember> GetParticipants()
         {
             if (this.IsGroup) {
                 return this.GroupProjectMembers.ToList();
+            } else {
+                return null;
             }
-            return null;
         }
+
+        public void SetParticipants(List<GroupProjectMember> members)
+        {
+            if (this.IsGroup) {
+                this.GroupProjectMembers = members;
+            } else {
+                this.GroupProjectMembers = null;
+            } 
+        }
+
+        public GroupProjectMember GetParticipant(int participantId) 
+        {
+            if(this.IsGroup) {
+                return this.GroupProjectMembers.Where(m => m.Id == participantId).FirstOrDefault();
+            } else {
+                return null;
+            }
+        }
+
+        public void AddParticipant(GroupProjectMember participant) 
+        {
+            if(this.IsGroup) {
+                this.GroupProjectMembers.Add(participant);
+            }
+        }
+
+        public void AddParticipants(List<GroupProjectMember> participants) 
+        {
+            if(this.IsGroup) {
+                this.GroupProjectMembers.Concat(participants);
+            }
+        }
+
     }
 }
