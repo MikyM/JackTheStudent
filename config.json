@@ -1,12 +1,7 @@
 {
   "discord": {
-<<<<<<< HEAD
-    "CommandPrefix":  "?" ,
-    "LogChannelId": 778328563589185586,
-=======
     "CommandPrefix":  "!" ,
     "LogChannelId": 766965667428827188,
->>>>>>> 650e289308d226b6f8010c3ec13e7a2a64af8fcd
     "AutoRemind": {
       "Time": "18:00"
     }
