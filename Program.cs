@@ -236,6 +236,7 @@ namespace JackTheStudent
         var periodTimeSpan = TimeSpan.FromHours(24);
         timeCheckTimer = new Timer((e) => {
             TimeCheck().ContinueWith(t => {Log.Logger.Error(t.Exception.ToString());}, TaskContinuationOptions.OnlyOnFaulted); 
+            Limiter().ContinueWith(t => {Log.Logger.Error(t.Exception.ToString());}, TaskContinuationOptions.OnlyOnFaulted);
         }, null, startTimeSpan, periodTimeSpan);
     }
     private async Task Limiter(){

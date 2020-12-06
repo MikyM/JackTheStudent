@@ -30,11 +30,11 @@ namespace JackTheStudent.Commands
                 return;
             }
 
-            /*if (idString == idAuthorString)
+            if (idString == idAuthorString)
             {
                 await ctx.RespondAsync("You can't award yourself, what a shameful attempt yikes.");
                 return;
-            }*/
+            }
 
             if (!usersList.Contains(user))
             {
@@ -54,11 +54,11 @@ namespace JackTheStudent.Commands
 
             JackTheStudent.Program.limiter[idAuthorString] += 1;
 
-            /*if (JackTheStudent.Program.limiter[idAuthorString] > 2)
+            if (JackTheStudent.Program.limiter[idAuthorString] > 2)
             {
                 await ctx.RespondAsync("Sorry, each user can award someone 2 times a day max!");
                 return;
-            }*/
+            }
 
             JackTheStudent.Program.respects[idString] += 1;
 
@@ -77,7 +77,7 @@ namespace JackTheStudent.Commands
         }
 
         [Command("leaderboard")]
-        [Description("Awards specific person with a respect point to rise their rank! Max 2 respects a day.")]
+        [Description("Check who's the boss!")]
         public async Task Leaderboard(CommandContext ctx)
         {
             var ranking = new List<string>();
